@@ -1,15 +1,24 @@
 # Orb Studios Website
 
-A modern web application built with Next.js, Payload CMS, and MongoDB, with Tailwind CSS for styling.
+A modern web application built with Next.js, Payload CMS with PostgreSQL and Drizzle ORM, and Tailwind CSS for styling.
 
 ## Tech Stack
 
 - **Frontend**: [Next.js](https://nextjs.org/) - React framework for production
 - **CMS**: [Payload CMS](https://payloadcms.com/) - Headless CMS and backend API
-- **Database**: [MongoDB](https://www.mongodb.com/) - NoSQL database
+- **Database**: [PostgreSQL](https://www.postgresql.org/) - Relational database
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) - Lightweight TypeScript ORM
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - **Package Manager**: [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
 - **Language**: TypeScript
+
+## Key Libraries
+
+- **Email**: [Resend](https://resend.com/) with [React Email](https://react.email/) - Build email templates as React components for sending invoices and client notifications with excellent developer experience
+- **PDF Generation**: [React PDF](https://react-pdf.org/) (react-pdf/renderer) - Generate invoices as PDFs directly in your Next.js app using component-based approach
+- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema validation for forms, API inputs, and environment variables. Integrates seamlessly with Drizzle for schema validation
+- **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod - Lightweight, performant form management with unified validation schemas
+- **Date/Time**: [date-fns](https://date-fns.org/) - Lightweight, tree-shakeable date utility library for time calculations and hour tracking
 
 ## Prerequisites
 
@@ -17,7 +26,7 @@ Before you begin, ensure you have the following installed on your machine:
 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - [pnpm](https://pnpm.io/installation) - Install globally with `npm install -g pnpm`
-- [MongoDB](https://www.mongodb.com/docs/manual/installation/) - Either local installation or a MongoDB Atlas account (cloud)
+- [PostgreSQL](https://www.postgresql.org/download/) (v12 or higher) - Either local installation or a PostgreSQL cloud service (e.g., Railway, Supabase, Neon)
 
 ## Getting Started
 
@@ -39,8 +48,8 @@ pnpm install
 Create a `.env.local` file in the root directory with the following variables:
 
 ```env
-# MongoDB Connection
-MONGODB_URI=mongodb://localhost:27017/orb-studios
+# PostgreSQL Connection
+DATABASE_URI=postgresql://user:password@localhost:5432/orb-studios
 
 # Payload CMS
 PAYLOAD_SECRET=your-secret-key-here
@@ -50,20 +59,32 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 ```
 
 **Note**: 
-- For local MongoDB, use `mongodb://localhost:27017/orb-studios`
-- For MongoDB Atlas, use your connection string: `mongodb+srv://username:password@cluster.mongodb.net/orb-studios`
+- For local PostgreSQL, use `postgresql://user:password@localhost:5432/orb-studios`
+- For Railway or other cloud providers, use your provided connection string
 - Generate a secure `PAYLOAD_SECRET` - it should be a long, random string
 
 ### 4. Database Setup
 
-If using local MongoDB, ensure it's running:
+If using local PostgreSQL, ensure it's running:
 
 ```bash
 # macOS with Homebrew
-brew services start mongodb-community
+brew services start postgresql
 
-# Or run MongoDB in Docker
-docker run -d -p 27017:27017 --name mongodb mongo
+# Or run PostgreSQL in Docker
+docker run -d -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=password postgres
+```
+
+Then create the database:
+
+```bash
+creatdb orb-studios
+```
+
+Run database migrations:
+
+```bash
+pnpm db:push
 ```
 
 ### 5. Start Development Server
@@ -136,15 +157,21 @@ export default function Button() {
 
 ## Troubleshooting
 
-**Issue**: MongoDB connection fails
-- Ensure MongoDB is running
-- Check your `MONGODB_URI` in `.env.local`
-- Verify network connectivity if using MongoDB Atlas
+**Issue**: PostgreSQL connection fails
+- Ensure PostgreSQL is running
+- Check your `DATABASE_URI` in `.env.local`
+- Verify the database exists: `psql -l`
+- Verify network connectivity if using a cloud provider
 
 **Issue**: Payload admin not loading
 - Clear browser cache
 - Ensure `PAYLOAD_SECRET` is set
 - Check console for API errors
+
+**Issue**: Database migrations fail
+- Ensure PostgreSQL is running and accessible
+- Check that the database exists
+- Review migration files in the `drizzle` directory
 
 **Issue**: pnpm install fails
 - Delete `pnpm-lock.yaml` and `node_modules`
@@ -161,8 +188,9 @@ export default function Button() {
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Payload CMS Documentation](https://payloadcms.com/docs)
+- [Drizzle ORM Documentation](https://orm.drizzle.team/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [MongoDB Documentation](https://www.mongodb.com/docs/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [pnpm Documentation](https://pnpm.io/motivation)
 
 ## License
