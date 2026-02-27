@@ -2,6 +2,15 @@
 
 A modern web application built with Next.js, Payload CMS with PostgreSQL and Drizzle ORM, and Tailwind CSS for styling.
 
+### Studio pages to emulate
+https://blackbirdstudio.com/
+
+https://www.lynxmusic.ca/
+
+https://www.secretweaponsound.ca/
+
+
+
 ## Tech Stack
 
 - **Frontend**: [Next.js](https://nextjs.org/) - React framework for production
