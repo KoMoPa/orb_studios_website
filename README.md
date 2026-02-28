@@ -2,6 +2,11 @@
 
 A modern web application built with Next.js, Payload CMS with PostgreSQL and Drizzle ORM, and Tailwind CSS for styling.
 
+### Links
+Original domain: https://orbstudios.ca
+Railway Development domain: https://orbstudioswebsite-production.up.railway.app/
+
+
 ### Studio pages to emulate
 https://blackbirdstudio.com/
 
