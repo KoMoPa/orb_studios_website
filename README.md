@@ -207,6 +207,42 @@ export default function Button() {
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [pnpm Documentation](https://pnpm.io/motivation)
 
+## Custom Google Fonts
+
+This project includes four decorative Google Fonts from the Rubik family available site-wide:
+
+### Available Fonts
+
+| Alias | Font Family | Use Case |
+|-------|-------------|----------|
+| `vinyl` | Rubik Vinyl | Bold, eye-catching headlines |
+| `doodle` | Rubik Doodle Shadow | Playful, bubbly text |
+| `glitch` | Rubik Glitch | Edgy, distorted effects |
+| `spraypaint` | Rubik Spray Paint | Artistic, graffiti-style text |
+
+### Usage Examples
+
+```tsx
+// Vinyl - Bold, solid font
+<h1 className="vinyl">Title</h1>
+
+// Doodle - With Tailwind size utilities
+<h1 className="doodle text-2xl">Title</h1>
+
+// Glitch - Edgy distorted effect
+<span className="glitch">Text</span>
+
+// Spraypaint - Artistic brushstroke style
+<div className="spraypaint">Content</div>
+```
+
+You can combine these font classes with any Tailwind utilities for color, sizing, spacing, etc:
+
+```tsx
+<h1 className="vinyl text-4xl text-red-600 mb-4">Orb Studios</h1>
+<p className="doodle text-xl text-gray-700">Premium Recording Space</p>
+```
+
 ## License
 
 [Add your license here]

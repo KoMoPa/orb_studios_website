@@ -49,6 +49,9 @@ export default buildConfig({
       ],
     },
   },
+  cache: {
+    enabled: true,
+  },
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   csrf: [getServerSideURL()].filter(Boolean),

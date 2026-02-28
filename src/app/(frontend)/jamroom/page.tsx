@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
-export default function StudioA() {
+export default function JamRoom() {
     const gallery = [
         '/liveroom1.jpg',
         '/liveroom2.jpg',
@@ -16,7 +18,7 @@ export default function StudioA() {
         'Fender 100W Rumble Bass Amp',
         'Orange Guitar Amp/Cab Combo',
         "Fender '65 Deluxe Reverb",
-        'Allen & Heath ZED 4 Channel Mixer',
+        'Behringer 16 Channel Mixer',
         'Yorkville PA System/Speakers',
         'Assorted Dynamic Mics (57s, 58s, 421, d112s)',
     ];
@@ -32,13 +34,15 @@ export default function StudioA() {
     }, []);
 
     return (
-        <div className="font-sans text-gray-800">
+        <>
+            <Header />
+            <div className="font-sans text-gray-800">
             {/* hero */}
-            <header className="relative min-h-[380px] flex items-center bg-cover bg-center"
-                style={{ backgroundImage: "linear-gradient(to right,rgba(220,38,38,.6),rgba(234,179,8,.6)),url('/hero.png')" }}>
+            <header className="relative min-h-[380px] flex items-center"
+                style={{ backgroundImage: "linear-gradient(to right,rgba(220,38,38,.1),rgba(234,179,8,.1)),url('/coppa-cover-C6XPTN7LYpI-unsplash.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
                 <div className="relative z-10 w-full max-w-5xl pl-4 pr-12 py-12 text-left">
-                    <h1 className="text-5xl font-bold text-white">Studio A</h1>
-                    <p className="mt-2 text-lg text-red-100 ml-px">Rehearsal Room — 21 x 17 x 11 ft</p>
+                    <h1 className="text-5xl font-bold text-white">Jam Room</h1>
+                    {/* <p className="mt-2 text-lg text-red-100 ml-px">Rehearsal Space — 357 sq ft (33 sq mt)</p> */}
                     <Link href="#booking" className="inline-block mt-4 ml-4 bg-black bg-opacity-40 text-white px-4 py-2 rounded">
                         Book Studio A
                     </Link>
@@ -48,10 +52,10 @@ export default function StudioA() {
             <main className="max-w-5xl mx-auto px-6 py-12">
                 <section className="flex flex-col lg:flex-row gap-8">
                     <div className="flex-1">
-                        <h2 className="text-2xl font-semibold">About Studio A</h2>
+                        <h2 className="text-2xl font-semibold">About Our Rehearsal Room</h2>
                         <p className="mt-4">
-                            Studio A is a bright, roomy rehearsal space ideal for bands and artists. It includes quality amps,
-                            drums, PA and a small control area for simple tracking. Monthly and hourly rentals are available.
+                            The Jam Room is a bright, voluminous rehearsal space ideal for bands and artists. It includes quality amps,
+                            drums, PA and a 16 channel mixer for full live sound performance.
                         </p>
 
                         <h3 className="mt-6 text-xl font-semibold">Included Gear</h3>
@@ -65,8 +69,8 @@ export default function StudioA() {
                     <aside className="w-full lg:w-64">
                         <div className="bg-gray-100 rounded-lg p-6 space-y-4">
                             <div>
-                                <strong className="block text-xl">21 x 17 x 11</strong>
-                                <span className="text-sm text-gray-600">Feet (L&nbsp;x&nbsp;W&nbsp;x&nbsp;H)</span>
+                                <strong className="block text-xl">357 Sq Ft</strong>
+                                <span className="text-sm text-gray-600">3927 Cubic Feet (L&nbsp;x&nbsp;W&nbsp;x&nbsp;H)</span>
                             </div>
                             <div>
                                 <strong className="block text-xl">$30</strong>
@@ -134,13 +138,9 @@ export default function StudioA() {
                     </a>
                 </section>
             </main>
+            </div>
 
-            <footer className="py-12 text-center text-gray-500">
-                <p>&copy; 2026 Orb Studios</p>
-                <Link href="/" className="underline">
-                    Back to Home
-                </Link>
-            </footer>
-        </div>
+            <Footer />
+        </>
     );
 }
