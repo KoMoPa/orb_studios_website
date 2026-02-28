@@ -40,7 +40,7 @@ interface RoomData {
 async function fetchRoom(slug: string): Promise<RoomData | null> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}/api/rooms?where[slug][equals]=${slug}`,
+      `/api/rooms?where[slug][equals]=${slug}`,
       { next: { revalidate: 60 } }
     );
     const data = await res.json();
