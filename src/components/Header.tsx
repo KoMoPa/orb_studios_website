@@ -8,17 +8,32 @@ interface NavItem {
   url: string
 }
 
+interface Room {
+  id: string
+  title: string
+  slug: string
+}
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isRoomsOpen, setIsRoomsOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHeader = async () => {
       try {
-        const res = await fetch('/api/globals/header');
-        const data = await res.json();
-        setNavItems(data.nav || []);
+        // Fetch header global nav items
+        const headerRes = await fetch('/api/globals/header');
+        const headerData = await headerRes.json();
+        const headerNavItems = headerData.nav || [];
+        setNavItems(headerNavItems);
+
+        // Fetch all rooms
+        const roomsRes = await fetch('/api/rooms?limit=100');
+        const roomsData = await roomsRes.json();
+        setRooms(roomsData.docs || []);
       } catch (error) {
         console.error('Failed to fetch header:', error);
       } finally {
@@ -63,6 +78,43 @@ export default function Header() {
                 </Link>
               </li>
             ))}
+
+            {/* Rooms Dropdown */}
+            <li className="relative group">
+              <button
+                onClick={() => setIsRoomsOpen(!isRoomsOpen)}
+                className="text-white hover:text-secondary transition-colors py-2 md:py-0 flex items-center gap-2"
+              >
+                Rooms
+                <span className={`inline-block transition-transform ${isRoomsOpen ? 'rotate-180' : ''}`}>
+                  ▼
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {isRoomsOpen && (
+                <ul className="md:absolute md:left-0 md:mt-0 w-full md:w-48 bg-primary md:bg-gray-900 rounded-md md:shadow-lg py-2 mt-2">
+                  {rooms.length > 0 ? (
+                    rooms.map((room) => (
+                      <li key={room.id}>
+                        <Link
+                          href={`/${room.slug}`}
+                          className="block px-4 py-2 text-white hover:bg-secondary hover:text-black transition-colors"
+                          onClick={() => {
+                            setIsRoomsOpen(false);
+                            setIsOpen(false);
+                          }}
+                        >
+                          {room.title}
+                        </Link>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-4 py-2 text-gray-400">No rooms available</li>
+                  )}
+                </ul>
+              )}
+            </li>
           </ul>
         </div>
       </nav>

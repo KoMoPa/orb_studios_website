@@ -58,11 +58,38 @@ function renderRichText(content: any): React.ReactNode {
     return content;
   }
 
+  // Handle Payload's Lexical editor format
+  if (content.root && content.root.children) {
+    return content.root.children.map((block: any, index: number) => {
+      if (block.type === 'paragraph') {
+        return (
+          <p key={index} className="mt-4 text-white">
+            {block.children?.map((child: any, i: number) => (
+              <span key={i}>{child.text}</span>
+            ))}
+          </p>
+        );
+      }
+      if (block.type === 'ul' || block.type === 'list') {
+        return (
+          <ul key={index} className="list-disc list-inside mt-2 space-y-1 text-white">
+            {block.children?.map((item: any, i: number) => {
+              const itemText = item.children?.[0]?.text || item.text;
+              return <li key={i}>{itemText}</li>;
+            })}
+          </ul>
+        );
+      }
+      return null;
+    });
+  }
+
+  // Handle flat array format (fallback)
   if (Array.isArray(content)) {
     return content.map((block: any, index: number) => {
       if (block.type === 'paragraph') {
         return (
-          <p key={index} className="mt-4">
+          <p key={index} className="mt-4 text-white">
             {block.children?.map((child: any, i: number) => (
               <span key={i}>{child.text}</span>
             ))}
@@ -71,7 +98,7 @@ function renderRichText(content: any): React.ReactNode {
       }
       if (block.type === 'ul') {
         return (
-          <ul key={index} className="list-disc list-inside mt-2 space-y-1">
+          <ul key={index} className="list-disc list-inside mt-2 space-y-1 text-white">
             {block.children?.map((item: any, i: number) => (
               <li key={i}>{item.children?.[0]?.text}</li>
             ))}
@@ -139,17 +166,16 @@ export default function RoomPage({ slug }: RoomPageProps) {
   return (
     <>
       <Header />
-      <div className="font-sans text-gray-800">
+      <div className="font-sans text-white">
         {/* Hero Section */}
-        <header
-          className="relative min-h-[380px] flex items-center"
+        <div
+          className="relative min-h-[380px] flex items-center bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `linear-gradient(to right,rgba(220,38,38,.1),rgba(234,179,8,.1)),url('${heroImageUrl}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage: `url('${heroImageUrl}')`,
           }}
         >
+          <div className={`absolute inset-0 bg-gradient-to-r ${room.heroGradientColor} opacity-50`}></div>
+          <header className="relative z-10 w-full">
           <div className="relative z-10 w-full max-w-5xl pl-4 pr-12 py-12 text-left">
             <h1 className="text-5xl font-bold text-white">{room.heroTitle}</h1>
             <a href="#booking" className="inline-block mt-4 ml-4 bg-black bg-opacity-40 text-white px-4 py-2 rounded">
@@ -157,18 +183,19 @@ export default function RoomPage({ slug }: RoomPageProps) {
             </a>
           </div>
         </header>
+        </div>
 
         <main className="max-w-5xl mx-auto px-6 py-12">
           {/* About Section */}
           <section className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1">
-              <h2 className="text-2xl font-semibold">About {room.title}</h2>
-              <div className="mt-4 text-gray-700">
+              <h2 className="text-2xl font-semibold text-white">About {room.title}</h2>
+              <div className="mt-4 text-white">
                 {renderRichText(room.aboutSection)}
               </div>
 
-              <h3 className="mt-6 text-xl font-semibold">Included Gear</h3>
-              <div className="mt-2 text-gray-700">
+              <h3 className="mt-6 text-xl font-semibold text-white">Included Gear</h3>
+              <div className="mt-2 text-white">
                 {renderRichText(room.gearList)}
               </div>
             </div>
@@ -196,7 +223,7 @@ export default function RoomPage({ slug }: RoomPageProps) {
 
           {/* Gallery Section */}
           <section className="mt-12">
-            <h2 className="text-2xl font-semibold">Gallery</h2>
+            <h2 className="text-2xl font-semibold text-white">Gallery</h2>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {room.galleryImages.map((image, index) => {
                 const imageUrl = getImageUrl(image);
