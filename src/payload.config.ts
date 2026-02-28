@@ -4,7 +4,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 
-import { Users, Pages, Posts, Media, Categories } from '@/collections'
+import { Users, Pages, Posts, Media, Categories, Rooms } from '@/collections'
 import { Header } from '@/Header/config'
 import { Footer } from '@/Footer/config'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -52,7 +52,7 @@ export default buildConfig({
   cache: {
     enabled: true,
   },
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Rooms, Users],
   cors: [getServerSideURL()].filter(Boolean),
   csrf: [getServerSideURL()].filter(Boolean),
   db: postgresAdapter({
