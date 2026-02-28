@@ -2,6 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    useAsTitle: 'alt',
+  },
   upload: {
     staticDir: 'public/media',
     staticURL: '/media',
@@ -26,6 +29,12 @@ export const Media: CollectionConfig = {
       },
     ],
     mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'],
+  },
+  access: {
+    read: async () => true,
+    create: async ({ req }) => req.user?.roles?.includes('admin'),
+    update: async ({ req }) => req.user?.roles?.includes('admin'),
+    delete: async ({ req }) => req.user?.roles?.includes('admin'),
   },
   fields: [
     {
