@@ -7,9 +7,18 @@ export const Rooms: CollectionConfig = {
   },
   access: {
     read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    create: async ({ req }) => {
+      // Allow admin and editor roles
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    update: async ({ req }) => {
+      // Allow admin and editor roles
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    delete: async ({ req }) => {
+      // Only admins can delete
+      return req.user?.roles?.includes('admin') || false
+    },
   },
   fields: [
     {

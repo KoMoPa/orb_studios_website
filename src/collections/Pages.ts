@@ -28,6 +28,15 @@ export const Pages: CollectionConfig = {
         ].filter(Boolean),
       }
     },
+    create: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    update: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    delete: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || false
+    },
   },
   fields: [
     {

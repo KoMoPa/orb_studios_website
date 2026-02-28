@@ -32,9 +32,15 @@ export const Media: CollectionConfig = {
   },
   access: {
     read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    create: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    update: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+    },
+    delete: async ({ req }) => {
+      return req.user?.roles?.includes('admin') || false
+    },
   },
   fields: [
     {

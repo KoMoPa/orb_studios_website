@@ -8,9 +8,9 @@ export const Users: CollectionConfig = {
   auth: true,
   access: {
     read: async ({ req }) => !!req.user,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    create: async ({ req }) => req.user?.roles?.includes('admin') || false,
+    update: async ({ req }) => req.user?.roles?.includes('admin') || false,
+    delete: async ({ req }) => req.user?.roles?.includes('admin') || false,
   },
   fields: [
     {
