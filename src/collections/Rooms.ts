@@ -7,38 +7,9 @@ export const Rooms: CollectionConfig = {
   },
   access: {
     read: async () => true,
-    create: async ({ req }) => {
-      if (!req.user) return false
-      // Allow admin and editor roles
-      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
-        return true
-      }
-      // Fallback: if this is the only/first user, grant access
-      const userCount = await req.payload.count({
-        collection: 'users',
-      })
-      return userCount === 1
-    },
-    update: async ({ req }) => {
-      if (!req.user) return false
-      // Allow admin and editor roles
-      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
-        return true
-      }
-      // Fallback: if this is the only/first user, grant access
-      const userCount = await req.payload.count({
-        collection: 'users',
-      })
-      return userCount === 1
-    },
-    delete: async ({ req }) => {
-      if (!req.user) return false
-      // Only admins can delete
-      const userCount = await req.payload.count({
-        collection: 'users',
-      })
-      return req.user?.roles?.includes('admin') || userCount === 1
-    },
+    create: async ({ req }) => !!req.user,
+    update: async ({ req }) => !!req.user,
+    delete: async ({ req }) => !!req.user,
   },
   fields: [
     {

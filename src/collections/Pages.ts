@@ -28,27 +28,6 @@ export const Pages: CollectionConfig = {
         ].filter(Boolean),
       }
     },
-    create: async ({ req }) => {
-      if (!req.user) return false
-      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
-        return true
-      }
-      const userCount = await req.payload.count({ collection: 'users' })
-      return userCount === 1
-    },
-    update: async ({ req }) => {
-      if (!req.user) return false
-      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
-        return true
-      }
-      const userCount = await req.payload.count({ collection: 'users' })
-      return userCount === 1
-    },
-    delete: async ({ req }) => {
-      if (!req.user) return false
-      const userCount = await req.payload.count({ collection: 'users' })
-      return req.user?.roles?.includes('admin') || userCount === 1
-    },
   },
   fields: [
     {
