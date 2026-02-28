@@ -29,13 +29,25 @@ export const Pages: CollectionConfig = {
       }
     },
     create: async ({ req }) => {
-      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+      if (!req.user) return false
+      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
+        return true
+      }
+      const userCount = await req.payload.count({ collection: 'users' })
+      return userCount === 1
     },
     update: async ({ req }) => {
-      return req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor') || false
+      if (!req.user) return false
+      if (req.user?.roles?.includes('admin') || req.user?.roles?.includes('editor')) {
+        return true
+      }
+      const userCount = await req.payload.count({ collection: 'users' })
+      return userCount === 1
     },
     delete: async ({ req }) => {
-      return req.user?.roles?.includes('admin') || false
+      if (!req.user) return false
+      const userCount = await req.payload.count({ collection: 'users' })
+      return req.user?.roles?.includes('admin') || userCount === 1
     },
   },
   fields: [
