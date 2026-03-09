@@ -33,7 +33,6 @@ interface RoomData {
     heading: string;
     description: string;
     buttonText: string;
-    bookingEmail: string;
   };
 }
 
@@ -271,7 +270,7 @@ export default function RoomPage({ slug }: RoomPageProps) {
             <p className="mt-4">{room.bookingSection.description}</p>
             <a
               className="inline-block mt-6 bg-yellow-400 text-red-800 px-6 py-3 rounded font-medium"
-              href={`mailto:${room.bookingSection.bookingEmail}`}
+              href="mailto:orbmusicstudios@gmail.com"
             >
               {room.bookingSection.buttonText}
             </a>

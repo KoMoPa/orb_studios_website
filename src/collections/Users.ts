@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { admin } from '../access/admin'
+import { authenticated } from '../access/authenticated'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -7,10 +9,19 @@ export const Users: CollectionConfig = {
   },
   auth: true,
   access: {
-    read: async ({ req }) => !!req.user,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: authenticated,
+    create: admin,
+    update: ({ req }) => {
+      if (!req.user) return false
+      // Admins can update anyone, users can update themselves
+      if (req.user?.roles?.includes('admin')) return true
+      return {
+        id: {
+          equals: req.user.id,
+        },
+      }
+    },
+    delete: admin,
   },
   fields: [
     {

@@ -4,12 +4,12 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 
-import { Users, Pages, Posts, Media, Categories, Rooms } from '@/collections'
-import { Header } from '@/Header/config'
-import { Footer } from '@/Footer/config'
-import { defaultLexical } from '@/fields/defaultLexical'
-import { plugins } from '@/plugins'
-import { getServerSideURL } from '@/utilities/getURL'
+import { Users, Pages, Posts, Media, Categories, Rooms } from './collections'
+import { Header } from './Header/config'
+import { Footer } from './Footer/config'
+import { defaultLexical } from './fields/defaultLexical'
+import { plugins } from './plugins'
+import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -59,7 +59,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-    push: process.env.NODE_ENV === 'development',
+   push: false, // Disabled to prevent data loss - use migrations instead
+    migrationDir: path.resolve(dirname, './migrations'),
   }),
   editor: defaultLexical,
   globals: [Header, Footer],
