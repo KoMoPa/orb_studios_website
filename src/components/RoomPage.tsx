@@ -26,8 +26,6 @@ interface RoomData {
     areaDetails?: string;
     hourlyRate: string;
     hourlyRateLabel: string;
-    monthlyRate: string;
-    monthlyRateLabel: string;
   };
   bookingSection: {
     heading: string;
@@ -211,10 +209,6 @@ export default function RoomPage({ slug }: RoomPageProps) {
                 <div>
                   <strong className="block text-xl">{room.infoBox.hourlyRate}</strong>
                   <span className="text-sm text-gray-600">{room.infoBox.hourlyRateLabel}</span>
-                </div>
-                <div>
-                  <strong className="block text-xl">{room.infoBox.monthlyRate}</strong>
-                  <span className="text-sm text-gray-600">{room.infoBox.monthlyRateLabel}</span>
                 </div>
               </div>
             </aside>

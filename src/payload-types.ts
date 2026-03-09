@@ -348,11 +348,6 @@ export interface Room {
      */
     hourlyRate: string;
     hourlyRateLabel?: string | null;
-    /**
-     * e.g., "$400" or "€350"
-     */
-    monthlyRate?: string | null;
-    monthlyRateLabel?: string | null;
   };
   bookingSection?: {
     heading?: string | null;
@@ -591,8 +586,6 @@ export interface RoomsSelect<T extends boolean = true> {
         areaDetails?: T;
         hourlyRate?: T;
         hourlyRateLabel?: T;
-        monthlyRate?: T;
-        monthlyRateLabel?: T;
       };
   bookingSection?:
     | T

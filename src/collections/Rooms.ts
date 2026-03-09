@@ -114,19 +114,6 @@ export const Rooms: CollectionConfig = {
           type: 'text',
           defaultValue: 'Hourly Rate',
         },
-        {
-          name: 'monthlyRate',
-          type: 'text',
-          // required: true,
-          admin: {
-            description: 'e.g., "$400" or "€350"',
-          },
-        },
-        {
-          name: 'monthlyRateLabel',
-          type: 'text',
-          defaultValue: 'Monthly Rate',
-        },
       ],
     },
     {
