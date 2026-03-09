@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { adminOrEditor } from '../access/adminOrEditor'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -23,6 +24,9 @@ export const Posts: CollectionConfig = {
         ].filter(Boolean),
       }
     },
+    create: adminOrEditor,
+    update: adminOrEditor,
+    delete: adminOrEditor,
   },
   fields: [
     {

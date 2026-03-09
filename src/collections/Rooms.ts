@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { anyone } from '../access/anyone'
+import { adminOrEditor } from '../access/adminOrEditor'
 
 export const Rooms: CollectionConfig = {
   slug: 'rooms',
@@ -6,10 +8,10 @@ export const Rooms: CollectionConfig = {
     useAsTitle: 'title',
   },
   access: {
-    read: async () => true,
-    create: async ({ req }) => !!req.user,
-    update: async ({ req }) => !!req.user,
-    delete: async ({ req }) => !!req.user,
+    read: anyone,
+    create: adminOrEditor,
+    update: adminOrEditor,
+    delete: adminOrEditor,
   },
   fields: [
     {
@@ -115,7 +117,7 @@ export const Rooms: CollectionConfig = {
         {
           name: 'monthlyRate',
           type: 'text',
-          required: true,
+          // required: true,
           admin: {
             description: 'e.g., "$400" or "€350"',
           },
@@ -144,11 +146,6 @@ export const Rooms: CollectionConfig = {
           name: 'buttonText',
           type: 'text',
           defaultValue: 'Email to Book',
-        },
-        {
-          name: 'bookingEmail',
-          type: 'email',
-          required: true,
         },
       ],
     },
