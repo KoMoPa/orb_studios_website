@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:with-migrate": "payload migrate && next start",
+    "start:with-migrate": "sleep 10 && payload migrate && next start",
     "generate:types": "payload generate:types",
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
