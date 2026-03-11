@@ -438,6 +438,7 @@ export interface Activity {
      */
     hourlyRate: string;
     hourlyRateLabel?: string | null;
+    test?: string | null;
   };
   bookingSection?: {
     heading?: string | null;
@@ -714,6 +715,7 @@ export interface ActivitiesSelect<T extends boolean = true> {
         area?: T;
         hourlyRate?: T;
         hourlyRateLabel?: T;
+        test?: T;
       };
   bookingSection?:
     | T

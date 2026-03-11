@@ -120,6 +120,11 @@ export const Activities: CollectionConfig = {
           type: 'text',
           defaultValue: 'Hourly Rate',
         },
+        {
+          name: 'test',
+          type: 'text',
+          defaultValue: 'Test',
+        }
       ],
     },
     {

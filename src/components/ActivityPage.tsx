@@ -28,6 +28,7 @@ interface ActivityData {
         area: string;
         hourlyRate: string;
         hourlyRateLabel: string;
+        test: string;
     };
     bookingSection: {
         heading: string;
@@ -206,6 +207,7 @@ export default function ActivityPage({ slug }: ActivityPageProps) {
                                 <div>
                                     <strong className="block text-xl text-gray-900">{activity.infoBox.hourlyRate}</strong>
                                     <span className="text-sm text-gray-600">{activity.infoBox.hourlyRateLabel}</span>
+                                    <span className="text-sm text-gray-600">{activity.infoBox.test}</span>
                                 </div>
                             </div>
                         </aside>

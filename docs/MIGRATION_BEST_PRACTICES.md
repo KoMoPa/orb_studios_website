@@ -76,3 +76,14 @@ pnpm migrate
 # Generate TypeScript types
 pnpm generate:types
 ```
+
+
+
+Your workflow is now:
+
+Make schema changes locally
+pnpm migrate:create - generates migration file
+pnpm migrate - applies locally
+Commit and push to git
+Railway auto-deploys (build + start, no migrations)
+When ready: railway run pnpm migrate - applies migration to production
