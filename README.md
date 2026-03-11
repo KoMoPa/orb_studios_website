@@ -227,7 +227,7 @@ This project includes four decorative Google Fonts from the Rubik family availab
 <h1 className="vinyl">Title</h1>
 
 // Doodle - With Tailwind size utilities
-<h1 className="doodle text-2xl">Title</h1>
+<h1 className="doodle text-2xl">Title</h1> 
 
 // Glitch - Edgy distorted effect
 <span className="glitch">Text</span>
