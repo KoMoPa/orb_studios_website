@@ -243,6 +243,6 @@ You can combine these font classes with any Tailwind utilities for color, sizing
 <p className="doodle text-xl text-gray-700">Premium Recording Space</p>
 ```
 
-## License
+## License 
 
 [Add your license here]
