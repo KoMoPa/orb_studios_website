@@ -4,7 +4,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 
-import { Users, Pages, Posts, Media, Categories, Rooms } from './collections'
+import { Users, Pages, Posts, Media, Categories, Rooms, Activities } from './collections'
 import { Header } from './Header/config'
 import { Footer } from './Footer/config'
 import { defaultLexical } from './fields/defaultLexical'
@@ -17,9 +17,7 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     components: {
-      // Uncomment to remove the BeforeLogin component
       // beforeLogin: [],
-      // Uncomment to remove the BeforeDashboard component
       // beforeDashboard: [],
     },
     importMap: {
@@ -52,14 +50,14 @@ export default buildConfig({
   cache: {
     enabled: true,
   },
-  collections: [Pages, Posts, Media, Categories, Rooms, Users],
+  collections: [Pages, Posts, Media, Categories, Rooms, Activities, Users],
   cors: [getServerSideURL()].filter(Boolean),
   csrf: [getServerSideURL()].filter(Boolean),
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-   push: false, // Disabled to prevent data loss - use migrations instead
+    push: false,
     migrationDir: path.resolve(dirname, './migrations'),
   }),
   editor: defaultLexical,

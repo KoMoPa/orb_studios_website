@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     rooms: Room;
+    activities: Activity;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
+    activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -359,6 +361,93 @@ export interface Room {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities".
+ */
+export interface Activity {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier (e.g., "podcast", "masterclass")
+   */
+  slug: string;
+  /**
+   * Background image for the hero section
+   */
+  heroImage: number | Media;
+  /**
+   * Main heading in the hero section
+   */
+  heroTitle: string;
+  heroGradient: {
+    /**
+     * Start color in hex format (e.g., #ef4444) or rgb format (e.g., rgb(239, 68, 68))
+     */
+    startColor: string;
+    /**
+     * End color in hex format (e.g., #facc15) or rgb format (e.g., rgb(250, 204, 21))
+     */
+    endColor: string;
+  };
+  /**
+   * Main content section about the activity
+   */
+  aboutSection: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Equipment and gear included in this activity
+   */
+  gearList: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Images to display in the gallery section
+   */
+  galleryImages: (number | Media)[];
+  infoBox: {
+    /**
+     * e.g., any deets
+     */
+    area: string;
+    /**
+     * e.g., "$30" or "€25"
+     */
+    hourlyRate: string;
+    hourlyRateLabel?: string | null;
+  };
+  bookingSection?: {
+    heading?: string | null;
+    buttonText?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -427,6 +516,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'rooms';
         value: number | Room;
+      } | null)
+    | ({
+        relationTo: 'activities';
+        value: number | Activity;
       } | null)
     | ({
         relationTo: 'users';
@@ -592,6 +685,40 @@ export interface RoomsSelect<T extends boolean = true> {
     | {
         heading?: T;
         description?: T;
+        buttonText?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities_select".
+ */
+export interface ActivitiesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  heroImage?: T;
+  heroTitle?: T;
+  heroGradient?:
+    | T
+    | {
+        startColor?: T;
+        endColor?: T;
+      };
+  aboutSection?: T;
+  gearList?: T;
+  galleryImages?: T;
+  infoBox?:
+    | T
+    | {
+        area?: T;
+        hourlyRate?: T;
+        hourlyRateLabel?: T;
+      };
+  bookingSection?:
+    | T
+    | {
+        heading?: T;
         buttonText?: T;
       };
   updatedAt?: T;
