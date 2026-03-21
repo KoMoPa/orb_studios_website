@@ -1,17 +1,18 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
-import { adminOrEditor } from '../access/adminOrEditor'
+import { authenticated } from '../access/authenticated'
 
 export const Rooms: CollectionConfig = {
   slug: 'rooms',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', 'updatedAt'],
   },
   access: {
     read: anyone,
-    create: adminOrEditor,
-    update: adminOrEditor,
-    delete: adminOrEditor,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     {

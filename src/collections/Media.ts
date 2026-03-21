@@ -1,52 +1,81 @@
 import type { CollectionConfig } from 'payload'
+
+import {
+  FixedToolbarFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
+
 export const Media: CollectionConfig = {
   slug: 'media',
-  admin: {
-    useAsTitle: 'alt',
-  },
-  upload: {
-    staticDir: 'public/media',
-    staticURL: '/media',
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 300,
-        position: 'center',
-      },
-      {
-        name: 'card',
-        width: 768,
-        height: 512,
-        position: 'center',
-      },
-      {
-        name: 'tablet',
-        width: 1024,
-        height: 768,
-        position: 'center',
-      },
-    ],
-    mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4'],
-  },
+  folders: true,
   access: {
-    read: anyone,
     create: authenticated,
-    update: authenticated,
     delete: authenticated,
+    read: anyone,
+    update: authenticated,
   },
   fields: [
     {
       name: 'alt',
       type: 'text',
-      required: true,
+      //required: true,
     },
     {
       name: 'caption',
-      type: 'textarea',
+      type: 'richText',
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
+        },
+      }),
     },
   ],
+  upload: {
+    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
+    staticDir: path.resolve(dirname, '../../public/media'),
+    adminThumbnail: 'thumbnail',
+    focalPoint: true,
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 300,
+      },
+      {
+        name: 'square',
+        width: 500,
+        height: 500,
+      },
+      {
+        name: 'small',
+        width: 600,
+      },
+      {
+        name: 'medium',
+        width: 900,
+      },
+      {
+        name: 'large',
+        width: 1400,
+      },
+      {
+        name: 'xlarge',
+        width: 1920,
+      },
+      {
+        name: 'og',
+        width: 1200,
+        height: 630,
+        crop: 'center',
+      },
+    ],
+  },
 }

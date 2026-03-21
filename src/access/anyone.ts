@@ -1,3 +1,3 @@
-import type { AccessArgs } from 'payload'
+import type { Access } from 'payload'
 
-export const anyone = () => true
+export const anyone: Access = () => true
