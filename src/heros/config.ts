@@ -35,6 +35,10 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Custom',
+          value: 'custom',
+        },
       ],
       required: true,
     },
@@ -66,6 +70,97 @@ export const hero: Field = {
       },
       relationTo: 'media',
       required: true,
+    },
+    {
+      name: 'backgroundImage',
+      type: 'upload',
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+      relationTo: 'media',
+      required: true,
+    },
+    {
+      name: 'title',
+      type: 'text',
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+      required: true,
+    },
+    {
+      name: 'subtitle',
+      type: 'text',
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+      required: true,
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+    },
+    {
+      name: 'overlay',
+      type: 'select',
+      defaultValue: 'dark',
+      options: [
+        {
+          label: 'Dark',
+          value: 'dark',
+        },
+        {
+          label: 'Light',
+          value: 'light',
+        },
+        {
+          label: 'None',
+          value: 'none',
+        },
+      ],
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+    },
+    {
+      name: 'titleFont',
+      type: 'select',
+      defaultValue: 'vinyl',
+      options: [
+        {
+          label: 'Vinyl',
+          value: 'vinyl',
+        },
+        {
+          label: 'Default',
+          value: 'default',
+        },
+      ],
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+    },
+    {
+      name: 'cta',
+      type: 'group',
+      admin: {
+        condition: (_, { type } = {}) => type === 'custom',
+      },
+      fields: [
+        {
+          name: 'text',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
   ],
   label: false,

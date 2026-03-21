@@ -161,7 +161,7 @@ export interface Page {
   id: number;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'custom';
     richText?: {
       root: {
         type: string;
@@ -202,6 +202,16 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    backgroundImage?: (number | null) | Media;
+    title?: string | null;
+    subtitle?: string | null;
+    description?: string | null;
+    overlay?: ('dark' | 'light' | 'none') | null;
+    titleFont?: ('vinyl' | 'default') | null;
+    cta?: {
+      text: string;
+      url: string;
+    };
   };
   layout: (
     | CallToActionBlock
@@ -214,6 +224,7 @@ export interface Page {
       }
     | ArchiveBlock
     | FormBlock
+    | ArticleBlock
   )[];
   meta?: {
     title?: string | null;
@@ -787,6 +798,37 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleBlock".
+ */
+export interface ArticleBlock {
+  title: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  media: number | Media;
+  imagePosition?: ('left' | 'right') | null;
+  cta: {
+    text: string;
+    url: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'articleBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rooms".
  */
 export interface Room {
@@ -1178,6 +1220,18 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        backgroundImage?: T;
+        title?: T;
+        subtitle?: T;
+        description?: T;
+        overlay?: T;
+        titleFont?: T;
+        cta?:
+          | T
+          | {
+              text?: T;
+              url?: T;
+            };
       };
   layout?:
     | T
@@ -1187,6 +1241,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        articleBlock?: T | ArticleBlockSelect<T>;
       };
   meta?:
     | T
@@ -1283,6 +1338,24 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArticleBlock_select".
+ */
+export interface ArticleBlockSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
+  media?: T;
+  imagePosition?: T;
+  cta?:
+    | T
+    | {
+        text?: T;
+        url?: T;
+      };
   id?: T;
   blockName?: T;
 }

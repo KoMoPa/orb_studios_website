@@ -11,6 +11,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    qualities: [75, 100],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
@@ -20,6 +21,11 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+    ],
+    localPatterns: [
+      {
+        pathname: '/media/**',
+      },
     ],
   },
   webpack: (webpackConfig) => {

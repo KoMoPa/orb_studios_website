@@ -2,16 +2,11 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import type { Media } from '@/payload-types';
 // Note: Header and Footer are server components and cannot be imported in a client component
 // This component is not currently in use - consider refactoring as a server component if needed
 // import { Header } from '@/Header/Component';
 // import { Footer } from '@/Footer/Component';
-
-interface Media {
-    id: string;
-    filename: string;
-    alt?: string;
-}
 
 interface ActivityData {
     id: string;
@@ -111,6 +106,7 @@ function getImageUrl(image: Media | string): string {
   if (typeof image === 'string') {
     return image.startsWith('/') ? image : `/media/${image}`;
   }
+  if (!image.filename) return '';
   return image.filename.startsWith('/') ? image.filename : `/media/${image.filename}`;
 }
 
