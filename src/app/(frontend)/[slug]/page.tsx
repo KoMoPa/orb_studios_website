@@ -56,9 +56,14 @@ export default async function Page({ params: paramsPromise }: Args) {
   const url = '/' + decodedSlug
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
-  page = await queryPageBySlug({
-    slug: decodedSlug,
-  })
+  try {
+    page = await queryPageBySlug({
+      slug: decodedSlug,
+    })
+  } catch (error) {
+    console.warn('Could not fetch page, falling back to static:', error instanceof Error ? error.message : error)
+    page = null
+  }
 
   // Remove this code once your website is seeded
   if (!page && slug === 'home') {
@@ -89,11 +94,23 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = 'home' } = await paramsPromise
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
-  const page = await queryPageBySlug({
-    slug: decodedSlug,
-  })
+  
+  try {
+    const page = await queryPageBySlug({
+      slug: decodedSlug,
+    })
 
-  return generateMeta({ doc: page })
+    return generateMeta({ doc: page })
+  } catch (error) {
+    console.warn('Could not fetch page metadata:', error instanceof Error ? error.message : error)
+    // Return minimal metadata on error
+    return {
+      title: decodedSlug
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' '),
+    }
+  }
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
