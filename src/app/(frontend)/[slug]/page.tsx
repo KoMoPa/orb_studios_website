@@ -14,20 +14,21 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const pages = await payload.find({
+      collection: 'pages',
+      draft: false,
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: {
+        slug: true,
+      },
+    })
 
-  const params = pages.docs
-    ?.filter((doc) => {
+    const params = pages.docs
+      ?.filter((doc) => {
       return doc.slug !== 'home'
     })
     .map(({ slug }) => {
@@ -35,6 +36,10 @@ export async function generateStaticParams() {
     })
 
   return params
+  } catch (error) {
+    console.warn('Could not fetch pages for static generation:', error instanceof Error ? error.message : error)
+    return []
+  }
 }
 
 type Args = {

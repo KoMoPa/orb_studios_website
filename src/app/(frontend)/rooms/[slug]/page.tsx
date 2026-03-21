@@ -8,19 +8,26 @@ import { generateMeta } from '@/utilities/generateMeta'
 import RichText from '@/components/RichText'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const rooms = await payload.find({
-    collection: 'rooms',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const rooms = await payload.find({
+      collection: 'rooms',
+      draft: false,
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: {
+        slug: true,
+      },
+    })
 
-  return rooms.docs.map(({ slug }) => ({ slug }))
+    return rooms.docs.map(({ slug }) => ({ slug }))
+  } catch (error) {
+    // During builds without database access, return empty array
+    // Pages will still be generated on-demand
+    console.warn('Could not fetch rooms for static generation:', error instanceof Error ? error.message : error)
+    return []
+  }
 }
 
 type Args = {
