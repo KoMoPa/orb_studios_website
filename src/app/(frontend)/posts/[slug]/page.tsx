@@ -3,10 +3,10 @@ import type { Metadata } from 'next'
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
+import { getCachedCollectionItemsForStaticGeneration, getCachedPayloadInstance } from '@/utilities/getGlobals'
 
 import type { Post } from '@/payload-types'
 
@@ -17,17 +17,9 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 export async function generateStaticParams() {
   try {
-    const payload = await getPayload({ config: configPromise })
-    const posts = await payload.find({
-      collection: 'posts',
-      draft: false,
-      limit: 1000,
-      overrideAccess: false,
-      pagination: false,
-      select: {
-        slug: true,
-      },
-    })
+    const posts = await getCachedCollectionItemsForStaticGeneration('posts', 1000, {
+      slug: true,
+    })()
 
     const params = posts.docs.map(({ slug }) => {
       return { slug }
@@ -94,7 +86,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getCachedPayloadInstance()
 
   const result = await payload.find({
     collection: 'posts',
