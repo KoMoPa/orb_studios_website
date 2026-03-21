@@ -433,7 +433,7 @@ export interface Category {
 export interface User {
   id: number;
   name?: string | null;
-  roles?: ('admin' | 'editor')[] | null;
+  roles?: ('admin' | 'editor') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
