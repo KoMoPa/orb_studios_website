@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+// Note: Header and Footer are server components and cannot be imported in a client component
+// This component is not currently in use - consider refactoring as a server component if needed
+// import { Header } from '@/Header/Component';
+// import { Footer } from '@/Footer/Component';
 
 interface Media {
     id: string;
@@ -132,34 +134,24 @@ export default function ActivityPage({ slug }: ActivityPageProps) {
 
     if (loading) {
         return (
-            <>
-                <Header />
-                <div className="flex items-center justify-center min-h-screen">
-                <p className="text-gray-500">Loading...</p>
-                </div>
-                <Footer />
-            </>
+            <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-500">Loading...</p>
+            </div>
         );
     }
 
     if (!activity) {
         return (
-            <>
-                <Header />
-                <div className="flex items-center justify-center min-h-screen">
-                <p className="text-gray-500">Activity not found</p>
-                </div>
-                <Footer />
-            </>
+            <div className="flex items-center justify-center min-h-screen">
+            <p className="text-gray-500">Activity not found</p>
+            </div>
         );
     }
 
     const heroImageUrl = getImageUrl(activity.heroImage);
 
     return (
-        <>
-            <Header />
-            <div className="font-sans text-white">
+        <div className="font-sans text-white">
                 {/* Hero Section */}
                 <div
                     className="relative min-h-[380px] flex items-center bg-cover bg-center bg-no-repeat"
@@ -275,8 +267,5 @@ export default function ActivityPage({ slug }: ActivityPageProps) {
                     </section>
                 </main>
             </div>
-
-            <Footer />
-        </>
     );
 }

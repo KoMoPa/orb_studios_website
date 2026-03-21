@@ -3,7 +3,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React from 'react'
-import type { Room } from '@/payload-types'
+import type { Room, Page } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import RichText from '@/components/RichText'
 
@@ -112,8 +112,24 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
   })
 
+  const roomDoc = room.docs[0]
+
+  if (!roomDoc) {
+    return generateMeta({
+      doc: null,
+    })
+  }
+
+  // Create a partial document structure compatible with generateMeta
+  const metaDoc: Partial<Page> = {
+    meta: {
+      title: roomDoc.title,
+      description: roomDoc.heroTitle,
+    },
+    slug: roomDoc.slug,
+  }
+
   return generateMeta({
-    title: room.docs[0]?.title || 'Room',
-    description: room.docs[0]?.heroTitle || '',doc: room.docs[0],
+    doc: metaDoc as any,
   })
 }
