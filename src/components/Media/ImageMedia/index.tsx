@@ -77,6 +77,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
+  // Disable optimization for localhost URLs (Next.js prevents private IPs from being optimized)
+  const isLocalhost = typeof src === 'string' && (src.includes('localhost') || src.includes('127.0.0.1') || src.includes('::1'))
+  const unoptimized = isLocalhost
+
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
   const sizes = sizeFromProps
     ? sizeFromProps
@@ -98,6 +102,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         loading={loading}
         sizes={sizes}
         src={src}
+        unoptimized={unoptimized}
         width={!fill ? width : undefined}
       />
     </picture>

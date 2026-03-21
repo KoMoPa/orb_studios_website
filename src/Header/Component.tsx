@@ -1,14 +1,11 @@
 import { HeaderClient } from './Component.client'
-import { getCachedGlobal } from '@/utilities/getGlobals'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedGlobal, getCachedCollectionItems } from '@/utilities/getGlobals'
 import React from 'react'
 
 import type { Header } from '@/payload-types'
 
 export async function Header() {
   const headerData: Header = await getCachedGlobal('header', 1)()
-  const payload = await getPayload({ config: configPromise })
 
   // Dynamically fetch items for each collection dropdown
   const navItemsWithData = await Promise.all(
@@ -17,17 +14,16 @@ export async function Header() {
         const { collection, titleField = 'title', slugField = 'slug' } = navItem.collectionDropdown
 
         try {
-          // Dynamically fetch from the specified collection
-          const items = await payload.find({
-            collection: collection as any,
-            limit: 100,
-            sort: titleField,
-            overrideAccess: false,
-            select: {
+          // Dynamically fetch from the specified collection with caching
+          const items = await getCachedCollectionItems(
+            collection,
+            100,
+            titleField,
+            {
               [titleField]: true,
               [slugField]: true,
             },
-          })
+          )()
 
           return {
             ...navItem,

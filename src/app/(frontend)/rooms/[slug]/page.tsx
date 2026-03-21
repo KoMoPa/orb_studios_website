@@ -1,25 +1,17 @@
 import type { Metadata } from 'next'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React from 'react'
 import type { Room, Page } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getCachedCollectionItemsForStaticGeneration, getCachedDocument } from '@/utilities/getGlobals'
 import RichText from '@/components/RichText'
 
 export async function generateStaticParams() {
   try {
-    const payload = await getPayload({ config: configPromise })
-    const rooms = await payload.find({
-      collection: 'rooms',
-      draft: false,
-      limit: 1000,
-      overrideAccess: false,
-      pagination: false,
-      select: {
-        slug: true,
-      },
-    })
+    const rooms = await getCachedCollectionItemsForStaticGeneration('rooms', 1000, {
+      slug: true,
+    })()
 
     return rooms.docs.map(({ slug }) => ({ slug }))
   } catch (error) {
@@ -40,19 +32,13 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   const { isEnabled: isDraftMode } = await draftMode()
 
-  const payload = await getPayload({ config: configPromise })
-
-  const room = await payload.find({
-    collection: 'rooms',
-    draft: isDraftMode,
-    limit: 1,
-    overrideAccess: isDraftMode,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
+  // Use cached document fetcher instead of getPayload directly
+  const room = await getCachedDocument(
+    'rooms',
+    { slug: { equals: slug } },
+    isDraftMode,
+    0,
+  )()
 
   if (!room.docs[0]) {
     return <div>Room not found</div>
@@ -105,19 +91,13 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const room = await payload.find({
-    collection: 'rooms',
-    draft: false,
-    limit: 1,
-    overrideAccess: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
+  const room = await getCachedDocument(
+    'rooms',
+    { slug: { equals: slug } },
+    false,
+    0,
+  )()
 
   const roomDoc = room.docs[0]
 

@@ -252,25 +252,25 @@ html[data-theme='light'] {
 
 /* Shorter aliases */
 .vinyl {
-  font-family: var(--font-vinyl);
+  font-family: "Rubik Vinyl", system-ui;
   font-weight: 400;
   font-style: normal;
 }
 
 .doodle {
-  font-family: var(--font-doodle);
+  font-family: "Rubik Doodle Shadow", system-ui;
   font-weight: 400;
   font-style: normal;
 }
 
 .glitch {
-  font-family: var(--font-glitch);
+  font-family: "Rubik Glitch", system-ui;
   font-weight: 400;
   font-style: normal;
 }
 
 .spraypaint {
-  font-family: var(--font-spraypaint);
+  font-family: "Rubik Spray Paint", system-ui;
   font-weight: 400;
   font-style: normal;
 }
