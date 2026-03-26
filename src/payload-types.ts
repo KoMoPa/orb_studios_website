@@ -225,6 +225,7 @@ export interface Page {
     | ArchiveBlock
     | FormBlock
     | ArticleBlock
+    | GalleryBlock
   )[];
   meta?: {
     title?: string | null;
@@ -829,6 +830,19 @@ export interface ArticleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  /**
+   * Images to display in the gallery grid
+   */
+  images: (number | Media)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rooms".
  */
 export interface Room {
@@ -1242,6 +1256,7 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         articleBlock?: T | ArticleBlockSelect<T>;
+        gallery?: T | GalleryBlockSelect<T>;
       };
   meta?:
     | T
@@ -1356,6 +1371,15 @@ export interface ArticleBlockSelect<T extends boolean = true> {
         text?: T;
         url?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock_select".
+ */
+export interface GalleryBlockSelect<T extends boolean = true> {
+  images?: T;
   id?: T;
   blockName?: T;
 }
