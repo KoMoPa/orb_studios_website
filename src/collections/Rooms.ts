@@ -118,6 +118,14 @@ export const Rooms: CollectionConfig = {
       ],
     },
     {
+      name: 'rate',
+      type: 'relationship',
+      relationTo: 'rates',
+      admin: {
+        description: 'Select a rate associated with this room',
+      },
+    },
+    {
       name: 'bookingSection',
       type: 'group',
       fields: [

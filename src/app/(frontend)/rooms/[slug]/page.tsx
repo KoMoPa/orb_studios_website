@@ -7,7 +7,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { getCachedCollectionItemsForStaticGeneration, getCachedDocument } from '@/utilities/getGlobals'
 import RichText from '@/components/RichText'
 import { CustomHero } from '@/heros/CustomHero'
-import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
+import { RateCard } from '@/components/RateCard'
 
 export async function generateStaticParams() {
   try {
@@ -109,11 +109,13 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
           </div>
         </div>
 
-        {/* Gallery Section - Full Width Below */}
-        {roomData.galleryImages && roomData.galleryImages.length > 0 && (
+        {/* Rate Card Section - Full Width Below */}
+        {roomData.rate && typeof roomData.rate === 'object' && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-4">Gallery</h2>
-            <GalleryBlock images={roomData.galleryImages} />
+            <h2 className="text-2xl font-bold mb-4">Pricing</h2>
+            <div className="max-w-md">
+              <RateCard doc={roomData.rate} />
+            </div>
           </div>
         )}
       </div>
