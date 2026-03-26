@@ -5,7 +5,6 @@ import React, { useEffect } from 'react'
 import type { Page } from '@/payload-types'
 
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { normalizeMediaUrl } from '@/utilities/normalizeMediaUrl'
 
 type CustomHeroProps = {
   backgroundImage?: any
@@ -41,7 +40,17 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  const imageUrl = normalizeMediaUrl(backgroundImage)
+  // Simple image URL handling - Payload stores URLs as /media/filename with staticURL config
+  let imageUrl = ''
+  if (backgroundImage) {
+    if (typeof backgroundImage === 'string') {
+      imageUrl = backgroundImage.startsWith('/') ? backgroundImage : `/media/${backgroundImage}`
+    } else if (backgroundImage.url) {
+      imageUrl = backgroundImage.url
+    } else if (backgroundImage.filename) {
+      imageUrl = `/media/${backgroundImage.filename}`
+    }
+  }
 
   const overlayClass = overlay === 'dark' 
     ? 'bg-black' 
