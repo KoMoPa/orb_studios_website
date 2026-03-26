@@ -3,15 +3,14 @@ import { getClientSideURL } from '@/utilities/getURL'
 /**
  * Normalizes media URLs from various Payload formats to a consistent format
  *
- * Handles:
- * - `/media/filename.jpg` (relative path)
- * - `/api/media/file/filename.jpg` (API path)
- * - `https://domain.com/media/filename.jpg` (full URL)
- * - Media objects with url property
+ * With staticURL: '/media' configured in Media collection:
+ * - Payload automatically serves files at /media/filename
+ * - Database stores: /media/filename.jpg
+ * - This utility ensures proper base URL for full paths
  *
  * @param input - URL string, Media object, or undefined
  * @param cacheTag - Optional cache tag to append to URL
- * @returns Normalized URL ready for use in img/Image components
+ * @returns Normalized URL
  */
 export const normalizeMediaUrl = (
   input: string | { url?: string | null } | undefined | null,
@@ -20,31 +19,18 @@ export const normalizeMediaUrl = (
   if (!input) return ''
 
   // Extract URL from object if needed
-  let urlString = typeof input === 'string' ? input : input?.url
+  let url = typeof input === 'string' ? input : input?.url
 
-  if (!urlString) return ''
+  if (!url) return ''
 
-  // Remove /api prefix if present (convert /api/media/file/... to /media/...)
-  if (urlString.includes('/api/media/file/')) {
-    urlString = urlString.replace('/api/media/file/', '/media/')
+  // If it's already a full URL (http/https), return as-is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return cacheTag ? `${url}?${encodeURIComponent(cacheTag)}` : url
   }
 
-  // If it's already a full URL (http/https), return as-is with cache tag
-  if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
-    return cacheTag ? `${urlString}?${encodeURIComponent(cacheTag)}` : urlString
-  }
-
-  // If it's a relative path starting with /media, prepend base URL
-  if (urlString.startsWith('/media')) {
-    const baseUrl = getClientSideURL()
-    return cacheTag ? `${baseUrl}${urlString}?${encodeURIComponent(cacheTag)}` : `${baseUrl}${urlString}`
-  }
-
-  // Fallback: treat as relative path and prepend /media/ if needed
-  if (!urlString.startsWith('/')) {
-    urlString = `/media/${urlString}`
-  }
-
+  // For relative paths, prepend base URL
   const baseUrl = getClientSideURL()
-  return cacheTag ? `${baseUrl}${urlString}?${encodeURIComponent(cacheTag)}` : `${baseUrl}${urlString}`
+  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+
+  return cacheTag ? `${fullUrl}?${encodeURIComponent(cacheTag)}` : fullUrl
 }
