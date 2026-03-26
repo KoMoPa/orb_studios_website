@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import type { Page } from '@/payload-types'
 
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { normalizeMediaUrl } from '@/utilities/normalizeMediaUrl'
 
 type CustomHeroProps = {
   backgroundImage?: any
@@ -41,24 +41,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  let imageUrl = ''
-
-  if (backgroundImage) {
-    let urlString = null
-    
-    // Handle if backgroundImage is an object with url property
-    if (typeof backgroundImage === 'object' && backgroundImage.url) {
-      urlString = backgroundImage.url
-    }
-    // Handle if backgroundImage is a string
-    else if (typeof backgroundImage === 'string') {
-      urlString = backgroundImage
-    }
-    
-    if (urlString) {
-      imageUrl = getMediaUrl(urlString)
-    }
-  }
+  const imageUrl = normalizeMediaUrl(backgroundImage)
 
   const overlayClass = overlay === 'dark' 
     ? 'bg-black' 
