@@ -49,8 +49,8 @@ node_modules
 .next
 .vercel
 
-# Payload default media upload directory
-public/media/
+# Payload default media upload directory - COMMENTED OUT to deploy media files
+# public/media/
 
 public/robots.txt
 public/sitemap*.xml
