@@ -5,9 +5,10 @@ import React, { useEffect } from 'react'
 import type { Page } from '@/payload-types'
 
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type CustomHeroProps = {
-  backgroundImage?: Page['hero']['backgroundImage']
+  backgroundImage?: any
   title?: string
   subtitle?: string
   description?: string
@@ -15,8 +16,11 @@ type CustomHeroProps = {
     text: string
     url: string
   }
-  overlay?: 'dark' | 'light' | 'none'
+  overlay?: 'dark' | 'light' | 'none' | string
+  overlayOpacity?: number
   titleFont?: string
+  alignment?: 'center' | 'left'
+  minHeight?: string
 }
 
 export const CustomHero: React.FC<CustomHeroProps> = ({
@@ -26,7 +30,10 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
   description,
   cta,
   overlay = 'dark',
-  titleFont = 'vinyl',
+  overlayOpacity = 50,
+  titleFont = 'glitch',
+  alignment = 'center',
+  minHeight = '80vh',
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
 
@@ -37,23 +44,61 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
   let imageUrl = ''
 
   if (backgroundImage) {
+    let urlString = null
+    
+    // Handle if backgroundImage is an object with url property
     if (typeof backgroundImage === 'object' && backgroundImage.url) {
-      imageUrl = backgroundImage.url
+      urlString = backgroundImage.url
+    }
+    // Handle if backgroundImage is a string
+    else if (typeof backgroundImage === 'string') {
+      urlString = backgroundImage
+    }
+    
+    if (urlString) {
+      imageUrl = getMediaUrl(urlString)
     }
   }
 
-  const overlayClass =
-    overlay === 'dark' ? 'bg-black/50' : overlay === 'light' ? 'bg-white/20' : ''
+  const overlayClass = overlay === 'dark' 
+    ? 'bg-black' 
+    : overlay === 'light' 
+    ? 'bg-white' 
+    : !overlay || overlay === 'none'
+    ? ''
+    : overlay
+
+  const isGradient = overlay && (overlay.includes('gradient') || overlay.includes('from-'))
 
   return (
     <section
-      className="relative w-full min-h-[80vh] bg-cover bg-center bg-fixed flex items-center justify-center overflow-hidden"
-      style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined }}
+      className={`relative w-full flex items-center overflow-hidden`}
+      style={{ 
+        minHeight,
+      }}
       data-theme="dark"
     >
-      {overlay !== 'none' && <div className={`absolute inset-0 z-10 ${overlayClass}`}></div>}
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+      {overlay !== 'none' && !isGradient && (
+        <div 
+          className={`absolute inset-0 z-10 ${overlayClass}`}
+          style={{ opacity: overlayOpacity / 100 }}
+        ></div>
+      )}
+      {isGradient && (
+        <div 
+          className={`absolute inset-0 z-10 bg-gradient-to-r ${overlay}`}
+          style={{ opacity: overlayOpacity / 100 }}
+        ></div>
+      )}
 
-      <div className="relative z-20 text-center text-white px-4 max-w-5xl mx-auto animate-fadeInUp">
+      <div className={`relative z-20 w-full max-w-5xl px-4 py-12 ${alignment === 'left' ? 'text-left' : 'mx-auto text-center'}`}>
         {title && (
           <h1
             className={`${titleFont} text-5xl font-bold uppercase text-white mb-4 drop-shadow-lg tracking-wider`}
@@ -61,10 +106,12 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
             {title}
           </h1>
         )}
-        {subtitle && <h2 className="text-4xl font-semibold mb-6 drop-shadow-md">{subtitle}</h2>}
+        {subtitle && <h2 className="text-4xl font-semibold mb-6 drop-shadow-md text-white">{subtitle}</h2>}
 
         {description && (
-          <p className="text-lg mb-8 max-w-2xl mx-auto drop-shadow-md">{description}</p>
+          <p className="text-lg mb-8 max-w-2xl drop-shadow-md text-white">
+            {description}
+          </p>
         )}
 
         {cta && (

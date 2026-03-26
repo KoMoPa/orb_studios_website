@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     rooms: Room;
+    rates: Rate;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
+    rates: RatesSelect<false> | RatesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -225,6 +227,7 @@ export interface Page {
     | ArchiveBlock
     | FormBlock
     | ArticleBlock
+    | GalleryBlock
   )[];
   meta?: {
     title?: string | null;
@@ -829,6 +832,19 @@ export interface ArticleBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  /**
+   * Images to display in the gallery grid
+   */
+  images: (number | Media)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rooms".
  */
 export interface Room {
@@ -909,11 +925,48 @@ export interface Room {
     hourlyRate: string;
     hourlyRateLabel?: string | null;
   };
+  /**
+   * Select a rate associated with this room
+   */
+  rate?: (number | null) | Rate;
   bookingSection?: {
     heading?: string | null;
     description?: string | null;
     buttonText?: string | null;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rates".
+ */
+export interface Rate {
+  id: number;
+  title: string;
+  /**
+   * include $$$
+   */
+  amount: string;
+  type: 'hourly' | 'monthly' | 'other';
+  /**
+   * whats included
+   */
+  includes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1132,6 +1185,10 @@ export interface PayloadLockedDocument {
         value: number | Room;
       } | null)
     | ({
+        relationTo: 'rates';
+        value: number | Rate;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1242,6 +1299,7 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         articleBlock?: T | ArticleBlockSelect<T>;
+        gallery?: T | GalleryBlockSelect<T>;
       };
   meta?:
     | T
@@ -1356,6 +1414,15 @@ export interface ArticleBlockSelect<T extends boolean = true> {
         text?: T;
         url?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock_select".
+ */
+export interface GalleryBlockSelect<T extends boolean = true> {
+  images?: T;
   id?: T;
   blockName?: T;
 }
@@ -1549,6 +1616,7 @@ export interface RoomsSelect<T extends boolean = true> {
         hourlyRate?: T;
         hourlyRateLabel?: T;
       };
+  rate?: T;
   bookingSection?:
     | T
     | {
@@ -1556,6 +1624,18 @@ export interface RoomsSelect<T extends boolean = true> {
         description?: T;
         buttonText?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rates_select".
+ */
+export interface RatesSelect<T extends boolean = true> {
+  title?: T;
+  amount?: T;
+  type?: T;
+  includes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

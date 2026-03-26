@@ -9,6 +9,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Rooms } from './collections/Rooms'
+import { Rates } from './collections/Rates'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -64,7 +65,7 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Rooms],
+  collections: [Pages, Posts, Media, Categories, Users, Rooms, Rates],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
