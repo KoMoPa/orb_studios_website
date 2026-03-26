@@ -5,7 +5,6 @@ import configPromise from '@payload-config'
 import { type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import { homeStatic } from '@/endpoints/seed/home-static'
 import { getCachedCollectionItemsForStaticGeneration, getCachedPayloadInstance } from '@/utilities/getGlobals'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
@@ -54,13 +53,8 @@ export default async function Page({ params: paramsPromise }: Args) {
       slug: decodedSlug,
     })
   } catch (error) {
-    console.warn('Could not fetch page, falling back to static:', error instanceof Error ? error.message : error)
+    console.warn('Could not fetch page:', error instanceof Error ? error.message : error)
     page = null
-  }
-
-  // Remove this code once your website is seeded
-  if (!page && slug === 'home') {
-    page = homeStatic
   }
 
   if (!page) {
