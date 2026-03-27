@@ -31,6 +31,138 @@ export default function Home() {
       <main style={{ minHeight: '70vh', padding: '2rem' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {/* Additional content goes here */}
+          <ArticleBlock
+            blockType="articleBlock"
+            title="World-Class Recording Equipment"
+            titleFont="glitch"
+            content={{
+              root: {
+                type: 'root',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    children: [
+                      {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Experience professional-grade recording with state-of-the-art equipment and expert engineering support.',
+                        type: 'text',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'paragraph',
+                    version: 1,
+                  },
+                  {
+                    children: [
+                      {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Our studio features industry-leading gear and acoustically treated rooms for pristine recordings.',
+                        type: 'text',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'paragraph',
+                    version: 1,
+                  },
+                ],
+              },
+            }}
+            media={{
+              id: 1,
+              filename: 'console.jpg',
+              alt: 'Professional recording console',
+              url: '/media/console.jpg',
+              width: 1200,
+              height: 800,
+              updatedAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+            } as any}
+            imagePosition="right"
+            cta={{
+              text: 'Book a Session',
+              url: '#booking',
+            }}
+          />
+          <ArticleBlock
+            blockType="articleBlock"
+            title="Use Orb Studios in a number of ways"
+            titleFont="spraypaint"
+            content={{
+              root: {
+                type: 'root',
+                format: '',
+                indent: 0,
+                version: 1,
+                children: [
+                  {
+                    children: [
+                      {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Check out a list of suggested activities Orb can be used for, or feel free to contact us for whatever you want.',
+                        type: 'text',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'paragraph',
+                    version: 1,
+                  },
+                  {
+                    children: [
+                      {
+                        detail: 0,
+                        format: 0,
+                        mode: 'normal',
+                        style: '',
+                        text: 'Perfect for practice, rehearsal, recording, streaming, or shooting video.',
+                        type: 'text',
+                        version: 1,
+                      },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    type: 'paragraph',
+                    version: 1,
+                  },
+                ],
+              },
+            }}
+            media={{
+              id: 2,
+              filename: 'controlroom1.jpg',
+              alt: 'Professional control room',
+              url: '/media/controlroom1.jpg',
+              width: 1200,
+              height: 800,
+              updatedAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+            } as any}
+            imagePosition="left"
+            cta={{
+              text: 'Explore Activities',
+              url: '/activities',
+            }}
+          />
         </div>
       </main>
     </>

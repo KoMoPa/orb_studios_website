@@ -17,6 +17,33 @@ export const ArticleBlock: Block = {
       required: true,
     },
     {
+      name: 'titleFont',
+      type: 'select',
+      defaultValue: 'bebas',
+      options: [
+        {
+          label: 'Bebas Neue',
+          value: 'bebas',
+        },
+        {
+          label: 'Glitch',
+          value: 'glitch',
+        },
+        {
+          label: 'Spraypaint',
+          value: 'spraypaint',
+        },
+        {
+          label: 'Vinyl',
+          value: 'vinyl',
+        },
+        {
+          label: 'Doodle',
+          value: 'doodle',
+        },
+      ],
+    },
+    {
       name: 'content',
       type: 'richText',
       editor: lexicalEditor({

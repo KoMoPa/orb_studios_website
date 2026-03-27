@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    activities: Activity;
     rooms: Room;
     rates: Rate;
     redirects: Redirect;
@@ -96,6 +97,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     rates: RatesSelect<false> | RatesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -805,6 +807,7 @@ export interface Form {
  */
 export interface ArticleBlock {
   title: string;
+  titleFont?: ('bebas' | 'glitch' | 'spraypaint' | 'vinyl' | 'doodle') | null;
   content: {
     root: {
       type: string;
@@ -842,6 +845,60 @@ export interface GalleryBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'gallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities".
+ */
+export interface Activity {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier (e.g., "vocal-coaching", "beat-making")
+   */
+  slug: string;
+  /**
+   * Featured image for the activity
+   */
+  picture: number | Media;
+  /**
+   * Short description of the suggested activity for the studio
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Equipment and resources included for this activity
+   */
+  equipmentIncluded: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -928,7 +985,7 @@ export interface Room {
   /**
    * Select a rate associated with this room
    */
-  rate?: (number | null) | Rate;
+  rate?: (number | Rate)[] | null;
   bookingSection?: {
     heading?: string | null;
     description?: string | null;
@@ -1181,6 +1238,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'activities';
+        value: number | Activity;
+      } | null)
+    | ({
         relationTo: 'rooms';
         value: number | Room;
       } | null)
@@ -1405,6 +1466,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface ArticleBlockSelect<T extends boolean = true> {
   title?: T;
+  titleFont?: T;
   content?: T;
   media?: T;
   imagePosition?: T;
@@ -1594,6 +1656,19 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities_select".
+ */
+export interface ActivitiesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  picture?: T;
+  description?: T;
+  equipmentIncluded?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1972,26 +2047,39 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  description: string;
+  linkGroups?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
+        title: string;
+        links?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
+  contactInfo?: {
+    address?: string | null;
+    email?: string | null;
+    phone?: string | null;
+  };
+  copyright?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2033,20 +2121,35 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  description?: T;
+  linkGroups?:
     | T
     | {
-        link?:
+        title?: T;
+        links?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
             };
         id?: T;
       };
+  contactInfo?:
+    | T
+    | {
+        address?: T;
+        email?: T;
+        phone?: T;
+      };
+  copyright?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
