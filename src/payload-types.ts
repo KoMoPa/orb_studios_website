@@ -230,6 +230,7 @@ export interface Page {
     | FormBlock
     | ArticleBlock
     | GalleryBlock
+    | ParallaxBlock
   )[];
   meta?: {
     title?: string | null;
@@ -848,6 +849,53 @@ export interface GalleryBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ParallaxBlock".
+ */
+export interface ParallaxBlock {
+  /**
+   * Background image for the parallax effect
+   */
+  media: number | Media;
+  /**
+   * Opacity of the overlay on the background image (0-1)
+   */
+  overlayOpacity?: number | null;
+  /**
+   * Color of the overlay (hex color)
+   */
+  overlayColor?: string | null;
+  /**
+   * Large title text at the top
+   */
+  title: string;
+  /**
+   * Content to display in the center box (4-5 sentences or bullet points)
+   */
+  richText: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Minimum height of the parallax section in pixels
+   */
+  minHeight?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'parallaxBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
  */
 export interface Activity {
@@ -1361,6 +1409,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         articleBlock?: T | ArticleBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
+        parallaxBlock?: T | ParallaxBlockSelect<T>;
       };
   meta?:
     | T
@@ -1485,6 +1534,20 @@ export interface ArticleBlockSelect<T extends boolean = true> {
  */
 export interface GalleryBlockSelect<T extends boolean = true> {
   images?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ParallaxBlock_select".
+ */
+export interface ParallaxBlockSelect<T extends boolean = true> {
+  media?: T;
+  overlayOpacity?: T;
+  overlayColor?: T;
+  title?: T;
+  richText?: T;
+  minHeight?: T;
   id?: T;
   blockName?: T;
 }

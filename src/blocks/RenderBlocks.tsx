@@ -9,6 +9,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
+import { ParallaxBlock } from '@/blocks/ParallaxBlock/Component'
 
 const blockComponents = {
   articleBlock: ArticleBlock,
@@ -18,6 +19,7 @@ const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   gallery: GalleryBlock,
+  parallaxBlock: ParallaxBlock,
 }
 
 export const RenderBlocks: React.FC<{
