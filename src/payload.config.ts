@@ -4,6 +4,7 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { Activities } from './collections/Activities'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -65,7 +66,7 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Rooms, Rates],
+  collections: [Pages, Posts, Media, Categories, Users, Activities, Rooms, Rates],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

@@ -121,6 +121,7 @@ export const Rooms: CollectionConfig = {
       name: 'rate',
       type: 'relationship',
       relationTo: 'rates',
+      hasMany: true,
       admin: {
         description: 'Select a rate associated with this room',
       },

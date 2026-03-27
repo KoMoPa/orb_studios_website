@@ -13,14 +13,14 @@ type Props = ArticleBlockProps & {
 }
 
 export const ArticleBlock: React.FC<Props> = (props) => {
-  const { title, content, media, imagePosition = 'right', cta } = props
+  const { title, content, media, imagePosition = 'right', cta, titleFont = 'bebas' } = props
 
   const contentSection = (
     <div>
-      <h2 className="text-4xl font-bold uppercase mb-6 tracking-wider" style={{ fontFamily: "'Bebas Neue', cursive" }}>
+      <h2 className={`${titleFont} text-4xl font-bold uppercase mb-6 tracking-wider`}>
         {title}
       </h2>
-      <div className="text-base leading-relaxed text-gray-700 mb-8">
+      <div className="text-base leading-relaxed mb-8" style={{ color: 'var(--dark)' }}>
         {content && <RichText data={content} enableGutter={false} />}
       </div>
       {cta && (
@@ -35,7 +35,7 @@ export const ArticleBlock: React.FC<Props> = (props) => {
   )
 
   const imageSection = (
-    <div className="w-full rounded overflow-hidden shadow-2xl">
+    <div className="w-full rounded overflow-hidden shadow-2xl relative" style={{ minHeight: '400px' }}>
       {media && typeof media === 'object' && (
         <Media
           fill
@@ -47,9 +47,9 @@ export const ArticleBlock: React.FC<Props> = (props) => {
   )
 
   return (
-    <section className="w-full py-16 px-4 bg-gray-50">
+    <section className="w-full py-16 px-4" style={{ backgroundColor: 'var(--light)' }}>
       <div
-        className={`max-w-5xl mx-auto grid gap-12 items-center grid-cols-2 md:grid-cols-1`}
+        className={`max-w-5xl mx-auto grid gap-12 items-center grid-cols-1 lg:grid-cols-2`}
       >
         {imagePosition === 'left' ? (
           <>

@@ -110,11 +110,17 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
         </div>
 
         {/* Rate Card Section - Full Width Below */}
-        {roomData.rate && typeof roomData.rate === 'object' && (
+        {roomData.rate && Array.isArray(roomData.rate) && roomData.rate.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold mb-4">Pricing</h2>
-            <div className="max-w-md">
-              <RateCard doc={roomData.rate} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {roomData.rate.map((rate, index) => {
+                // Handle both object rates and reference IDs
+                if (typeof rate === 'object' && rate !== null) {
+                  return <RateCard key={rate.id || index} doc={rate} />
+                }
+                return null
+              })}
             </div>
           </div>
         )}
