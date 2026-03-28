@@ -6,19 +6,23 @@ import { ArticleBlock } from '@/blocks/ArticleBlock/Component'
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { FAQBlock } from '@/blocks/FAQBlock/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
 import { ParallaxBlock } from '@/blocks/ParallaxBlock/Component'
+import { StaffCardBlock } from '@/blocks/StaffCard/Component'
 
 const blockComponents = {
   articleBlock: ArticleBlock,
   archive: ArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
+  faqBlock: FAQBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   gallery: GalleryBlock,
+  staffCard: StaffCardBlock,
   parallaxBlock: ParallaxBlock,
 }
 

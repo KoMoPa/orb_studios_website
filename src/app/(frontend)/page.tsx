@@ -4,6 +4,7 @@ import React from 'react'
 
 import { CustomHero } from '@/heros/CustomHero'
 import { ArticleBlock } from '@/blocks/ArticleBlock/Component'
+import { FAQBlock } from '@/blocks/FAQBlock/Component'
 
 export default function Home() {
   return (
@@ -162,6 +163,10 @@ export default function Home() {
               text: 'Explore Activities',
               url: '/activities',
             }}
+          />
+          <FAQBlock
+            blockType="faqBlock"
+            title="Frequently Asked Questions"
           />
         </div>
       </main>
