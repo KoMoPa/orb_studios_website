@@ -8,6 +8,7 @@ import { getCachedCollectionItemsForStaticGeneration, getCachedDocument } from '
 import RichText from '@/components/RichText'
 import { CustomHero } from '@/heros/CustomHero'
 import { RateCard } from '@/components/RateCard'
+import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
 
 export async function generateStaticParams() {
   try {
@@ -108,6 +109,13 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
             )}
           </div>
         </div>
+
+        {/* Gallery Section - Full Width Below Content */}
+        {roomData.galleryImages && Array.isArray(roomData.galleryImages) && roomData.galleryImages.length > 0 && (
+          <div className="mb-12">
+            <GalleryBlock images={roomData.galleryImages} />
+          </div>
+        )}
 
         {/* Rate Card Section - Full Width Below */}
         {roomData.rate && Array.isArray(roomData.rate) && roomData.rate.length > 0 && (

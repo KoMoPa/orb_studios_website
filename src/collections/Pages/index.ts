@@ -6,9 +6,12 @@ import { Archive } from '../../blocks/ArchiveBlock/config'
 import { ArticleBlock } from '../../blocks/ArticleBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
+import { FAQBlock } from '../../blocks/FAQBlock/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { Gallery } from '../../blocks/GalleryBlock/config'
+import { ParallaxBlock } from '../../blocks/ParallaxBlock/config'
+import { StaffCard } from '../../blocks/StaffCard/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -74,7 +77,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, ArticleBlock, Gallery],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, ArticleBlock, Gallery, ParallaxBlock, StaffCard, FAQBlock],
               required: true,
               admin: {
                 initCollapsed: true,

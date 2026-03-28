@@ -36,10 +36,10 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, navItemsWithData }) 
 
         return null
       })}
-      <Link href="/search">
+      {/* <Link href="/search">
         <span className="sr-only">Search</span>
         <SearchIcon className="w-5 text-primary" />
-      </Link>
+      </Link> */}
     </nav>
   )
 }

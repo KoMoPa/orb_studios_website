@@ -6,11 +6,13 @@ import { fileURLToPath } from 'url'
 
 import { Activities } from './collections/Activities'
 import { Categories } from './collections/Categories'
+import { FAQ } from './collections/FAQ'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Rooms } from './collections/Rooms'
 import { Rates } from './collections/Rates'
+import { Staff } from './collections/Staff'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -66,7 +68,7 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Activities, Rooms, Rates],
+  collections: [Pages, Posts, Media, Categories, Users, Activities, Rooms, Rates, Staff, FAQ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

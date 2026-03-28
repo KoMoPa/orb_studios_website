@@ -26,6 +26,9 @@ const nextConfig = {
       {
         pathname: '/media/**',
       },
+      {
+        pathname: '/api/media/**',
+      },
     ],
   },
   webpack: (webpackConfig) => {

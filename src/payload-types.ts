@@ -75,6 +75,8 @@ export interface Config {
     activities: Activity;
     rooms: Room;
     rates: Rate;
+    staff: Staff;
+    faq: Faq;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -100,6 +102,8 @@ export interface Config {
     activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     rates: RatesSelect<false> | RatesSelect<true>;
+    staff: StaffSelect<false> | StaffSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -230,6 +234,9 @@ export interface Page {
     | FormBlock
     | ArticleBlock
     | GalleryBlock
+    | ParallaxBlock
+    | StaffCardBlock
+    | FAQBlock
   )[];
   meta?: {
     title?: string | null;
@@ -848,6 +855,134 @@ export interface GalleryBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ParallaxBlock".
+ */
+export interface ParallaxBlock {
+  /**
+   * Background image for the parallax effect
+   */
+  media: number | Media;
+  /**
+   * Opacity of the overlay on the background image (0-1)
+   */
+  overlayOpacity?: number | null;
+  /**
+   * Color of the overlay (hex color)
+   */
+  overlayColor?: string | null;
+  /**
+   * Large title text at the top
+   */
+  title: string;
+  /**
+   * Content to display in the center box (4-5 sentences or bullet points)
+   */
+  richText: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Minimum height of the parallax section in pixels
+   */
+  minHeight?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'parallaxBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StaffCardBlock".
+ */
+export interface StaffCardBlock {
+  /**
+   * Select the staff members to display
+   */
+  staffMembers: (number | Staff)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'staffCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff".
+ */
+export interface Staff {
+  id: number;
+  name: string;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  headshot: number | Media;
+  skills?:
+    | {
+        skill: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock".
+ */
+export interface FAQBlock {
+  title: string;
+  faqs: (number | Faq)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faqBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
  */
 export interface Activity {
@@ -1250,6 +1385,14 @@ export interface PayloadLockedDocument {
         value: number | Rate;
       } | null)
     | ({
+        relationTo: 'staff';
+        value: number | Staff;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1361,6 +1504,9 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         articleBlock?: T | ArticleBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
+        parallaxBlock?: T | ParallaxBlockSelect<T>;
+        staffCard?: T | StaffCardBlockSelect<T>;
+        faqBlock?: T | FAQBlockSelect<T>;
       };
   meta?:
     | T
@@ -1485,6 +1631,39 @@ export interface ArticleBlockSelect<T extends boolean = true> {
  */
 export interface GalleryBlockSelect<T extends boolean = true> {
   images?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ParallaxBlock_select".
+ */
+export interface ParallaxBlockSelect<T extends boolean = true> {
+  media?: T;
+  overlayOpacity?: T;
+  overlayColor?: T;
+  title?: T;
+  richText?: T;
+  minHeight?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StaffCardBlock_select".
+ */
+export interface StaffCardBlockSelect<T extends boolean = true> {
+  staffMembers?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock_select".
+ */
+export interface FAQBlockSelect<T extends boolean = true> {
+  title?: T;
+  faqs?: T;
   id?: T;
   blockName?: T;
 }
@@ -1711,6 +1890,33 @@ export interface RatesSelect<T extends boolean = true> {
   amount?: T;
   type?: T;
   includes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff_select".
+ */
+export interface StaffSelect<T extends boolean = true> {
+  name?: T;
+  bio?: T;
+  headshot?: T;
+  skills?:
+    | T
+    | {
+        skill?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
   updatedAt?: T;
   createdAt?: T;
 }
