@@ -1,5 +1,4 @@
 // Types for the booking system
-export type SessionType = 'rehearsal' | 'recording' | 'rehearsal-recording';
 export type RentalType = 'monthly' | 'hourly-recording' | 'hourly-rehearsal';
 
 export interface BookingRequest {
@@ -11,9 +10,7 @@ export interface BookingRequest {
     preferredTime: string; // HH:mm
     duration: number; // minutes
     rentalType: RentalType;
-    sessionType: SessionType;
     additionalInfo?: string;
-    gearStorage: boolean;
 }
 
 export interface AvailabilitySlot {
@@ -39,7 +36,6 @@ export interface PricingBreakdown {
     totalMinutes: number;
     subtotal: number;
     monthlyDiscount?: number;
-    gearStorageFee?: number;
     total: number;
 }
 

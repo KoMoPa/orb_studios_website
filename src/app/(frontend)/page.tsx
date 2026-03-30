@@ -24,7 +24,7 @@ export default function Home() {
         titleFont="spraypaint"
         subtitle="Premier Boutique Music Space"
         description="Etobicoke's premier recording and rehearsal space with world-class equipment and professional tracking facilities."
-        cta={{ text: 'Book Now', url: '#booking' }}
+        cta={{ text: 'Book Now', url: '/booking' }}
       />
 
       
