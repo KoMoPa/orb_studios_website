@@ -32,19 +32,19 @@ const DEFAULT_RENTAL_TYPE_OPTIONS: RentalTypeOption[] = [
 ];
 
 const DURATION_OPTIONS = [
-  { value: 60, label: '1 hour' },
-  { value: 120, label: '2 hours' },
-  { value: 180, label: '3 hours' },
-  { value: 240, label: '4 hours' },
-  { value: 300, label: '5 hours' },
-  { value: 360, label: '6 hours' },
-  { value: 420, label: '7 hours' },
-  { value: 480, label: '8 hours' },
-  { value: 540, label: '9 hours' },
-  { value: 600, label: '10 hours' },
-  { value: 660, label: '11 hours' },
-  { value: 720, label: '12 hours' },
-  { value: 1440, label: 'Full Day (24 hours)' },
+  { value: 1, label: '1 hour' },
+  { value: 2, label: '2 hours' },
+  { value: 3, label: '3 hours' },
+  { value: 4, label: '4 hours' },
+  { value: 5, label: '5 hours' },
+  { value: 6, label: '6 hours' },
+  { value: 7, label: '7 hours' },
+  { value: 8, label: '8 hours' },
+  { value: 9, label: '9 hours' },
+  { value: 10, label: '10 hours' },
+  { value: 11, label: '11 hours' },
+  { value: 12, label: '12 hours' },
+  { value: 24, label: 'Full Day (24 hours)' },
 ];
 
 export function BookingCalendarComponent() {
@@ -103,7 +103,7 @@ export function BookingCalendarComponent() {
     clientPhone: '',
     bandName: '',
     rentalType: DEFAULT_RENTAL_TYPE_OPTIONS[0].value,
-    duration: 60,
+    duration: 1,
     additionalInfo: '',
   });
 
@@ -135,7 +135,7 @@ export function BookingCalendarComponent() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             date: format(selectedDate, 'yyyy-MM-dd'),
-            durationMinutes: formData.duration,
+            durationHours: formData.duration,
             rentalType: formData.rentalType,
           }),
         });
@@ -225,7 +225,7 @@ export function BookingCalendarComponent() {
         clientPhone: '',
         bandName: '',
         rentalType: rentalTypeOptions[0]?.value || '2',
-        duration: 60,
+        duration: 1,
         additionalInfo: '',
       });
       setSelectedDate(null);
@@ -262,7 +262,7 @@ export function BookingCalendarComponent() {
   const estimatedPrice = (() => {
     const selectedRate = rentalTypeOptions.find(option => option.value === formData.rentalType);
     const hourlyRate = selectedRate?.amount ?? 30;
-    const hours = formData.duration / 60;
+    const hours = formData.duration;
     const subtotal = hourlyRate * hours;
     const hst = subtotal * 0.13;
     const total = subtotal + hst;

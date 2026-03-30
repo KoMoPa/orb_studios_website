@@ -4,10 +4,10 @@ import { checkAvailability, getCalendarEvents } from '@/lib/booking/google-calen
 const TIMEZONE = 'America/Toronto'; // Eastern time
 
 // Time slot configuration
-const SLOT_DURATION_MINUTES = 30; // 30-minute slots
-const STUDIO_OPENS = 9; // 9 AM
-const STUDIO_CLOSES = 22; // 10 PM
-const BOOKING_MIN_ADVANCE_HOURS = 24; // Must book 24 hours in advance
+const SLOT_DURATION_MINUTES = 60; // 1-hour slots
+const STUDIO_OPENS = 0; // Midnight (24/7 operation)
+const STUDIO_CLOSES = 24; // Midnight (24/7 operation)
+const BOOKING_MIN_ADVANCE_HOURS = 0; // No advance booking requirement
 
 /**
  * Create a UTC date from a date string and time string in Eastern timezone
@@ -66,7 +66,8 @@ function generateTimeSlots(date: Date): string[] {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { date, durationMinutes = 60, rentalType = 'hourly-rehearsal' } = body;
+    const { date, durationHours = 1, rentalType = 'hourly-rehearsal' } = body;
+    const durationMinutes = durationHours * 60;
 
     if (!date) {
       return NextResponse.json(
@@ -146,23 +147,23 @@ export async function POST(request: NextRequest) {
         slotEnd.setTime(endDate.getTime());
       }
 
-      // Check if slot ends after studio closes (in Eastern time)
-      const slotEndHours = (minutes + durationMinutes) / 60;
-      const slotEndHoursInt = Math.floor(slotEndHours);
-      if (slotEndHoursInt >= STUDIO_CLOSES) {
-        continue;
-      }
+      // Calculate end time accounting for hour and day boundaries
+      const totalMinutes = minutes + durationMinutes;
+      const endHours = hours + Math.floor(totalMinutes / 60);
+      const endMinutes = totalMinutes % 60;
+      
+      // Allow bookings even if they extend past studio close (for late-night bookings)
+      // The booking start time must be within studio hours; end time can roll to next day
 
       try {
         const isAvailable = await checkAvailability(slotStart, slotEnd);
         
         if (isAvailable) {
-          const totalMinutes = minutes + durationMinutes;
-          const endHours = hours + Math.floor(totalMinutes / 60);
-          const endMinutes = totalMinutes % 60;
+          // Use modulo 24 to handle midnight rollover for display purposes
+          const displayHours = endHours % 24;
           availableSlots.push({
             startTime: slot,
-            endTime: `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`,
+            endTime: `${String(displayHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`,
             available: true,
           });
         }
@@ -179,7 +180,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       date: date,
-      durationMinutes,
+      durationHours,
       slots: availableSlots,
       availableCount: availableSlots.filter(s => s.available).length,
     });
@@ -202,7 +203,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
     const time = searchParams.get('time');
-    const durationMinutes = parseInt(searchParams.get('durationMinutes') || '60');
+    const durationHours = parseInt(searchParams.get('durationHours') || '1');
+    const durationMinutes = durationHours * 60;
 
     if (!date || !time) {
       return NextResponse.json(

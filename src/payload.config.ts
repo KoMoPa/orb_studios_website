@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import { Activities } from './collections/Activities'
 import { Categories } from './collections/Categories'
+import { Clients } from './collections/Clients'
 import { FAQ } from './collections/FAQ'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -68,7 +69,7 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Activities, Rooms, Rates, Staff, FAQ],
+  collections: [Pages, Posts, Media, Categories, Clients, Users, Activities, Rooms, Rates, Staff, FAQ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

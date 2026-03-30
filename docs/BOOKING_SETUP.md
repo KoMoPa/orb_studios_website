@@ -114,7 +114,6 @@ curl -X POST http://localhost:3000/api/booking/create \
     "preferredTime": "14:00",
     "duration": 120,
     "rentalType": "hourly-rehearsal",
-    "sessionType": "rehearsal",
     "additionalInfo": "Test booking",
     "gearStorage": false
   }'

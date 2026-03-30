@@ -8,8 +8,8 @@ export interface BookingRequest {
     bandName?: string;
     preferredDate: string; // YYYY-MM-DD
     preferredTime: string; // HH:mm
-    duration: number; // minutes
-    rentalType: RentalType;
+    duration: number; // hours
+    rentalType: string; // Payload rate ID
     additionalInfo?: string;
 }
 
@@ -33,7 +33,7 @@ export interface BookingConfirmation {
 export interface PricingBreakdown {
     rentalType: RentalType;
     hourlyRate: number;
-    totalMinutes: number;
+    totalHours: number;
     subtotal: number;
     monthlyDiscount?: number;
     total: number;
@@ -56,7 +56,6 @@ export interface BookingRecord {
     startTime: Date;
     endTime: Date;
     rentalType: RentalType;
-    sessionType: SessionType;
     totalPrice: number;
     status: 'confirmed' | 'pending' | 'cancelled';
     googleCalendarEventId?: string;

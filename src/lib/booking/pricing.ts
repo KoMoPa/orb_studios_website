@@ -8,11 +8,9 @@ const HST_RATE = 0.13; // 13% HST (Ontario)
  */
 export function calculatePrice(
     hourlyRate: number,
-    durationMinutes: number,
+    durationHours: number,
     isMonthlyClient: boolean = false
 ): PricingBreakdown {
-    const durationHours = durationMinutes / 60;
-
     let subtotal = hourlyRate * durationHours;
     let monthlyDiscount = 0;
 
@@ -30,7 +28,7 @@ export function calculatePrice(
     return {
         rentalType: 'hourly-recording' as RentalType,
         hourlyRate,
-        totalMinutes: durationMinutes,
+        totalHours: durationHours,
         subtotal: Number(subtotal.toFixed(2)),
         monthlyDiscount: monthlyDiscount > 0 ? Number(monthlyDiscount.toFixed(2)) : undefined,
         total: Number(total.toFixed(2)),
@@ -42,7 +40,7 @@ export function calculatePrice(
  */
 export function formatPricingBreakdown(pricing: PricingBreakdown): string {
     const lines = [
-        `Rate: $${pricing.hourlyRate}/hr (${pricing.totalMinutes} minutes)`,
+        `Rate: $${pricing.hourlyRate}/hr (${pricing.totalHours} hour${pricing.totalHours > 1 ? 's' : ''})`,
         `Subtotal: $${pricing.subtotal}`,
     ];
 

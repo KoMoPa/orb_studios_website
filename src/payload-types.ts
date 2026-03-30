@@ -71,6 +71,7 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    clients: Client;
     users: User;
     activities: Activity;
     rooms: Room;
@@ -98,6 +99,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
@@ -983,6 +985,36 @@ export interface Faq {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  bandName?: string | null;
+  isMonthlyClient?: boolean | null;
+  /**
+   * When they started their monthly plan (used for calculating monthly reset)
+   */
+  monthlyStartDate?: string | null;
+  /**
+   * Hours booked this month
+   */
+  monthlyHoursUsed?: number | null;
+  /**
+   * Hours from cancelled bookings refunded back to their allocation
+   */
+  monthlyHoursCancelled?: number | null;
+  /**
+   * Internal notes about this client
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
  */
 export interface Activity {
@@ -1367,6 +1399,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'clients';
+        value: number | Client;
       } | null)
     | ({
         relationTo: 'users';
@@ -1809,6 +1845,23 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients_select".
+ */
+export interface ClientsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  bandName?: T;
+  isMonthlyClient?: T;
+  monthlyStartDate?: T;
+  monthlyHoursUsed?: T;
+  monthlyHoursCancelled?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

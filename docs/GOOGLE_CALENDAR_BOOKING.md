@@ -152,7 +152,6 @@ Create a new booking and add event to Google Calendar.
   "preferredTime": "14:00",
   "duration": 120,
   "rentalType": "hourly-rehearsal",
-  "sessionType": "rehearsal",
   "additionalInfo": "First time, please help with setup",
   "gearStorage": false
 }
@@ -165,7 +164,6 @@ Create a new booking and add event to Google Calendar.
   "bookingId": "BOOK-1704067200000-ABC123XYZ",
   "clientEmail": "john@example.com",
   "clientName": "John Doe",
-  "sessionType": "rehearsal",
   "rentalType": "hourly-rehearsal",
   "startTime": "2026-04-15T14:00:00.000Z",
   "endTime": "2026-04-15T16:00:00.000Z",
@@ -222,7 +220,6 @@ curl -X POST http://localhost:3000/api/booking/create \
     "preferredTime": "14:00",
     "duration": 120,
     "rentalType": "hourly-rehearsal",
-    "sessionType": "rehearsal",
     "additionalInfo": "Test booking",
     "gearStorage": false
   }'
