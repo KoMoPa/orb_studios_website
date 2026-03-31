@@ -7,6 +7,7 @@ export const Rates: CollectionConfig = {
     admin: {
         useAsTitle: 'title',
         defaultColumns: ['title', 'slug', 'updatedAt'],
+        group: 'Studio',
     },
     access: {
         read: anyone,

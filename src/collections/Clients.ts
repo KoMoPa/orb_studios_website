@@ -8,6 +8,7 @@ export const Clients: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'name', 'phone', 'isMonthlyClient', 'updatedAt'],
+    group: 'Operations',
   },
   access: {
     read: authenticated,
