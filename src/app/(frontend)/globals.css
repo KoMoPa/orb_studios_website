@@ -84,6 +84,40 @@
       max-width: var(--breakpoint-2xl);
     }
   }
+
+  /* Image Filter Effect */
+  .image-container {
+    display: block;
+    position: relative;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .image-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    mix-blend-mode: overlay;
+    background: #fa0000;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .image-container picture {
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .image-container picture img {
+    display: block;
+    width: 100%;
+    filter: brightness(105%) contrast(106%) saturate(90%);
+  }
 }
 
 :root {
@@ -273,4 +307,145 @@ html[data-theme='light'] {
   font-family: "Rubik Spray Paint", system-ui;
   font-weight: 400;
   font-style: normal;
+}
+
+/* Console Buttons - Vintage Recording Studio Style */
+.btn-console {
+  display: inline-block;
+  border: none;
+  border-radius: 0;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+
+/* Red Console Button */
+.btn-console--red {
+  background: #8b2222;
+  background-image: 
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%);
+  color: #fff;
+  border: 2px solid #4a1515;
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -20px 30px -10px rgba(200, 50, 50, 0.6) inset,
+    0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.btn-console--red:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -25px 40px -12px rgba(220, 80, 80, 0.8) inset,
+    0 12px 28px rgba(0, 0, 0, 0.9);
+}
+
+.btn-console--red:active,
+.btn-console--red.pressed {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -10px 20px -8px rgba(100, 20, 20, 0.3) inset,
+    0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Yellow Console Button */
+.btn-console--yellow {
+  background: #a68a35;
+  background-image: 
+    linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.12) 100%);
+  color: #333;
+  border: 2px solid #6b5a25;
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.8),
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 -20px 30px -10px rgba(200, 170, 80, 0.5) inset,
+    0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.btn-console--yellow:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.8),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 -25px 40px -12px rgba(230, 200, 100, 0.7) inset,
+    0 12px 28px rgba(0, 0, 0, 0.9);
+}
+
+.btn-console--yellow:active,
+.btn-console--yellow.pressed {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.9),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 -10px 20px -8px rgba(140, 110, 30, 0.3) inset,
+    0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Gray Console Button */
+.btn-console--gray {
+  background: #6b6b6b;
+  background-image: 
+    linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%);
+  color: #333;
+  border: 2px solid #3d3d3d;
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.85),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -20px 30px -10px rgba(180, 180, 180, 0.4) inset,
+    0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.btn-console--gray:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 -4px 8px rgba(0, 0, 0, 0.85),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -25px 40px -12px rgba(210, 210, 210, 0.6) inset,
+    0 12px 28px rgba(0, 0, 0, 0.9);
+}
+
+.btn-console--gray:active,
+.btn-console--gray.pressed {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 -10px 20px -8px rgba(100, 100, 100, 0.3) inset,
+    0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Size modifiers for scalability */
+.btn-console--sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-console--lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
 }

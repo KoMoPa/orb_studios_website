@@ -87,7 +87,7 @@ export const MediumImpactHero: React.FC<Page['hero'] & { overlayColor?: string; 
               {links.map(({ link }, i) => {
                 return (
                   <li key={i}>
-                    <CMSLink {...link} />
+                    <CMSLink {...link} className="btn-console btn-console--red" />
                   </li>
                 )
               })}

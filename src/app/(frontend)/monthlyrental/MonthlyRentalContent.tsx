@@ -16,6 +16,14 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({
   form,
   richTextData,
 }) => {
+  // Filter out checkbox fields from the form
+  const filteredForm = form
+    ? {
+        ...form,
+        fields: form.fields?.filter((field) => field.blockType !== 'checkbox') || [],
+      }
+    : undefined
+
   return (
     <ParallaxProvider>
       <article className="pt-16 pb-24">
@@ -37,7 +45,7 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({
           minHeight={1800}
         />
       </article>
-      {form && <FormBlock form={form} enableIntro={false} />}
+      {filteredForm && <FormBlock form={filteredForm} enableIntro={false} />}
     </ParallaxProvider>
   )
 }

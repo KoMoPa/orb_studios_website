@@ -17,6 +17,7 @@ export type FormBlockType = {
   enableIntro: boolean
   form: FormType
   introContent?: DefaultTypedEditorState
+  isEmbedded?: boolean
 }
 
 export const FormBlock: React.FC<
@@ -29,6 +30,7 @@ export const FormBlock: React.FC<
     form: formFromProps,
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
+    isEmbedded = false,
   } = props
 
   const formMethods = useForm({
@@ -114,11 +116,11 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-[48rem]">
+    <div className={isEmbedded ? 'w-full' : 'container lg:max-w-[48rem]'}>
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
+      <div className={isEmbedded ? 'w-full' : 'p-4 lg:p-6 border border-border rounded-[0.8rem]'}>
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
@@ -126,11 +128,15 @@ export const FormBlock: React.FC<
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {!hasSubmitted && (
-            <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+            <form id={formID} onSubmit={handleSubmit(onSubmit)} className={isEmbedded ? 'w-full' : ''}>
               <div className="mb-4 last:mb-0">
                 {formFromProps &&
                   formFromProps.fields &&
                   formFromProps.fields?.map((field, index) => {
+                    // Skip checkbox fields when embedded
+                    if (isEmbedded && field.blockType === 'checkbox') {
+                      return null
+                    }
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
                     if (Field) {

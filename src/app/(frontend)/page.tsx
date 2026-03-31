@@ -1,12 +1,28 @@
-'use client'
-
 import React from 'react'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import type { Form } from '@payloadcms/plugin-form-builder/types'
 
 import { CustomHero } from '@/heros/CustomHero'
+import { AccentHero } from '@/heros/AccentHero'
 import { ArticleBlock } from '@/blocks/ArticleBlock/Component'
+import { MonthlyCardsBlock } from '@/blocks/MonthlyCards/Component'
 import { FAQBlock } from '@/blocks/FAQBlock/Component'
 
-export default function Home() {
+export default async function Home() {
+  const payload = await getPayload({ config: configPromise })
+
+  // Fetch the form by title
+  const formsData = await payload.find({
+    collection: 'forms',
+    where: {
+      title: {
+        equals: 'Sign Up For Monthly Waitlist',
+      },
+    },
+  })
+
+  const form = formsData.docs[0] as Form | undefined
   return (
     <>
       <main style={{ minHeight: '70vh' }}>
@@ -16,24 +32,28 @@ export default function Home() {
             type="custom"
             backgroundImage={{
               id: 1,
+              filename: 'IMG_0773.mov',
+              alt: 'Recording studio',
+              url: '/media/IMG_0773.mov',
+            } as any}
+            fallbackImage={{
+              id: 1,
               filename: 'liveroom1.jpg',
               alt: 'Recording studio',
               url: '/media/liveroom1.jpg',
-              updatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString(),
             } as any}
             title="ORB STUDIOS"
-            titleFont="spraypaint"
+            titleFont="vinyl"
             subtitle="Premier Boutique Music Space"
             description="Etobicoke's premier recording and rehearsal space with world-class equipment and professional tracking facilities."
             cta={{ text: 'Book Now', url: '/booking' }}
           />
 
           
-          {/* Additional content goes here */}
+          {/* Rooms Feature Section */}
           <ArticleBlock
             blockType="articleBlock"
-            title="World-Class Recording Equipment"
+            title="Our Spaces"
             titleFont="glitch"
             content={{
               root: {
@@ -49,25 +69,7 @@ export default function Home() {
                         format: 0,
                         mode: 'normal',
                         style: '',
-                        text: 'Experience professional-grade recording with state-of-the-art equipment and expert engineering support.',
-                        type: 'text',
-                        version: 1,
-                      },
-                    ],
-                    direction: 'ltr',
-                    format: '',
-                    indent: 0,
-                    type: 'paragraph',
-                    version: 1,
-                  },
-                  {
-                    children: [
-                      {
-                        detail: 0,
-                        format: 0,
-                        mode: 'normal',
-                        style: '',
-                        text: 'Our studio features industry-leading gear and acoustically treated rooms for pristine recordings.',
+                        text: "ORB Studios features two expertly designed spaces to suit your creative needs. Whether you're looking to jam with a band or mix your masterpiece, we have the perfect room for you.",
                         type: 'text',
                         version: 1,
                       },
@@ -82,25 +84,23 @@ export default function Home() {
               },
             }}
             media={{
-              id: 1,
-              filename: 'console.jpg',
-              alt: 'Professional recording console',
-              url: '/media/console.jpg',
+              id: 3,
+              filename: 'liveroom1.jpg',
+              alt: 'ORB Studios rooms',
+              url: '/media/liveroom1.jpg',
               width: 1200,
               height: 800,
-              updatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString(),
             } as any}
-            imagePosition="right"
-            cta={{
-              text: 'Book a Session',
-              url: '#booking',
-            }}
+            imagePosition="left"
+            ctas={[
+              { text: 'Jam Room', url: '/rooms/jamroom' },
+              { text: 'Mixing Room', url: '/rooms/mixingroom' },
+            ]}
           />
           <ArticleBlock
             blockType="articleBlock"
             title="Use Orb Studios in a number of ways"
-            titleFont="spraypaint"
+            titleFont="glitch"
             content={{
               root: {
                 type: 'root',
@@ -154,15 +154,61 @@ export default function Home() {
               url: '/media/controlroom1.jpg',
               width: 1200,
               height: 800,
-              updatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString(),
             } as any}
-            imagePosition="left"
+            imagePosition="right"
             cta={{
               text: 'Explore Activities',
               url: '/activities',
             }}
           />
+          <AccentHero
+            title="How to Use Our Great Equipment"
+            description="Master our professional-grade equipment with expert guidance and tutorials. Learn the ins and outs of our gear to get the best results for your project."
+            backgroundImage={{
+              url: '/media/console.jpg',
+              alt: 'Professional recording equipment',
+            }}
+            links={[
+              {
+                link: {
+                  type: 'custom',
+                  url: '/recording',
+                  label: 'View Guides',
+                  appearance: 'default',
+                },
+              },
+            ]}
+          />
+          <MonthlyCardsBlock
+            title="Monthly Rentals"
+            form={form}
+            cards={[
+              {
+                title: 'Book for the Month',
+                description: 'Get unlimited access to ORB Studios for an entire month. Perfect for long-term projects, ongoing recording sessions, or intensive rehearsals.',
+                type: 'link',
+                link: {
+                  url: '/monthlyrental',
+                  label: 'Learn More',
+                },
+              },
+              {
+                title: 'Already a Monthly?',
+                description: 'As a monthly member, you get priority booking and additional perks. Schedule your sessions at any time that works for you.',
+                type: 'action',
+                link: {
+                  url: '/booking/monthly',
+                  label: 'Book Your Session',
+                },
+              },
+              {
+                title: 'Join the Waitlist',
+                description: 'Interested in becoming a monthly member? Sign up for our waitlist and we\'ll notify you when spots become available.',
+                type: 'form',
+              },
+            ]}
+          />
+          
           <FAQBlock
             blockType="faqBlock"
             title="Frequently Asked Questions"

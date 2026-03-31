@@ -17,7 +17,7 @@ export const FAQBlock: React.FC<Props> = (props) => {
     <section className="w-full py-16 px-4" style={{ backgroundColor: 'var(--light)' }}>
       <div className="max-w-3xl mx-auto">
         {title && (
-          <h2 className="text-4xl font-bold uppercase mb-12 tracking-wider" style={{ color: 'var(--dark)' }}>
+          <h2 className="text-4xl font-bold uppercase mb-12 tracking-wider" style={{ color: 'var(--dark)', fontFamily: '"Rubik Doodle Shadow", sans-serif' }}>
             {title}
           </h2>
         )}
