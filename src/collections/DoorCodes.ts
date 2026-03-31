@@ -5,6 +5,7 @@ export const DoorCodes: CollectionConfig = {
   slug: 'doorCodes',
   admin: {
     useAsTitle: 'location',
+    group: 'Operations',
     defaultColumns: ['location', 'code', 'description', 'updatedAt'],
     preview: false,
   },

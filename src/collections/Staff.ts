@@ -6,6 +6,7 @@ export const Staff: CollectionConfig = {
   slug: 'staff',
   admin: {
     useAsTitle: 'name',
+    group: 'Studio',
     defaultColumns: ['name', 'updatedAt'],
   },
   access: {

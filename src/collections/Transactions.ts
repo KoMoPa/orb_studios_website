@@ -5,6 +5,7 @@ export const Transactions: CollectionConfig = {
   slug: 'transactions',
   admin: {
     useAsTitle: 'transactionDate',
+    group: 'Operations',
     defaultColumns: ['transactionDate', 'purchasePrice', 'taxAmount', 'createdAt'],
     preview: false,
   },

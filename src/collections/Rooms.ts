@@ -7,6 +7,7 @@ export const Rooms: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
+    group: 'Studio',
   },
   access: {
     read: anyone,
