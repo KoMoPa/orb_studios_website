@@ -1,15 +1,13 @@
-import { getClientSideURL } from '@/utilities/getURL'
-
 /**
  * Normalizes media URLs from various Payload formats to a consistent format
  *
  * With staticURL: '/media' configured in Media collection:
  * - Payload automatically serves files at /media/filename
  * - Database stores: /media/filename.jpg
- * - This utility ensures proper base URL for full paths
+ * - Relative paths are returned as-is to work correctly with Next.js Image optimization
  *
  * @param input - URL string, Media object, or undefined
- * @param cacheTag - Optional cache tag to append to URL
+ * @param cacheTag - Optional cache tag to append to URL (ignored for SSR compatibility)
  * @returns Normalized URL
  */
 export const normalizeMediaUrl = (
@@ -28,9 +26,7 @@ export const normalizeMediaUrl = (
     return cacheTag ? `${url}?${encodeURIComponent(cacheTag)}` : url
   }
 
-  // For relative paths, prepend base URL
-  const baseUrl = getClientSideURL()
-  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
-
-  return cacheTag ? `${fullUrl}?${encodeURIComponent(cacheTag)}` : fullUrl
+  // For relative paths, return as-is to ensure Next.js Image optimization works correctly during SSR
+  // Relative paths like /media/image.jpg will be optimized by Next.js Image automatically
+  return url
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { Page } from '@/payload-types'
 
@@ -8,6 +8,7 @@ import { useHeaderTheme } from '@/providers/HeaderTheme'
 
 type CustomHeroProps = {
   backgroundImage?: any
+  fallbackImage?: any
   title?: string
   subtitle?: string
   description?: string
@@ -24,6 +25,7 @@ type CustomHeroProps = {
 
 export const CustomHero: React.FC<CustomHeroProps> = ({
   backgroundImage,
+  fallbackImage,
   title,
   subtitle,
   description,
@@ -35,20 +37,36 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
   minHeight = '80vh',
 }) => {
   const { setHeaderTheme } = useHeaderTheme()
+  const [videoFailed, setVideoFailed] = useState(false)
 
   useEffect(() => {
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  // Simple image URL handling - Payload stores URLs as /media/filename with staticURL config
-  let imageUrl = ''
+  // Simple image/video URL handling - Payload stores URLs as /media/filename with staticURL config
+  let mediaUrl = ''
+  let isVideo = false
   if (backgroundImage) {
     if (typeof backgroundImage === 'string') {
-      imageUrl = backgroundImage.startsWith('/') ? backgroundImage : `/media/${backgroundImage}`
+      mediaUrl = backgroundImage.startsWith('/') ? backgroundImage : `/media/${backgroundImage}`
     } else if (backgroundImage.url) {
-      imageUrl = backgroundImage.url
+      mediaUrl = backgroundImage.url
     } else if (backgroundImage.filename) {
-      imageUrl = `/media/${backgroundImage.filename}`
+      mediaUrl = `/media/${backgroundImage.filename}`
+    }
+    // Check if it's a video file
+    isVideo = /\.(mp4|webm|mov|ogg)$/i.test(mediaUrl)
+  }
+
+  // Handle fallback image
+  let fallbackUrl = ''
+  if (fallbackImage) {
+    if (typeof fallbackImage === 'string') {
+      fallbackUrl = fallbackImage.startsWith('/') ? fallbackImage : `/media/${fallbackImage}`
+    } else if (fallbackImage.url) {
+      fallbackUrl = fallbackImage.url
+    } else if (fallbackImage.filename) {
+      fallbackUrl = `/media/${fallbackImage.filename}`
     }
   }
 
@@ -70,10 +88,27 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
       }}
       data-theme="dark"
     >
-      {imageUrl && (
+      {mediaUrl && isVideo && !videoFailed && (
+        <video
+          src={mediaUrl}
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          onError={() => setVideoFailed(true)}
+        />
+      )}
+      {mediaUrl && !isVideo && (
         <img
-          src={imageUrl}
+          src={mediaUrl}
           alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+      {(videoFailed || !mediaUrl) && fallbackUrl && (
+        <img
+          src={fallbackUrl}
+          alt="Hero background fallback"
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
@@ -101,7 +136,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
         {subtitle && <h2 className="text-4xl font-semibold mb-6 drop-shadow-md text-white">{subtitle}</h2>}
 
         {description && (
-          <p className="text-lg mb-8 max-w-2xl drop-shadow-md text-white">
+          <p className={`text-lg mb-8 max-w-2xl drop-shadow-md text-white ${alignment === 'center' ? 'mx-auto' : ''}`}>
             {description}
           </p>
         )}
@@ -109,7 +144,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
         {cta && (
           <a
             href={cta.url}
-            className="inline-block px-8 py-3 bg-red-600 text-white font-semibold rounded transition-all duration-300 hover:bg-red-700 hover:-translate-y-0.5 hover:shadow-2xl uppercase tracking-wider text-sm"
+            className="btn-console btn-console--red"
           >
             {cta.text}
           </a>
