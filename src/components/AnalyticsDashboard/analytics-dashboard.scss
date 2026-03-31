@@ -1,0 +1,343 @@
+.analytics-dashboard {
+  padding: 2rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  &__banner {
+    margin-bottom: 2rem;
+
+    h4 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #ffffff;
+    }
+  }
+
+  &__error {
+    margin-bottom: 1.5rem;
+
+    p {
+      margin: 0;
+      color: #ffffff;
+    }
+  }
+
+  // Quick Actions
+  &__quick-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  &__quick-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    border: 1px solid #6366f1;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__quick-action-icon {
+    font-size: 1.2rem;
+  }
+
+  &__quick-action-label {
+    font-size: 0.95rem;
+  }
+
+  &__section {
+    margin-bottom: 3rem;
+    background: #2a2a2e;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #3f3f47;
+  }
+
+  &__section-title {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  // Door Codes Grid
+  &__codes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  &__code-card {
+    background: #1a1a1e;
+    padding: 1.25rem;
+    border-radius: 6px;
+    border: 1px solid #3f3f47;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      border-color: #6366f1;
+      background: #242428;
+    }
+  }
+
+  &__code-location {
+    font-size: 0.85rem;
+    color: #a0a0a8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  &__code-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 0.75rem 0;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-radius: 4px;
+    word-break: break-all;
+  }
+
+  &__code-description {
+    font-size: 0.8rem;
+    color: #7a7a82;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  // Monthly Renters Table
+  &__renters-table {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1a1a1e;
+      border-radius: 6px;
+      overflow: hidden;
+
+      thead {
+        background: #242428;
+
+        th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: #e5e5ea;
+          border-bottom: 1px solid #3f3f47;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #3f3f47;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #2a2a2e;
+          }
+
+          td {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #c0c0c8;
+          }
+        }
+
+        tr:last-child td {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  &__hours {
+    font-weight: 600;
+    color: #6366f1;
+  }
+
+  &__hours-cancelled {
+    color: #888890;
+    font-style: italic;
+  }
+
+  // Income Summary
+  &__income-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__income-card {
+    background: #1a1a1e;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #3f3f47;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      border-color: #6366f1;
+    }
+
+    &--total {
+      background: linear-gradient(135deg, #1a1a1e 0%, #242428 100%);
+      border: 2px solid #6366f1;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+
+      .analytics-dashboard__income-value {
+        color: #ffffff;
+      }
+    }
+  }
+
+  &__income-label {
+    font-size: 0.85rem;
+    color: #a0a0a8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  &__income-value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+
+  &__income-subtext {
+    font-size: 0.8rem;
+    color: #7a7a82;
+  }
+
+  // Chart
+  &__chart {
+    background: #1a1a1e;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #3f3f47;
+  }
+
+  &__chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #e5e5ea;
+  }
+
+  &__chart-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 0.5rem;
+    height: 300px;
+    padding: 1rem 0;
+    border-top: 1px solid #3f3f47;
+  }
+
+  &__chart-bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  &__chart-bar {
+    width: 100%;
+    max-width: 30px;
+    background: linear-gradient(180deg, #4f46e5 0%, #6366f1 100%);
+    border-radius: 4px 4px 0 0;
+    transition: all 0.2s ease;
+    min-height: 2px;
+    cursor: pointer;
+
+    &:hover {
+      background: linear-gradient(180deg, #4338ca 0%, #4f46e5 100%);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+      filter: brightness(1.1);
+    }
+  }
+
+  &__chart-label {
+    font-size: 0.7rem;
+    color: #7a7a82;
+    white-space: nowrap;
+    transform: rotate(-45deg);
+    transform-origin: center;
+    margin-top: 0.5rem;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .analytics-dashboard {
+    padding: 1rem 0;
+
+    &__codes-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    &__code-value {
+      font-size: 1.4rem;
+    }
+
+    &__section {
+      padding: 1rem;
+    }
+
+    &__income-summary {
+      grid-template-columns: 1fr;
+    }
+
+    &__chart-container {
+      height: 200px;
+    }
+
+    &__chart-bar {
+      max-width: 20px;
+    }
+
+    &__chart-label {
+      font-size: 0.6rem;
+    }
+  }
+}

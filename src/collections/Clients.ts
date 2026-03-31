@@ -75,6 +75,25 @@ export const Clients: CollectionConfig = {
       },
     },
     {
+      name: 'monthlyHoursIncluded',
+      type: 'number',
+      label: 'Monthly Hours Included',
+      admin: {
+        description: 'Number of hours included in the monthly plan (e.g., 20, 40)',
+        condition: (data) => data?.isMonthlyClient,
+      },
+    },
+    {
+      name: 'overageRatePercentage',
+      type: 'number',
+      defaultValue: 100,
+      label: 'Overage Rate %',
+      admin: {
+        description: 'Percentage of hourly rate to charge for hours over the limit (100 = full price)',
+        condition: (data) => data?.isMonthlyClient,
+      },
+    },
+    {
       name: 'notes',
       type: 'textarea',
       label: 'Admin Notes',

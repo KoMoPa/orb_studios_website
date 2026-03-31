@@ -78,6 +78,8 @@ export interface Config {
     rates: Rate;
     staff: Staff;
     faq: Faq;
+    doorCodes: DoorCode;
+    transactions: Transaction;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -106,6 +108,8 @@ export interface Config {
     rates: RatesSelect<false> | RatesSelect<true>;
     staff: StaffSelect<false> | StaffSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
+    doorCodes: DoorCodesSelect<false> | DoorCodesSelect<true>;
+    transactions: TransactionsSelect<false> | TransactionsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1007,6 +1011,14 @@ export interface Client {
    */
   monthlyHoursCancelled?: number | null;
   /**
+   * Number of hours included in the monthly plan (e.g., 20, 40)
+   */
+  monthlyHoursIncluded?: number | null;
+  /**
+   * Percentage of hourly rate to charge for hours over the limit (100 = full price)
+   */
+  overageRatePercentage?: number | null;
+  /**
    * Internal notes about this client
    */
   notes?: string | null;
@@ -1191,6 +1203,48 @@ export interface Rate {
     };
     [k: string]: unknown;
   } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doorCodes".
+ */
+export interface DoorCode {
+  id: number;
+  /**
+   * e.g., "Front Door", "Studio A", "Main Entrance"
+   */
+  location: string;
+  /**
+   * The actual door code/PIN
+   */
+  code: string;
+  /**
+   * Optional notes about this door or code
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transactions".
+ */
+export interface Transaction {
+  id: number;
+  /**
+   * When the transaction occurred
+   */
+  transactionDate: string;
+  /**
+   * Income amount before tax
+   */
+  purchasePrice: number;
+  /**
+   * HST or applicable tax
+   */
+  taxAmount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1427,6 +1481,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faq';
         value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'doorCodes';
+        value: number | DoorCode;
+      } | null)
+    | ({
+        relationTo: 'transactions';
+        value: number | Transaction;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1861,6 +1923,8 @@ export interface ClientsSelect<T extends boolean = true> {
   monthlyStartDate?: T;
   monthlyHoursUsed?: T;
   monthlyHoursCancelled?: T;
+  monthlyHoursIncluded?: T;
+  overageRatePercentage?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1970,6 +2034,28 @@ export interface StaffSelect<T extends boolean = true> {
 export interface FaqSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doorCodes_select".
+ */
+export interface DoorCodesSelect<T extends boolean = true> {
+  location?: T;
+  code?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transactions_select".
+ */
+export interface TransactionsSelect<T extends boolean = true> {
+  transactionDate?: T;
+  purchasePrice?: T;
+  taxAmount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -3,6 +3,8 @@ import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/booking/pdf-gen
 import { calculatePrice } from '@/lib/booking/pricing';
 import { PricingBreakdown } from '@/lib/booking/types';
 import { sendBookingConfirmationEmail } from '@/lib/booking/email';
+import { getPayload } from 'payload';
+import config from '@/payload.config';
 
 const MONTHLY_RATE = 400;
 const HST_RATE = 0.13;
@@ -166,6 +168,30 @@ export async function POST(request: NextRequest) {
     } catch (emailError) {
       console.error('Error sending invoice email:', emailError);
       throw new Error(`Failed to send invoice email: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
+    }
+
+    // Log transaction for analytics
+    try {
+      const payload = await getPayload({ config });
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Split the total into purchase price and tax
+      const purchasePrice = pricing.subtotal || (pricing.total / 1.13);
+      const taxAmount = pricing.total - purchasePrice;
+
+      await payload.create({
+        collection: 'transactions',
+        data: {
+          transactionDate: today,
+          purchasePrice: Number(purchasePrice.toFixed(2)),
+          taxAmount: Number(taxAmount.toFixed(2)),
+        },
+      });
+      console.log('Transaction logged for manual invoice');
+    } catch (transactionError) {
+      console.error('Error logging transaction:', transactionError);
+      // Don't fail the invoice generation if transaction logging fails
     }
 
     // Return success response

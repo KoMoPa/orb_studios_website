@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const startTime = createEasternDate(body.preferredDate, body.preferredTime);
 
     const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + body.duration);
+    endTime.setMinutes(endTime.getMinutes() + body.duration * 60);
 
     // Validate date is in the future
     const now = new Date();
@@ -120,8 +120,9 @@ export async function POST(request: NextRequest) {
       // Use default hourly rate and rental type
     }
 
-    // Check if client is a monthly subscriber
+    // Check if client is a monthly subscriber (for tracking purposes only)
     let isMonthlyClient = false;
+    let clientId: string | undefined;
     try {
       const payload = await getPayload({ config });
       
@@ -136,16 +137,17 @@ export async function POST(request: NextRequest) {
 
       if (existingClients.docs.length > 0) {
         isMonthlyClient = existingClients.docs[0].isMonthlyClient || false;
+        clientId = existingClients.docs[0].id;
       }
     } catch (err) {
       console.error('Failed to check client status:', err);
     }
 
-    // Calculate pricing
+    // Calculate pricing - always at regular rate, no monthly discounts for bookings
     const pricing = calculatePrice(
       hourlyRate,
       body.duration,
-      isMonthlyClient
+      false // Don't apply monthly discount for regular bookings
     );
 
     // Create the calendar event
@@ -200,12 +202,10 @@ Price: $${pricing.total}
       // Don't fail the booking if PDF generation fails
     }
 
-    // Sync client data with Payload CMS
-    let clientId: string | undefined;
+    // Sync client with Payload CMS
     try {
       const payload = await getPayload({ config });
-      
-      // Try to find existing client by email
+
       const existingClients = await payload.find({
         collection: 'clients',
         where: {
@@ -217,7 +217,6 @@ Price: $${pricing.total}
 
       let client: any;
       if (existingClients.docs.length > 0) {
-        // Update existing client
         client = existingClients.docs[0];
         client = await payload.update({
           collection: 'clients',
@@ -229,7 +228,6 @@ Price: $${pricing.total}
         });
         console.log(`Updated existing client: ${client.id}`);
       } else {
-        // Create new client
         client = await payload.create({
           collection: 'clients',
           data: {
@@ -241,11 +239,28 @@ Price: $${pricing.total}
         });
         console.log(`Created new client: ${client.id}`);
       }
-
-      clientId = client.id;
     } catch (payloadError) {
       console.error('Error syncing client with Payload CMS:', payloadError);
-      // Don't fail the booking if Payload sync fails, but log it
+    }
+
+    // Log transaction for analytics
+    try {
+      const payload = await getPayload({ config });
+      const today = new Date().toISOString().split('T')[0];
+      const purchasePrice = pricing.subtotal || pricing.total / 1.13;
+      const taxAmount = pricing.total - purchasePrice;
+
+      await payload.create({
+        collection: 'transactions',
+        data: {
+          transactionDate: today,
+          purchasePrice: Number(purchasePrice.toFixed(2)),
+          taxAmount: Number(taxAmount.toFixed(2)),
+        },
+      });
+      console.log('Transaction logged for analytics');
+    } catch (transactionError) {
+      console.error('Error logging transaction:', transactionError);
     }
 
     // Send confirmation emails
@@ -270,7 +285,6 @@ Price: $${pricing.total}
       console.log('Confirmation emails sent');
     } catch (emailError) {
       console.error('Error sending emails:', emailError);
-      // Don't fail the booking if email fails
     }
 
     // Return success response
@@ -289,7 +303,6 @@ Price: $${pricing.total}
     };
 
     return NextResponse.json(response, { status: 201 });
-
   } catch (error) {
     console.error('Error creating booking:', error);
     return NextResponse.json(
@@ -319,11 +332,11 @@ function validateBookingRequest(booking: BookingRequest): string | null {
     return 'Preferred time is required';
   }
 
-  if (!booking.duration || booking.duration < 30) {
-    return 'Duration must be at least 30 minutes';
+  if (!booking.duration || booking.duration < 0.5) {
+    return 'Duration must be at least 0.5 hours';
   }
 
-  if (booking.duration > 480) {
+  if (booking.duration > 8) {
     return 'Duration cannot exceed 8 hours';
   }
 
