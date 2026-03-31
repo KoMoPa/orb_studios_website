@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function FaderMenuIcon() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function FaderMenuIcon({ isOpen, onToggle }) {
   const [theme, setTheme] = useState('light');
   
   // Fader positions: [closed, open]
@@ -33,13 +32,10 @@ export default function FaderMenuIcon() {
     return () => observer.disconnect();
   }, []);
   
-  const toggleMenu = () => {
-    const newState = !isOpen;
-    setIsOpen(newState);
-    
-    // Animate fader positions
+  // Animate fader positions based on isOpen prop
+  useEffect(() => {
     const startPositions = [...animatedPositions];
-    const targetPositions = faderPositions.map(p => p[newState ? 1 : 0]);
+    const targetPositions = faderPositions.map(p => p[isOpen ? 1 : 0]);
     const duration = 300; // ms
     const startTime = Date.now();
     
@@ -64,9 +60,13 @@ export default function FaderMenuIcon() {
     };
     
     requestAnimationFrame(animate);
+  }, [isOpen]);
+  
+  const toggleMenu = () => {
+    onToggle?.();
   };
   
-  const color = theme === 'light' ? '#000000' : '#FFFFFF';
+  const color = '#FFFFFF';
   
   return (
     <button

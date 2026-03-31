@@ -35,7 +35,7 @@ export async function Footer() {
     <footer className="mt-auto border-t border-border" style={{ backgroundColor: 'var(--card)', color: 'var(--dark)' }}>
       <div className="container py-12 gap-12">
         {/* Top Section: Logo, Description, and Social Links */}
-        <div className="border-b border-border pb-12 flex flex-col md:flex-row md:justify-between md:items-start gap-8">
+        <div className="border-b border-border p-10 flex flex-col md:flex-row md:justify-between md:items-start gap-8">
           <div className="flex flex-col gap-4 max-w-xs">
             <Link className="flex items-center w-fit" href="/">
               <Logo />
@@ -53,7 +53,7 @@ export async function Footer() {
                     className="transition-opacity hover:opacity-70"
                     style={{ color: 'var(--element-text)' }}
                   >
-                    <Icon size={20} />
+                    <Icon size={50} />
                   </a>
                 ))}
               </div>
@@ -64,7 +64,7 @@ export async function Footer() {
         </div>
 
         {/* Link Groups and Contact Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-10">
           {/* Link Groups */}
           {linkGroups.map((group, groupIndex) => (
             <div key={groupIndex}>

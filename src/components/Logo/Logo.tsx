@@ -27,7 +27,7 @@ export const Logo = (props: Props) => {
         className="w-10 h-10"
         src="/media/Record.png"
       />
-      <span className={clsx('text-4xl font-bold tracking-wide', textClassName)}>
+      <span className={clsx('text-4xl font-bold tracking-wide text-white', textClassName)}>
         Orb Studios
       </span>
     </div>
