@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-
+import FaderMenuIcon from '@/components/FaderMenuIcon';
 import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
@@ -40,6 +40,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, navItemsWithData }) 
         <span className="sr-only">Search</span>
         <SearchIcon className="w-5 text-primary" />
       </Link> */}
+      <FaderMenuIcon />
     </nav>
   )
 }
