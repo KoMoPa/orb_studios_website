@@ -1,5 +1,4 @@
 // Types for the booking system
-export type SessionType = 'rehearsal' | 'recording' | 'rehearsal-recording';
 export type RentalType = 'monthly' | 'hourly-recording' | 'hourly-rehearsal';
 
 export interface BookingRequest {
@@ -9,11 +8,9 @@ export interface BookingRequest {
     bandName?: string;
     preferredDate: string; // YYYY-MM-DD
     preferredTime: string; // HH:mm
-    duration: number; // minutes
-    rentalType: RentalType;
-    sessionType: SessionType;
+    duration: number; // hours
+    rentalType: string; // Payload rate ID
     additionalInfo?: string;
-    gearStorage: boolean;
 }
 
 export interface AvailabilitySlot {
@@ -36,10 +33,9 @@ export interface BookingConfirmation {
 export interface PricingBreakdown {
     rentalType: RentalType;
     hourlyRate: number;
-    totalMinutes: number;
+    totalHours: number;
     subtotal: number;
     monthlyDiscount?: number;
-    gearStorageFee?: number;
     total: number;
 }
 
@@ -60,7 +56,6 @@ export interface BookingRecord {
     startTime: Date;
     endTime: Date;
     rentalType: RentalType;
-    sessionType: SessionType;
     totalPrice: number;
     status: 'confirmed' | 'pending' | 'cancelled';
     googleCalendarEventId?: string;

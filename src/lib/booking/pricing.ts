@@ -1,50 +1,36 @@
 import { PricingBreakdown, RentalType } from './types';
 
-const HOURLY_RATES = {
-    'hourly-rehearsal': 30,
-    'hourly-recording': 50,
-    'monthly': 400,
-};
-
-const GEAR_STORAGE_FEE = 0; // Included in monthly plan
+const HST_RATE = 0.13; // 13% HST (Ontario)
 
 /**
- * Calculate booking price based on rental type, duration, and client status
+ * Calculate booking price based on hourly rate and duration
+ * Includes 13% HST
  */
 export function calculatePrice(
-    rentalType: RentalType,
-    durationMinutes: number,
-    isMonthlyClient: boolean = false,
-    includeGearStorage: boolean = false
+    hourlyRate: number,
+    durationHours: number,
+    isMonthlyClient: boolean = false
 ): PricingBreakdown {
-    const hourlyRate = HOURLY_RATES[rentalType];
-    const durationHours = durationMinutes / 60;
-
     let subtotal = hourlyRate * durationHours;
     let monthlyDiscount = 0;
-    let gearStorageFee = 0;
 
     // Apply monthly discount if applicable
-    if (isMonthlyClient && rentalType !== 'monthly') {
+    if (isMonthlyClient) {
         // Monthly clients get 20% discount on hourly bookings
         monthlyDiscount = subtotal * 0.2;
         subtotal -= monthlyDiscount;
     }
 
-    // Add gear storage fee for non-monthly clients
-    if (includeGearStorage && rentalType !== 'monthly') {
-        gearStorageFee = 50; // $50/month storage
-    }
-
-    const total = subtotal + gearStorageFee;
+    // Calculate HST on subtotal
+    const hst = subtotal * HST_RATE;
+    const total = subtotal + hst;
 
     return {
-        rentalType,
+        rentalType: 'hourly-recording' as RentalType,
         hourlyRate,
-        totalMinutes: durationMinutes,
+        totalHours: durationHours,
         subtotal: Number(subtotal.toFixed(2)),
         monthlyDiscount: monthlyDiscount > 0 ? Number(monthlyDiscount.toFixed(2)) : undefined,
-        gearStorageFee: gearStorageFee > 0 ? gearStorageFee : undefined,
         total: Number(total.toFixed(2)),
     };
 }
@@ -54,7 +40,7 @@ export function calculatePrice(
  */
 export function formatPricingBreakdown(pricing: PricingBreakdown): string {
     const lines = [
-        `Rate: $${pricing.hourlyRate}/hr (${pricing.totalMinutes} minutes)`,
+        `Rate: $${pricing.hourlyRate}/hr (${pricing.totalHours} hour${pricing.totalHours > 1 ? 's' : ''})`,
         `Subtotal: $${pricing.subtotal}`,
     ];
 

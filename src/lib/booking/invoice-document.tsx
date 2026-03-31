@@ -3,19 +3,20 @@ import { PricingBreakdown } from './types';
 
 const styles = StyleSheet.create({
     page: {
-        padding: 50,
+        padding: 40,
+        paddingTop: 30,
         fontFamily: 'Helvetica',
     },
     header: {
-        marginBottom: 30,
-        paddingBottom: 10,
+        marginBottom: 15,
+        paddingBottom: 8,
         borderBottomWidth: 2,
-        borderBottomColor: '#FF6B35',
+        borderBottomColor: '#8b3a3a',
     },
     title: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 3,
     },
     address: {
         fontSize: 10,
@@ -23,33 +24,33 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     section: {
-        marginBottom: 20,
+        marginBottom: 12,
     },
     sectionTitle: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: 'bold',
-        marginBottom: 10,
-        marginTop: 15,
+        marginBottom: 6,
+        marginTop: 10,
         color: '#333',
     },
     row: {
         display: 'flex',
         flexDirection: 'row',
-        marginBottom: 8,
+        marginBottom: 5,
     },
     label: {
         width: '40%',
-        fontSize: 11,
+        fontSize: 10,
         color: '#666',
     },
     value: {
         width: '60%',
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: 'bold',
     },
     priceTable: {
         width: '100%',
-        marginTop: 20,
+        marginTop: 12,
         border: '1px solid #ddd',
     },
     tableRow: {
@@ -57,22 +58,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
-        paddingVertical: 8,
-        paddingHorizontal: 10,
+        paddingVertical: 6,
+        paddingHorizontal: 8,
     },
     tableLabel: {
         width: '70%',
-        fontSize: 11,
+        fontSize: 10,
     },
     tableValue: {
         width: '30%',
-        fontSize: 11,
+        fontSize: 10,
         textAlign: 'right',
         fontWeight: 'bold',
     },
     totalRow: {
-        backgroundColor: '#FF6B35',
-        paddingVertical: 12,
+        backgroundColor: '#8b3a3a',
+        paddingVertical: 8,
     },
     totalLabel: {
         color: '#fff',
@@ -82,13 +83,32 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    paymentNote: {
+        marginTop: 12,
+        padding: 10,
+        backgroundColor: '#fef2f2',
+        borderWidth: 2,
+        borderColor: '#8b3a3a',
+        borderRadius: 4,
+    },
+    paymentNoteTitle: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        color: '#8b3a3a',
+        marginBottom: 5,
+    },
+    paymentNoteText: {
+        fontSize: 10,
+        color: '#7f1d1d',
+        lineHeight: 1.3,
+    },
     footer: {
-        marginTop: 40,
-        paddingTop: 10,
+        marginTop: 10,
+        paddingTop: 8,
         borderTopWidth: 1,
         borderTopColor: '#ddd',
         textAlign: 'center',
-        fontSize: 10,
+        fontSize: 9,
         color: '#999',
     },
 });
@@ -101,21 +121,27 @@ export function InvoiceDocument({
     startTime,
     endTime,
     pricing,
-    sessionType,
     rentalType,
+    isMonthly = false,
 }: {
     invoiceNumber: string;
     clientName: string;
     clientEmail: string;
     bookingDate: Date;
-    startTime: Date;
-    endTime: Date;
+    startTime?: Date;
+    endTime?: Date;
     pricing: PricingBreakdown;
-    sessionType: string;
     rentalType: string;
+    isMonthly?: boolean;
 }) {
-    const durationHours = pricing.totalMinutes / 60;
+    const durationHours = startTime && endTime ? (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60) : 0;
     const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'America/Toronto',
+    });
+    const dateTimeFormatter = new Intl.DateTimeFormat('en-CA', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -124,16 +150,20 @@ export function InvoiceDocument({
         timeZone: 'America/Toronto',
     });
 
+    // Calculate HST (13%)
+    const subtotalBeforeHST = pricing.subtotal || (pricing.total / 1.13);
+    const hstAmount = pricing.total - subtotalBeforeHST;
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.title}>INVOICE</Text>
-                    <Text style={{ fontSize: 11, color: '#666' }}>Invoice #{invoiceNumber}</Text>
-                    <Text style={styles.address}>Orb Studios</Text>
-                    <Text style={styles.address}>124 Portland St, Etobicoke, ON M8Y 1B2</Text>
-                    <Text style={styles.address}>orbmusicstudios@gmail.com</Text>
+                    <Text style={{ fontSize: 10, color: '#666' }}>Invoice #{invoiceNumber}</Text>
+                    <Text style={{ ...styles.address, fontSize: 9, marginTop: 3 }}>Orb Studios</Text>
+                    <Text style={{ ...styles.address, fontSize: 9 }}>124 Portland St, Etobicoke, ON M8Y 1B2</Text>
+                    <Text style={{ ...styles.address, fontSize: 9 }}>orbmusicstudios@gmail.com</Text>
                 </View>
 
                 {/* Invoice Details */}
@@ -147,68 +177,103 @@ export function InvoiceDocument({
                 {/* Bill To */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Bill To:</Text>
-                    <Text style={{ fontSize: 11, marginBottom: 3 }}>{clientName}</Text>
-                    <Text style={{ fontSize: 11, color: '#666' }}>{clientEmail}</Text>
+                    <Text style={{ fontSize: 10, marginBottom: 3 }}>{clientName}</Text>
+                    <Text style={{ fontSize: 10, color: '#666' }}>{clientEmail}</Text>
                 </View>
 
                 {/* Booking Details */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Booking Details</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Session Type:</Text>
-                        <Text style={styles.value}>{sessionType}</Text>
+                {!isMonthly && startTime && endTime ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Booking Details</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Rental Type:</Text>
+                            <Text style={styles.value}>{rentalType}</Text>
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Date & Time:</Text>
+                            <Text style={styles.value}>{dateTimeFormatter.format(startTime)}</Text>
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>End Time:</Text>
+                            <Text style={styles.value}>{dateTimeFormatter.format(endTime)}</Text>
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Duration:</Text>
+                            <Text style={styles.value}>{durationHours.toFixed(1)} hours</Text>
+                        </View>
                     </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Rental Type:</Text>
-                        <Text style={styles.value}>{rentalType}</Text>
+                ) : (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Booking Details</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Rental Type:</Text>
+                            <Text style={styles.value}>Monthly Rental</Text>
+                        </View>
                     </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Date & Time:</Text>
-                        <Text style={styles.value}>{dateFormatter.format(startTime)}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>End Time:</Text>
-                        <Text style={styles.value}>{dateFormatter.format(endTime)}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Text style={styles.label}>Duration:</Text>
-                        <Text style={styles.value}>{durationHours.toFixed(1)} hours</Text>
-                    </View>
-                </View>
+                )}
 
                 {/* Pricing Breakdown */}
                 <View style={styles.priceTable}>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableLabel}>Rate</Text>
-                        <Text style={styles.tableValue}>${pricing.hourlyRate}/hr</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableLabel}>Duration</Text>
-                        <Text style={styles.tableValue}>{durationHours.toFixed(1)} hrs</Text>
-                    </View>
-                    <View style={styles.tableRow}>
-                        <Text style={styles.tableLabel}>Subtotal</Text>
-                        <Text style={styles.tableValue}>${pricing.subtotal}</Text>
-                    </View>
+                    {isMonthly ? (
+                        <>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>Monthly Rental Rate</Text>
+                                <Text style={styles.tableValue}>${pricing.subtotal.toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>HST (13%)</Text>
+                                <Text style={styles.tableValue}>${hstAmount.toFixed(2)}</Text>
+                            </View>
+                        </>
+                    ) : (
+                        <>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>Rate</Text>
+                                <Text style={styles.tableValue}>${pricing.hourlyRate.toFixed(2)}/hr</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>Duration</Text>
+                                <Text style={styles.tableValue}>{durationHours.toFixed(1)} hrs</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>Subtotal</Text>
+                                <Text style={styles.tableValue}>${pricing.subtotal.toFixed(2)}</Text>
+                            </View>
 
-                    {pricing.monthlyDiscount && (
-                        <View style={styles.tableRow}>
-                            <Text style={styles.tableLabel}>Monthly Discount</Text>
-                            <Text style={styles.tableValue}>-${pricing.monthlyDiscount}</Text>
-                        </View>
-                    )}
+                            {pricing.monthlyDiscount && (
+                                <View style={styles.tableRow}>
+                                    <Text style={styles.tableLabel}>Monthly Discount</Text>
+                                    <Text style={styles.tableValue}>-${pricing.monthlyDiscount.toFixed(2)}</Text>
+                                </View>
+                            )}
 
-                    {pricing.gearStorageFee && (
-                        <View style={styles.tableRow}>
-                            <Text style={styles.tableLabel}>Gear Storage</Text>
-                            <Text style={styles.tableValue}>+${pricing.gearStorageFee}</Text>
-                        </View>
+                            {pricing.gearStorageFee && (
+                                <View style={styles.tableRow}>
+                                    <Text style={styles.tableLabel}>Gear Storage</Text>
+                                    <Text style={styles.tableValue}>+${pricing.gearStorageFee.toFixed(2)}</Text>
+                                </View>
+                            )}
+
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>HST (13%)</Text>
+                                <Text style={styles.tableValue}>${hstAmount.toFixed(2)}</Text>
+                            </View>
+                        </>
                     )}
 
                     <View style={{ ...styles.tableRow, ...styles.totalRow }}>
                         <Text style={{ ...styles.tableLabel, ...styles.totalLabel }}>Total Due</Text>
-                        <Text style={{ ...styles.tableValue, ...styles.totalValue }}>${pricing.total}</Text>
+                        <Text style={{ ...styles.tableValue, ...styles.totalValue }}>${pricing.total.toFixed(2)}</Text>
                     </View>
+                </View>
+
+                {/* Payment Instructions */}
+                <View style={styles.paymentNote}>
+                    <Text style={styles.paymentNoteTitle}>PAYMENT INSTRUCTIONS</Text>
+                    <Text style={styles.paymentNoteText}>Please send payment via e-Transfer to:</Text>
+                    <Text style={{ ...styles.paymentNoteText, fontWeight: 'bold', marginTop: 2 }}>
+                        orbmusicstudios@gmail.com
+                    </Text>
                 </View>
 
                 {/* Footer */}

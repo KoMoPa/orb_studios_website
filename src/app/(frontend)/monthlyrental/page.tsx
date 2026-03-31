@@ -1,18 +1,31 @@
-'use client'
-
 // import type { Metadata } from 'next'
 import React from 'react'
-import { ParallaxProvider } from 'react-scroll-parallax'
-import { ParallaxBlock } from '@/blocks/ParallaxBlock/Component'
-import controlroom1 from '@/../../public/media/controlroom1.jpg'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import type { Form } from '@payloadcms/plugin-form-builder/types'
+import { MonthlyRentalContent } from './MonthlyRentalContent'
 
-// Note: Metadata export not compatible with 'use client'
+// Note: Metadata export not compatible with server component if needed later
 // export const metadata: Metadata = {
 //   title: 'All-Inclusive Monthly Rental',
 //   description: 'Explore our flexible monthly rental options for studio space.',
 // }
 
-export default function MonthlyRentalsPage() {
+export default async function MonthlyRentalsPage() {
+  const payload = await getPayload({ config: configPromise })
+  
+  // Fetch the form by title
+  const formsData = await payload.find({
+    collection: 'forms',
+    where: {
+      title: {
+        equals: 'Sign Up For Monthly Waitlist',
+      },
+    },
+  })
+  
+  const form = formsData.docs[0] as Form | undefined
+
   const richTextData = {
     root: {
       type: 'root',
@@ -66,27 +79,5 @@ export default function MonthlyRentalsPage() {
     },
   }
 
-  return (
-    <ParallaxProvider>
-      <article className="pt-16 pb-24">
-      <ParallaxBlock
-        title="All-Inclusive Monthly Rental"
-        media={{
-          id: '1',
-          alt: 'Control Room Setup',
-          filename: 'controlroom1.jpg',
-          mimeType: 'image/jpeg',
-          filesize: 123456,
-          width: 1920,
-          height: 1154,
-          url: '/media/controlroom1.jpg',
-        }}
-        overlayOpacity={0.4}
-        overlayColor="#8B1A1A"
-        richText={richTextData}
-        minHeight={1800}
-      />
-      </article>
-    </ParallaxProvider>
-  )
+  return <MonthlyRentalContent form={form} richTextData={richTextData} />
 }

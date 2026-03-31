@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url'
 
 import { Activities } from './collections/Activities'
 import { Categories } from './collections/Categories'
+import { Clients } from './collections/Clients'
+import { DoorCodes } from './collections/DoorCodes'
 import { FAQ } from './collections/FAQ'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -13,6 +15,7 @@ import { Posts } from './collections/Posts'
 import { Rooms } from './collections/Rooms'
 import { Rates } from './collections/Rates'
 import { Staff } from './collections/Staff'
+import { Transactions } from './collections/Transactions'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -29,9 +32,8 @@ export default buildConfig({
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
-      beforeDashboard: ['@/components/BeforeDashboard'],
+      // The `BeforeDashboard` component renders analytics and quick access at the top of the dashboard
+      beforeDashboard: ['@/components/AnalyticsDashboard/AnalyticsDashboard'],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -68,7 +70,7 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Activities, Rooms, Rates, Staff, FAQ],
+  collections: [Pages, Posts, Media, Categories, Clients, Users, Activities, Rooms, Rates, Staff, FAQ, DoorCodes, Transactions],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

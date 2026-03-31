@@ -76,9 +76,9 @@ export async function createCalendarEvent(
     try {
         const calendar = initializeGoogleCalendar();
 
-        const event = {
+        // Start with minimal event structure
+        const event: any = {
             summary: title,
-            description,
             start: {
                 dateTime: startTime.toISOString(),
                 timeZone: 'America/Toronto',
@@ -87,27 +87,48 @@ export async function createCalendarEvent(
                 dateTime: endTime.toISOString(),
                 timeZone: 'America/Toronto',
             },
-            attendees: attendeesEmail
-                ? attendeesEmail.map((email) => ({ email, optional: false }))
-                : [],
-            reminders: {
-                useDefault: false,
-                overrides: [
-                    { method: 'email', minutes: 24 * 60 }, // 24 hours before
-                    { method: 'notification', minutes: 60 }, // 1 hour before
-                ],
-            },
         };
+
+        // Only add description if provided and not too long
+        if (description && description.trim().length > 0) {
+            const sanitizedDescription = description
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .join('\n');
+            
+            // Google Calendar has a limit on description length
+            if (sanitizedDescription.length < 8000) {
+                event.description = sanitizedDescription;
+            }
+        }
+
+        console.log('Creating calendar event:', { 
+            title, 
+            startTime: event.start.dateTime, 
+            endTime: event.end.dateTime,
+            hasDescription: !!event.description,
+        });
 
         const response = await calendar.events.insert({
             calendarId: calendarEmail,
             requestBody: event,
         });
 
+        console.log('Calendar event created successfully:', response.data.id);
         return response.data.id;
-    } catch (error) {
-        console.error('Error creating calendar event:', error);
-        throw new Error('Failed to create calendar event');
+    } catch (error: any) {
+        console.error('Error creating calendar event:', error?.message || error);
+        if (error?.errors) {
+            console.error('Calendar API errors:', JSON.stringify(error.errors, null, 2));
+        }
+        if (error?.response?.data) {
+            console.error('Calendar API response data:', JSON.stringify(error.response.data, null, 2));
+        }
+        if (error?.error) {
+            console.error('Calendar error details:', JSON.stringify(error.error, null, 2));
+        }
+        throw new Error(`Failed to create calendar event: ${error?.message || 'Unknown error'}`);
     }
 }
 
