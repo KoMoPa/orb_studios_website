@@ -64,7 +64,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
 
   return (
     <section
-      className={`relative w-full flex items-center overflow-hidden`}
+      className={`relative z-0 w-full flex items-center overflow-hidden`}
       style={{ 
         minHeight,
       }}

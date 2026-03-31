@@ -16,6 +16,7 @@ interface HeaderClientProps {
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, navItemsWithData }) => {
   const [theme, setTheme] = useState<string | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
 
@@ -27,14 +28,29 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, navItemsWithDa
     if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
   }, [headerTheme, theme])
 
+  useEffect(() => {
+    let lastScrollY = 0
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      setIsCollapsed(currentScrollY > 50)
+      lastScrollY = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="container relative z-20" {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
+    <header 
+      className={`sticky top-0 w-full relative z-20 transition-all duration-300 bg-black ${isCollapsed ? 'py-3' : 'py-8'}`}
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="flex justify-between px-4 md:px-8 lg:px-12">
         <Link href="/">
           <Logo 
           loading="eager" 
           priority="high" 
-          className="invert dark:invert-0"
           textClassName="doodle"
           />
         </Link>
