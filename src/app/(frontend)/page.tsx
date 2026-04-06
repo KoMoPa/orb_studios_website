@@ -32,9 +32,9 @@ export default async function Home() {
             type="custom"
             backgroundImage={{
               id: 1,
-              filename: 'IMG_0773.mov',
+              filename: 'console_video.mp4',
               alt: 'Recording studio',
-              url: '/media/IMG_0773.mov',
+              url: '/api/media/file/console_video.mp4',
             } as any}
             fallbackImage={{
               id: 1,
