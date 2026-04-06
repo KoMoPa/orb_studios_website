@@ -21,6 +21,10 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      {
+        hostname: 't3.storageapi.dev',
+        protocol: 'https',
+      },
     ],
     localPatterns: [
       {
