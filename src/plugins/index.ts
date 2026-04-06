@@ -3,6 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -24,6 +25,22 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 }
 
 export const plugins: Plugin[] = [
+  s3Storage({
+    collections: {
+      media: true,
+    },
+    bucket: process.env.AWS_S3_BUCKET_NAME || '',
+    config: {
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+      },
+      region: process.env.AWS_DEFAULT_REGION || 'us-east-1',
+      ...(process.env.AWS_ENDPOINT_URL
+        ? { endpoint: process.env.AWS_ENDPOINT_URL }
+        : {}),
+    },
+  }),
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
