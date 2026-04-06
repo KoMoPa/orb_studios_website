@@ -27,9 +27,7 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 export const plugins: Plugin[] = [
   s3Storage({
     collections: {
-      media: {
-        disablePayloadAccessControl: true,
-      },
+      media: true,
     },
     bucket: process.env.AWS_S3_BUCKET_NAME || '',
     config: {
