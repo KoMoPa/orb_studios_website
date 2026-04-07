@@ -34,7 +34,6 @@ export const Rooms: CollectionConfig = {
       name: 'heroImage',
       type: 'relationship',
       relationTo: 'media',
-      required: true,
       admin: {
         description: 'Background image for the hero section',
       },

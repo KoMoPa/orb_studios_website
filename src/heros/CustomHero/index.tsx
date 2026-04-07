@@ -43,16 +43,15 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
     setHeaderTheme('dark')
   }, [setHeaderTheme])
 
-  // Simple image/video URL handling - Payload stores URLs as /media/filename with staticURL config
   let mediaUrl = ''
   let isVideo = false
   if (backgroundImage) {
     if (typeof backgroundImage === 'string') {
-      mediaUrl = backgroundImage.startsWith('/') ? backgroundImage : `/media/${backgroundImage}`
+      mediaUrl = backgroundImage
     } else if (backgroundImage.url) {
       mediaUrl = backgroundImage.url
     } else if (backgroundImage.filename) {
-      mediaUrl = `/media/${backgroundImage.filename}`
+      mediaUrl = `/api/media/file/${backgroundImage.filename}`
     }
     // Check if it's a video file
     isVideo = /\.(mp4|webm|mov|ogg)$/i.test(mediaUrl)
@@ -62,11 +61,11 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
   let fallbackUrl = ''
   if (fallbackImage) {
     if (typeof fallbackImage === 'string') {
-      fallbackUrl = fallbackImage.startsWith('/') ? fallbackImage : `/media/${fallbackImage}`
+      fallbackUrl = fallbackImage
     } else if (fallbackImage.url) {
       fallbackUrl = fallbackImage.url
     } else if (fallbackImage.filename) {
-      fallbackUrl = `/media/${fallbackImage.filename}`
+      fallbackUrl = `/api/media/file/${fallbackImage.filename}`
     }
   }
 

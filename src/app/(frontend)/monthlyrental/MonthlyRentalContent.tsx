@@ -37,7 +37,7 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({
             filesize: 123456,
             width: 1920,
             height: 1154,
-            url: '/media/controlroom1.jpg',
+            url: '/api/media/file/controlroom1.jpg',
           }}
           overlayOpacity={0.4}
           overlayColor="#8B1A1A"

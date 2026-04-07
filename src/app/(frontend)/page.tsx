@@ -40,7 +40,7 @@ export default async function Home() {
               id: 1,
               filename: 'liveroom1.jpg',
               alt: 'Recording studio',
-              url: '/media/liveroom1.jpg',
+              url: '/api/media/file/liveroom1.jpg',
             } as any}
             title="ORB STUDIOS"
             titleFont="vinyl"
@@ -87,7 +87,7 @@ export default async function Home() {
               id: 3,
               filename: 'liveroom1.jpg',
               alt: 'ORB Studios rooms',
-              url: '/media/liveroom1.jpg',
+              url: '/api/media/file/liveroom1.jpg',
               width: 1200,
               height: 800,
             } as any}
@@ -151,7 +151,7 @@ export default async function Home() {
               id: 2,
               filename: 'controlroom1.jpg',
               alt: 'Professional control room',
-              url: '/media/controlroom1.jpg',
+              url: '/api/media/file/controlroom1.jpg',
               width: 1200,
               height: 800,
             } as any}
@@ -165,7 +165,7 @@ export default async function Home() {
             title="How to Use Our Great Equipment"
             description="Master our professional-grade equipment with expert guidance and tutorials. Learn the ins and outs of our gear to get the best results for your project."
             backgroundImage={{
-              url: '/media/console.jpg',
+              url: '/api/media/file/console.jpg',
               alt: 'Professional recording equipment',
             }}
             links={[

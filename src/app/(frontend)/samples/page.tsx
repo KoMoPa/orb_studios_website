@@ -49,7 +49,7 @@ const mockMediaObject = (filename: string, alt: string) => ({
   id: 1,
   filename,
   alt,
-  url: `/media/${filename}`,
+  url: `/api/media/file/${filename}`,
   width: 1200,
   height: 800,
   updatedAt: new Date().toISOString(),
