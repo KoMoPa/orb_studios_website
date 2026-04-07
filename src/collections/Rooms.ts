@@ -31,6 +31,15 @@ export const Rooms: CollectionConfig = {
       },
     },
     {
+      name: 'order',
+      type: 'number',
+      required: true,
+      defaultValue: 0,
+      admin: {
+        description: 'Display order (lower numbers appear first)',
+      },
+    },
+    {
       name: 'heroImage',
       type: 'relationship',
       relationTo: 'media',
@@ -60,7 +69,7 @@ export const Rooms: CollectionConfig = {
     {
       name: 'aboutSection',
       type: 'richText',
-      required: true,
+      required: false,
       admin: {
         description: 'Main content section about the room',
       },
@@ -68,7 +77,7 @@ export const Rooms: CollectionConfig = {
     {
       name: 'gearList',
       type: 'richText',
-      required: true,
+      required: false,
       admin: {
         description: 'Equipment and gear included in this space',
       },
@@ -78,7 +87,7 @@ export const Rooms: CollectionConfig = {
       type: 'relationship',
       relationTo: 'media',
       hasMany: true,
-      required: true,
+      required: false,
       admin: {
         description: 'Images to display in the gallery section',
       },
@@ -90,7 +99,7 @@ export const Rooms: CollectionConfig = {
         {
           name: 'area',
           type: 'text',
-          required: true,
+          required: false,
           admin: {
             description: 'e.g., "357 Sq Ft" or "600 Square Meters"',
           },
@@ -103,17 +112,11 @@ export const Rooms: CollectionConfig = {
           },
         },
         {
-          name: 'hourlyRate',
+          name: 'etc',
           type: 'text',
-          required: true,
           admin: {
-            description: 'e.g., "$30" or "€25"',
+            description: 'Additional miscellaneous information',
           },
-        },
-        {
-          name: 'hourlyRateLabel',
-          type: 'text',
-          defaultValue: 'Hourly Rate',
         },
       ],
     },
@@ -127,24 +130,11 @@ export const Rooms: CollectionConfig = {
       },
     },
     {
-      name: 'bookingSection',
-      type: 'group',
-      fields: [
-        {
-          name: 'heading',
-          type: 'text',
-          defaultValue: 'Ready to Book?',
-        },
-        {
-          name: 'description',
-          type: 'text',
-        },
-        {
-          name: 'buttonText',
-          type: 'text',
-          defaultValue: 'Email to Book',
-        },
-      ],
+      name: 'customHeroCtaText',
+      type: 'text',
+      admin: {
+        description: 'Text for the Custom Hero CTA button',
+      },
     },
   ],
 }

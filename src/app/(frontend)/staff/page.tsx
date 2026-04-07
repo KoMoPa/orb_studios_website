@@ -34,7 +34,7 @@ export default async function StaffPage({ params: paramsPromise }: Args) {
         <div className="container">
           <div className="mb-16">
             <h1 className="text-5xl font-bold mb-4 tracking-wider">Our Team</h1>
-            <p className="text-xl text-gray-300">Meet the talented individuals behind ORB Studios.</p>
+            <p className="text-xl text-muted-foreground">Meet the talented individuals behind ORB Studios.</p>
           </div>
 
           {staff.length === 0 ? (

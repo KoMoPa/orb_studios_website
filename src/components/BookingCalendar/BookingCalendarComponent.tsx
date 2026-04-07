@@ -67,6 +67,7 @@ export function BookingCalendarComponent() {
           const data = await response.json();
           const options: RentalTypeOption[] = data.docs
             .filter((rate: any) => rate.type === 'hourly')
+            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
             .map((rate: any) => {
               const amount = typeof rate.amount === 'number' ? rate.amount : parseFloat(String(rate.amount)) || 30;
               return {
@@ -483,8 +484,20 @@ export function BookingCalendarComponent() {
             {loading ? (
               <div className="text-center py-8">
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-                  <div className="bg-blue-600 dark:bg-blue-500 h-full animate-pulse" style={{ width: '100%' }}></div>
+                  <div 
+                    className="bg-blue-600 dark:bg-blue-500 h-full rounded-full" 
+                    style={{ 
+                      animation: 'loadingBar 2s ease-in-out infinite',
+                    }}
+                  ></div>
                 </div>
+                <style>{`
+                  @keyframes loadingBar {
+                    0% { width: 10%; }
+                    50% { width: 90%; }
+                    100% { width: 10%; }
+                  }
+                `}</style>
                 <p className="text-gray-600 dark:text-gray-400 mt-3">Checking available times...</p>
               </div>
             ) : error ? (

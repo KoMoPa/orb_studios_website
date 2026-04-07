@@ -83,7 +83,6 @@ export interface Config {
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
-    search: Search;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-folders': FolderInterface;
@@ -113,7 +112,6 @@ export interface Config {
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
-    search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -926,6 +924,10 @@ export interface StaffCardBlock {
 export interface Staff {
   id: number;
   name: string;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order: number;
   bio?: {
     root: {
       type: string;
@@ -984,6 +986,7 @@ export interface Faq {
     };
     [k: string]: unknown;
   };
+  category: 'main' | 'monthly';
   updatedAt: string;
   createdAt: string;
 }
@@ -1037,6 +1040,10 @@ export interface Activity {
    */
   slug: string;
   /**
+   * Display order (lower numbers appear first)
+   */
+  order: number;
+  /**
    * Featured image for the activity
    */
   picture?: (number | null) | Media;
@@ -1061,7 +1068,7 @@ export interface Activity {
   /**
    * Equipment and resources included for this activity
    */
-  equipmentIncluded: {
+  equipmentIncluded?: {
     root: {
       type: string;
       children: {
@@ -1075,7 +1082,7 @@ export interface Activity {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1090,6 +1097,10 @@ export interface Room {
    * URL-friendly identifier (e.g., "jamroom", "mixroom")
    */
   slug: string;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order: number;
   /**
    * Background image for the hero section
    */
@@ -1109,7 +1120,7 @@ export interface Room {
   /**
    * Main content section about the room
    */
-  aboutSection: {
+  aboutSection?: {
     root: {
       type: string;
       children: {
@@ -1123,11 +1134,11 @@ export interface Room {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   /**
    * Equipment and gear included in this space
    */
-  gearList: {
+  gearList?: {
     root: {
       type: string;
       children: {
@@ -1141,35 +1152,33 @@ export interface Room {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   /**
    * Images to display in the gallery section
    */
-  galleryImages: (number | Media)[];
-  infoBox: {
+  galleryImages?: (number | Media)[] | null;
+  infoBox?: {
     /**
      * e.g., "357 Sq Ft" or "600 Square Meters"
      */
-    area: string;
+    area?: string | null;
     /**
      * Additional area details, e.g., "3927 Cubic Feet (L x W x H)"
      */
     areaDetails?: string | null;
     /**
-     * e.g., "$30" or "€25"
+     * Additional miscellaneous information
      */
-    hourlyRate: string;
-    hourlyRateLabel?: string | null;
+    etc?: string | null;
   };
   /**
    * Select a rate associated with this room
    */
   rate?: (number | Rate)[] | null;
-  bookingSection?: {
-    heading?: string | null;
-    description?: string | null;
-    buttonText?: string | null;
-  };
+  /**
+   * Text for the Custom Hero CTA button
+   */
+  customHeroCtaText?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1180,6 +1189,10 @@ export interface Room {
 export interface Rate {
   id: number;
   title: string;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order: number;
   /**
    * include $$$
    */
@@ -1285,37 +1298,6 @@ export interface FormSubmission {
     | {
         field: string;
         value: string;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "search".
- */
-export interface Search {
-  id: number;
-  title?: string | null;
-  priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
-  slug?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (number | null) | Media;
-  };
-  categories?:
-    | {
-        relationTo?: string | null;
-        categoryID?: string | null;
-        title?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1501,10 +1483,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
-      } | null)
-    | ({
-        relationTo: 'search';
-        value: number | Search;
       } | null)
     | ({
         relationTo: 'payload-folders';
@@ -1960,6 +1938,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface ActivitiesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  order?: T;
   picture?: T;
   description?: T;
   equipmentIncluded?: T;
@@ -1973,6 +1952,7 @@ export interface ActivitiesSelect<T extends boolean = true> {
 export interface RoomsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  order?: T;
   heroImage?: T;
   heroTitle?: T;
   heroGradientColor?: T;
@@ -1984,17 +1964,10 @@ export interface RoomsSelect<T extends boolean = true> {
     | {
         area?: T;
         areaDetails?: T;
-        hourlyRate?: T;
-        hourlyRateLabel?: T;
+        etc?: T;
       };
   rate?: T;
-  bookingSection?:
-    | T
-    | {
-        heading?: T;
-        description?: T;
-        buttonText?: T;
-      };
+  customHeroCtaText?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2004,6 +1977,7 @@ export interface RoomsSelect<T extends boolean = true> {
  */
 export interface RatesSelect<T extends boolean = true> {
   title?: T;
+  order?: T;
   amount?: T;
   type?: T;
   includes?: T;
@@ -2016,6 +1990,7 @@ export interface RatesSelect<T extends boolean = true> {
  */
 export interface StaffSelect<T extends boolean = true> {
   name?: T;
+  order?: T;
   bio?: T;
   headshot?: T;
   skills?:
@@ -2034,6 +2009,7 @@ export interface StaffSelect<T extends boolean = true> {
 export interface FaqSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
+  category?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2219,33 +2195,6 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
     | {
         field?: T;
         value?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "search_select".
- */
-export interface SearchSelect<T extends boolean = true> {
-  title?: T;
-  priority?: T;
-  doc?: T;
-  slug?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
-  categories?:
-    | T
-    | {
-        relationTo?: T;
-        categoryID?: T;
-        title?: T;
         id?: T;
       };
   updatedAt?: T;

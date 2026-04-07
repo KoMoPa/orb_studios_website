@@ -28,5 +28,21 @@ export const FAQ: CollectionConfig = {
       required: true,
       label: 'Answer',
     },
+    {
+      name: 'category',
+      type: 'select',
+      options: [
+        {
+          label: 'Main FAQs',
+          value: 'main',
+        },
+        {
+          label: 'Monthly FAQs',
+          value: 'monthly',
+        },
+      ],
+      required: true,
+      defaultValue: 'main',
+    },
   ],
 }

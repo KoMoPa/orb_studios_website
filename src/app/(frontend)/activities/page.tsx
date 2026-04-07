@@ -36,7 +36,7 @@ export default async function ActivitiesPage({ params: paramsPromise }: Args) {
         <div className="container">
           <div className="mb-16">
             <h1 className="text-5xl font-bold mb-4 tracking-wider">Suggested Activities</h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-muted-foreground">
               Explore the different activities we recommend for our studio spaces.
             </p>
           </div>

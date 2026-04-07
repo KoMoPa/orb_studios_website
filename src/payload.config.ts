@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -69,6 +70,11 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL || '',
     },
     push: true,
+  }),
+  email: resendAdapter({
+    defaultFromAddress: process.env.RESEND_SENDER_EMAIL || 'noreply@orbstudios.com',
+    defaultFromName: 'Orb Studios',
+    apiKey: process.env.RESEND_API_KEY,
   }),
   collections: [Pages, Posts, Media, Categories, Clients, Users, Activities, Rooms, Rates, Staff, FAQ, DoorCodes, Transactions],
   cors: [getServerSideURL()].filter(Boolean),
