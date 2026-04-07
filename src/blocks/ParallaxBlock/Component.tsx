@@ -18,35 +18,26 @@ export const ParallaxBlock: React.FC<Props> = ({
   overlayColor = '#000000',
   title,
   richText,
-  minHeight = 1800,
   staticImage,
-  disableInnerContainer,
 }) => {
-  const containerParallax = useParallax<HTMLDivElement>({
-    onProgressChange: (progress) => {
-      if (containerParallax.ref.current) {
-        containerParallax.ref.current.style.setProperty('--scroll-progress', progress.toString())
-      }
-    },
+  // Background moves slower than the viewport scroll — classic parallax depth effect.
+  // shouldAlwaysCompleteAnimation ensures progress starts at 0 when the hero is
+  // visible at the top of the page (not mid-way through as the default calculates).
+  const bgParallax = useParallax<HTMLDivElement>({
+    speed: -10,
+    shouldAlwaysCompleteAnimation: true,
   })
 
   return (
-    <div
-      ref={containerParallax.ref}
-      className="relative w-full overflow-hidden"
-      style={{
-        minHeight: `${minHeight}px`,
-        '--scroll-progress': 0,
-      } as React.CSSProperties & { '--scroll-progress': number }}
-    >
-      {/* Background Image with Parallax - Fades in as you scroll */}
-      <Parallax speed={-15} className="absolute inset-0 w-full h-full">
+    <div>
+      {/* ── Hero: full viewport height ────────────────────────────────── */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Background image — extends well beyond the container so the slower
+            parallax movement never reveals the edges */}
         <div
-          className="absolute inset-0 w-full h-full"
-          style={{
-            opacity: `calc(0.1 + 1.4 * var(--scroll-progress))`,
-            filter: 'blur(4px)',
-          } as React.CSSProperties}
+          ref={bgParallax.ref}
+          className="absolute"
+          style={{ top: '-20%', left: 0, right: 0, bottom: '-20%' }}
         >
           {media && (
             <Media
@@ -56,54 +47,56 @@ export const ParallaxBlock: React.FC<Props> = ({
               priority
             />
           )}
-          {/* Overlay with dynamic opacity */}
           <div
             className="absolute inset-0"
-            style={{
-              backgroundColor: overlayColor,
-              opacity: `calc(${overlayOpacity} * max(0.3, var(--scroll-progress)))`,
-            } as React.CSSProperties}
+            style={{ backgroundColor: overlayColor, opacity: overlayOpacity }}
           />
         </div>
-      </Parallax>
 
-      {/* Title - Only visible at start, quickly fades as scroll begins */}
-      <div
-        className="absolute inset-0 flex items-start justify-center pt-12 pointer-events-none"
-        style={{
-          opacity: `calc(max(0, 1 - var(--scroll-progress) * 1.5))`,
-        } as React.CSSProperties}
-      >
-        <h1 className="text-6xl md:text-7xl lg:text-9xl font-bold text-white text-center px-6 drop-shadow-lg max-w-5xl">
-          {title}
-        </h1>
-      </div>
-
-      {/* Content Box - Custom effect with scale and blur based on progress */}
-      <div
-        className="absolute inset-0 flex items-start justify-center px-4"
-        style={{
-          paddingTop: '20vh',
-        }}
-      >
-        <div
-          className="bg-white bg-opacity-97 rounded-xl shadow-2xl p-10 md:p-16 max-w-5xl w-full"
-          style={{
-            opacity: `calc(max(0, var(--scroll-progress) - 0.15) / 0.25)`,
-            transform: `scale(calc(0.85 + 0.15 * max(0, var(--scroll-progress) - 0.15) / 0.25)) blur(calc(8px * (1 - max(0, var(--scroll-progress) - 0.15) / 0.25)))`,
-            pointerEvents: `calc(var(--scroll-progress)) > 0.25 ? 'auto' : 'none'`,
-          } as React.CSSProperties}
-        >
-          <div className="prose prose-xl dark:prose-invert max-w-none">
-            {richText && (
-              <RichText
-                data={richText}
-                enableGutter={false}
-              />
-            )}
-          </div>
+        {/* Title — fades out and drifts upward as the hero scrolls past */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-6">
+          <Parallax
+            opacity={[1, 0]}
+            translateY={['0px', '-60px']}
+            shouldAlwaysCompleteAnimation
+          >
+            <h1 className="text-6xl md:text-7xl lg:text-9xl font-bold text-white text-center drop-shadow-lg max-w-5xl leading-tight">
+              {title}
+            </h1>
+          </Parallax>
         </div>
-      </div>
+
+        {/* Scroll indicator — fades out as soon as the user starts scrolling */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+          <Parallax opacity={[1, 0]} shouldAlwaysCompleteAnimation>
+            <div className="flex flex-col items-center gap-2 text-white/70">
+              <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
+              <div className="animate-bounce">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </Parallax>
+        </div>
+      </section>
+
+      {/* ── Details: slides up and fades in as it enters the viewport ─── */}
+      {richText && (
+        <div className="relative py-20 px-4 bg-background">
+          <Parallax
+            translateY={['50px', '0px']}
+            opacity={[0, 1]}
+            easing="easeOutQuart"
+          >
+            <div className="max-w-5xl mx-auto bg-white dark:bg-card rounded-xl shadow-2xl p-10 md:p-16">
+              <div className="prose prose-xl dark:prose-invert max-w-none">
+                <RichText data={richText} enableGutter={false} />
+              </div>
+            </div>
+          </Parallax>
+        </div>
+      )}
     </div>
   )
 }
