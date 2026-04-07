@@ -23,10 +23,12 @@ export default async function ActivitiesPage({ params: paramsPromise }: Args) {
       {
         title: true,
         slug: true,
+        order: true,
         picture: true,
         description: true,
         equipmentIncluded: true,
       },
+      'order',
     )()
 
     const activities = activitiesData.docs || []

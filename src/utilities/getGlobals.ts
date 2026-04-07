@@ -101,6 +101,7 @@ async function getCollectionItemsForStaticGeneration(
   collection: string,
   limit: number = 1000,
   select: Record<string, boolean> = {},
+  sort?: string,
 ) {
   const payload = await getCachedPayloadInstance()
 
@@ -111,6 +112,7 @@ async function getCollectionItemsForStaticGeneration(
     overrideAccess: false,
     pagination: false,
     select,
+    ...(sort ? { sort } : {}),
   })
 }
 
@@ -122,13 +124,14 @@ export const getCachedCollectionItemsForStaticGeneration = (
   collection: string,
   limit: number = 1000,
   select: Record<string, boolean> = {},
+  sort?: string,
 ) => {
-  const key = `static_collection_${collection}_${JSON.stringify(select)}`
+  const key = `static_collection_${collection}_${JSON.stringify(select)}_${sort ?? ''}`
   if (!collectionCaches.has(key)) {
     collectionCaches.set(
       key,
       unstable_cache(
-        async () => getCollectionItemsForStaticGeneration(collection, limit, select),
+        async () => getCollectionItemsForStaticGeneration(collection, limit, select, sort),
         [key],
         {
           tags: [`collection_${collection}`],

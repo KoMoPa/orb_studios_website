@@ -202,12 +202,6 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({ form
           <div className="flex items-center gap-6 max-w-5xl mx-auto mb-20">
             <div className="flex-1 h-px" style={{ backgroundColor: '#2c2520' }} />
             <div className="text-center">
-              <p
-                className="text-sm tracking-[0.35em] uppercase mb-1"
-                style={{ color: amber, fontFamily: 'var(--font-geist-mono)' }}
-              >
-                Included
-              </p>
               <h2 className="vinyl text-4xl md:text-5xl text-white">What You Get</h2>
             </div>
             <div className="flex-1 h-px" style={{ backgroundColor: '#2c2520' }} />
@@ -244,12 +238,6 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({ form
       <div className="py-24 px-4" style={{ backgroundColor: bg2 }}>
         <Parallax translateY={['40px', '0px']} opacity={[0, 1]} easing="easeOutQuart">
           <div className="max-w-3xl mx-auto text-center">
-            <p
-              className="text-sm tracking-[0.35em] uppercase mb-6"
-              style={{ color: amber, fontFamily: 'var(--font-geist-mono)' }}
-            >
-              Who It's For
-            </p>
             <h2 className="vinyl text-4xl md:text-5xl text-white mb-10">Perfect For</h2>
             <p className="text-xl leading-relaxed" style={{ color: '#b5a898' }}>
               Musicians and bands who need regular rehearsal space, solo artists working on album
@@ -269,51 +257,40 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({ form
                 className="text-sm tracking-[0.35em] uppercase mb-6"
                 style={{ color: amber, fontFamily: 'var(--font-geist-mono)' }}
               >
-                Getting Started
+                ORB Studios
               </p>
-              <h2 className="vinyl text-4xl md:text-5xl text-white">How It Works</h2>
+              <h2 className="vinyl text-4xl md:text-5xl text-white">Ready to make our studio your creative home base?</h2>
             </div>
 
-            <p className="text-xl leading-relaxed text-center mb-14" style={{ color: '#8a7f72' }}>
-              Reserve your time through our booking system with full scheduling flexibility. Your 24
-              hours reset each calendar month—make the most of them.
-            </p>
 
             {/* CTA box — sharp-cornered, hand-stamp feel */}
             <div
               className="p-10 text-center"
-              style={{ border: '1px solid #2c2520' }}
+              style={{ border: '1px solid #2c2520', backgroundColor: '#8B1A1A' }}
             >
               <p
                 className="text-sm tracking-[0.3em] uppercase mb-6"
-                style={{ color: '#4a4035', fontFamily: 'var(--font-geist-mono)' }}
+                style={{ color: '#ffffff', fontFamily: 'var(--font-geist-mono)' }}
               >
-                — Next Step —
+                — We only carry 5 Monthly Clients at a time. —
               </p>
               <p className="text-xl font-semibold text-white leading-snug mb-2">
-                Ready to make our studio your creative home base?
+                Put your name down on the waiting list for the next open spot. 
               </p>
-              <p className="text-base" style={{ color: '#6b5f52' }}>
-                Fill out the form below to schedule a tour and sign up.
-              </p>
-              <div className="mt-8 flex flex-col items-center gap-2" style={{ color: '#3a2e24' }}>
-                <div className="animate-bounce">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
-                  </svg>
+              {/* WAITLIST FORM */}
+              {filteredForm && (
+                <div className="mt-8 flex justify-center w-full" >
+                  <div className="w-full max-w-2xl">
+                    <div className="flex items-end gap-4 flex-wrap justify-center" >
+                      <FormBlock form={filteredForm} enableIntro={false}  />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </Parallax>
       </div>
-
-      {/* ── WAITLIST FORM ─────────────────────────────────────────────── */}
-      {filteredForm && (
-        <div className="pb-24" style={{ backgroundColor: bg1 }}>
-          <FormBlock form={filteredForm} enableIntro={false} />
-        </div>
-      )}
     </ParallaxProvider>
   )
 }

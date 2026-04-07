@@ -129,7 +129,7 @@ export const FormBlock: React.FC<
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)} className={isEmbedded ? 'w-full' : ''}>
-              <div className="mb-4 last:mb-0">
+              <div className="flex flex-wrap gap-4 items-end">
                 {formFromProps &&
                   formFromProps.fields &&
                   formFromProps.fields?.map((field, index) => {
@@ -141,7 +141,7 @@ export const FormBlock: React.FC<
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
                     if (Field) {
                       return (
-                        <div className="mb-6 last:mb-0" key={index}>
+                        <div className="mb-6 last:mb-0" key={index} className="flex-1 min-w-62.5">
                           <Field
                             form={formFromProps}
                             {...field}
@@ -157,9 +157,11 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
-                {submitButtonLabel}
-              </Button>
+              <div className="mt-6">
+                <Button form={formID} type="submit" variant="default">
+                  {submitButtonLabel}
+                </Button>
+              </div>
             </form>
           )}
         </FormProvider>
