@@ -941,7 +941,7 @@ export interface Staff {
     };
     [k: string]: unknown;
   } | null;
-  headshot: number | Media;
+  headshot?: (number | null) | Media;
   skills?:
     | {
         skill: string;
@@ -1039,7 +1039,7 @@ export interface Activity {
   /**
    * Featured image for the activity
    */
-  picture: number | Media;
+  picture?: (number | null) | Media;
   /**
    * Short description of the suggested activity for the studio
    */
@@ -1093,7 +1093,7 @@ export interface Room {
   /**
    * Background image for the hero section
    */
-  heroImage: number | Media;
+  heroImage?: (number | null) | Media;
   /**
    * Main heading in the hero section
    */

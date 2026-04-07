@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import type { GalleryBlock as GalleryBlockProps } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 export const GalleryBlock: React.FC<GalleryBlockProps> = ({ 
   images 
@@ -12,10 +11,10 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
   const getImageUrl = (media: any): string => {
     if (!media) return ''
     if (typeof media === 'object' && media.url) {
-      return getMediaUrl(media.url)
+      return media.url
     }
     if (typeof media === 'string') {
-      return getMediaUrl(media)
+      return media
     }
     return ''
   }

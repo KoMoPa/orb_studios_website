@@ -25,7 +25,7 @@ export const Logo = (props: Props) => {
         fetchPriority={priority}
         decoding="async"
         className="w-10 h-10"
-        src="/media/Record.png"
+        src="/api/media/file/record.png"
       />
       <span className={clsx('text-4xl font-bold tracking-wide text-white', textClassName)}>
         Orb Studios

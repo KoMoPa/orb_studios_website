@@ -144,7 +144,7 @@ export default function RecordingPage() {
     filesize: 123456,
     width: 1920,
     height: 1080,
-    url: '/media/recording-article.jpg',
+    url: '/api/media/file/recording-article.jpg',
   }
 
   const media1 = {
@@ -155,7 +155,7 @@ export default function RecordingPage() {
     filesize: 123456,
     width: 1920,
     height: 1080,
-    url: '/media/console.jpg',
+    url: '/api/media/file/console.jpg',
   }
 
   const media2 = {
@@ -166,7 +166,7 @@ export default function RecordingPage() {
     filesize: 123456,
     width: 1920,
     height: 1154,
-    url: '/media/controlroom1.jpg',
+    url: '/api/media/file/controlroom1.jpg',
   }
 
   const media3 = {
@@ -177,7 +177,7 @@ export default function RecordingPage() {
     filesize: 123456,
     width: 1920,
     height: 1154,
-    url: '/media/controlroom2.jpg',
+    url: '/api/media/file/controlroom2.jpg',
   }
 
   const media4 = {
@@ -188,7 +188,7 @@ export default function RecordingPage() {
     filesize: 123456,
     width: 1920,
     height: 1154,
-    url: '/media/controlroom3.jpg',
+    url: '/api/media/file/controlroom3.jpg',
   }
 
   return (

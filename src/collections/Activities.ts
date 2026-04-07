@@ -34,7 +34,6 @@ export const Activities: CollectionConfig = {
       name: 'picture',
       type: 'relationship',
       relationTo: 'media',
-      required: true,
       admin: {
         description: 'Featured image for the activity',
       },

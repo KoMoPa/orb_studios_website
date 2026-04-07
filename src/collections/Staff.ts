@@ -30,7 +30,6 @@ export const Staff: CollectionConfig = {
       name: 'headshot',
       type: 'upload',
       relationTo: 'media',
-      required: true,
     },
     {
       name: 'skills',
