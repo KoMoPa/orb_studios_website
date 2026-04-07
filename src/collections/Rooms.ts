@@ -130,6 +130,26 @@ export const Rooms: CollectionConfig = {
       },
     },
     {
+      name: 'audioSample',
+      type: 'relationship',
+      relationTo: 'media',
+      required: false,
+      filterOptions: {
+        mimeType: { contains: 'audio' },
+      },
+      admin: {
+        description: 'Audio file to play as a sample recording from this room (MP3, WAV, etc.)',
+      },
+    },
+    {
+      name: 'audioSampleLabel',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'Label shown on the audio player, e.g. "Sample Recording – Live Session"',
+      },
+    },
+    {
       name: 'customHeroCtaText',
       type: 'text',
       admin: {

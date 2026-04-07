@@ -9,6 +9,7 @@ import RichText from '@/components/RichText'
 import { CustomHero } from '@/heros/CustomHero'
 import { RateCard } from '@/components/RateCard'
 import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
+import { AudioPlayer } from '@/components/AudioPlayer'
 
 export async function generateStaticParams() {
   try {
@@ -75,6 +76,17 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
             {roomData.aboutSection && (
               <div className="mb-12">
                 <RichText data={roomData.aboutSection} enableGutter={false} />
+              </div>
+            )}
+
+            {/* Audio Sample */}
+            {roomData.audioSample && typeof roomData.audioSample === 'object' && roomData.audioSample.url && (
+              <div className="mb-12">
+                <h2 className="text-2xl font-bold mb-4">Hear the Room</h2>
+                <AudioPlayer
+                  url={roomData.audioSample.url}
+                  label={roomData.audioSampleLabel ?? roomData.audioSample.filename ?? undefined}
+                />
               </div>
             )}
           </div>

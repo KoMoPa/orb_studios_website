@@ -1176,6 +1176,14 @@ export interface Room {
    */
   rate?: (number | Rate)[] | null;
   /**
+   * Audio file to play as a sample recording from this room (MP3, WAV, etc.)
+   */
+  audioSample?: (number | null) | Media;
+  /**
+   * Label shown on the audio player, e.g. "Sample Recording – Live Session"
+   */
+  audioSampleLabel?: string | null;
+  /**
    * Text for the Custom Hero CTA button
    */
   customHeroCtaText?: string | null;
@@ -1967,6 +1975,8 @@ export interface RoomsSelect<T extends boolean = true> {
         etc?: T;
       };
   rate?: T;
+  audioSample?: T;
+  audioSampleLabel?: T;
   customHeroCtaText?: T;
   updatedAt?: T;
   createdAt?: T;
