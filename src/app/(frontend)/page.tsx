@@ -2,12 +2,57 @@ import React from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
+import type { Metadata } from 'next'
 
 import { CustomHero } from '@/heros/CustomHero'
 import { AccentHero } from '@/heros/AccentHero'
 import { ArticleBlock } from '@/blocks/ArticleBlock/Component'
 import { MonthlyCardsBlock } from '@/blocks/MonthlyCards/Component'
 import { FAQBlock } from '@/blocks/FAQBlock/Component'
+import { SchemaScript } from '@/components/SchemaScript'
+import {
+  generateOrganizationSchema,
+  generateRecordingStudioSchema,
+  generateRehearsalSpaceSchema,
+} from '@/utilities/generateSchema'
+import { getServerSideURL } from '@/utilities/getURL'
+
+export const metadata: Metadata = {
+  title: 'ORB Studios - Recording & Rehearsal Space | Etobicoke, Toronto',
+  description:
+    'Premier boutique recording studio and rehearsal space for musicians and bands. Features two expertly designed rooms with world-class equipment, professional acoustics, monthly rentals, gear storage, and complete privacy in Etobicoke and Toronto.',
+  keywords: [
+    'recording studio',
+    'rehearsal space',
+    'band rehearsal',
+    'music production',
+    'Etobicoke',
+    'Toronto',
+    'professional recording',
+    'boutique studio',
+    'monthly rental',
+    'jam room',
+    'mixing room',
+    'gear storage',
+  ],
+  openGraph: {
+    title: 'ORB Studios - Recording & Rehearsal Space | Etobicoke, Toronto',
+    description:
+      'Premier boutique recording studio and rehearsal space with world-class equipment, professional acoustics, monthly rentals, gear storage, and complete privacy.',
+    url: getServerSideURL(),
+    type: 'website',
+    locale: 'en_CA',
+    siteName: 'ORB Studios',
+    images: [
+      {
+        url: `${getServerSideURL()}/api/media/file/liveroom1.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'ORB Studios Live Room',
+      },
+    ],
+  },
+}
 
 export default async function Home() {
   const payload = await getPayload({ config: configPromise })
@@ -37,6 +82,9 @@ export default async function Home() {
   const faqs = faqsData.docs
   return (
     <>
+      <SchemaScript schema={generateOrganizationSchema()} />
+      <SchemaScript schema={generateRecordingStudioSchema()} />
+      <SchemaScript schema={generateRehearsalSpaceSchema()} />
       <main style={{ minHeight: '70vh' }}>
         <div style={{ width: '100%' }}>
           {/* Hero Block Example */}
