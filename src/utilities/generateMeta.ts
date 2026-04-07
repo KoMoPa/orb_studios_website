@@ -27,13 +27,13 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+    ? doc?.meta?.title + ' | ORB Studios'
+    : 'ORB Studios - Recording & Rehearsal Space | Etobicoke, Toronto'
 
   return {
-    description: doc?.meta?.description,
+    description: doc?.meta?.description || 'Premier boutique recording studio and rehearsal space in Etobicoke and Toronto. Professional acoustically treated rooms, world-class gear, monthly rentals, and gear storage.',
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
+      description: doc?.meta?.description || 'Premier boutique recording studio and rehearsal space in Etobicoke and Toronto. Professional acoustically treated rooms, world-class gear, monthly rentals, and gear storage.',
       images: ogImage
         ? [
             {
