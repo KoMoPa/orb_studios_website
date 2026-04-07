@@ -59,8 +59,8 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
       minHeight="380px"
       alignment="left"
       cta={{
-        text: `Book ${roomData.title}`,
-        url: '#booking',
+        text: roomData.customHeroCtaText || `Book ${roomData.title}`,
+        url: `/booking?room=${roomData.slug}`,
       }}
     />
 
@@ -93,17 +93,18 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
             {roomData.infoBox && (
               <div className="bg-gray-900/40 border border-gray-700 p-6 rounded-lg">
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-white">Area</h3>
-                    <p className="text-gray-300">{roomData.infoBox.area}</p>
-                    {roomData.infoBox.areaDetails && (
-                      <p className="text-sm text-gray-500">{roomData.infoBox.areaDetails}</p>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">{roomData.infoBox.hourlyRateLabel}</h3>
-                    <p className="text-gray-300">{roomData.infoBox.hourlyRate}</p>
-                  </div>
+                  {roomData.infoBox.area && (
+                    <div>
+                      <h3 className="font-semibold text-white">Area Info</h3>
+                      <p className="text-gray-300">{roomData.infoBox.area}</p>
+                      {roomData.infoBox.areaDetails && (
+                        <p className="text-sm text-gray-500">{roomData.infoBox.areaDetails}</p>
+                      )}
+                      {roomData.infoBox.etc && (
+                        <p className="text-xs text-gray-400">{roomData.infoBox.etc}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

@@ -23,6 +23,18 @@ export default async function Home() {
   })
 
   const form = formsData.docs[0] as Form | undefined
+
+  // Fetch main category FAQs
+  const faqsData = await payload.find({
+    collection: 'faq',
+    where: {
+      category: {
+        equals: 'main',
+      },
+    },
+  })
+
+  const faqs = faqsData.docs
   return (
     <>
       <main style={{ minHeight: '70vh' }}>
@@ -212,6 +224,7 @@ export default async function Home() {
           <FAQBlock
             blockType="faqBlock"
             title="Frequently Asked Questions"
+            faqs={faqs}
           />
         </div>
       </main>

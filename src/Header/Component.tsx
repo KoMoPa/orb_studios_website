@@ -18,7 +18,7 @@ export async function Header() {
           const items = await getCachedCollectionItems(
             collection,
             100,
-            titleField,
+            'order',
             {
               [titleField]: true,
               [slugField]: true,

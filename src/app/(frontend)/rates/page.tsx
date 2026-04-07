@@ -16,6 +16,7 @@ export default async function Page() {
     collection: 'rates',
     depth: 1,
     limit: 12,
+    sort: 'order',
     overrideAccess: false,
     select: {
       title: true,

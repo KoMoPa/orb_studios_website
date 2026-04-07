@@ -22,6 +22,15 @@ export const Staff: CollectionConfig = {
       required: true,
     },
     {
+      name: 'order',
+      type: 'number',
+      required: true,
+      defaultValue: 0,
+      admin: {
+        description: 'Display order (lower numbers appear first)',
+      },
+    },
+    {
       name: 'bio',
       type: 'richText',
       required: false,

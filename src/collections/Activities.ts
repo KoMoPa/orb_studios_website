@@ -31,6 +31,15 @@ export const Activities: CollectionConfig = {
       },
     },
     {
+      name: 'order',
+      type: 'number',
+      required: true,
+      defaultValue: 0,
+      admin: {
+        description: 'Display order (lower numbers appear first)',
+      },
+    },
+    {
       name: 'picture',
       type: 'relationship',
       relationTo: 'media',
@@ -49,7 +58,6 @@ export const Activities: CollectionConfig = {
     {
       name: 'equipmentIncluded',
       type: 'richText',
-      required: true,
       admin: {
         description: 'Equipment and resources included for this activity',
       },
