@@ -17,31 +17,32 @@ function createEasternDate(dateString: string, timeString: string): Date {
   const [year, month, day] = dateString.split('-').map(Number);
   const [hours, minutes] = timeString.split(':').map(Number);
   
-  // Create a date interpreting the input as Eastern time
-  // Get current offset to determine if EDT or EST
-  const testDate = new Date(year, month - 1, day);
+  // Create a candidate date (in system local time)
+  const candidateDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
   
-  // Create the date in UTC, then adjust for Eastern timezone offset
-  const utcDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0, 0));
-  
-  // Calculate the offset between UTC and Eastern on this date
-  // Format the UTC date as a string that represents Eastern time
-  // Create a temporary date to check offset
-  const formatter = new Intl.DateTimeFormat('en-US', {
+  // Get what time this date represents in Toronto timezone
+  const torontoFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Toronto',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
     hour12: false,
   });
   
-  // We need to find the UTC time that equals the given Eastern time
-  // Start with UTC time and adjust
-  let offset = new Date(year, month - 1, day).getTimezoneOffset() * 60000;
-  return new Date(utcDate.getTime() + offset);
+  const parts = torontoFormatter.formatToParts(candidateDate);
+  const partMap: Record<string, number> = {};
+  parts.forEach(p => {
+    partMap[p.type] = parseInt(p.value, 10);
+  });
+  
+  // Calculate the offset: how many hours/minutes we need to adjust
+  const hourDiff = hours - partMap.hour;
+  const minuteDiff = minutes - partMap.minute;
+  
+  // Adjust the candidate date to represent the correct Eastern time in UTC
+  return new Date(candidateDate.getTime() + hourDiff * 3600000 + minuteDiff * 60000);
 }
 
 /**
