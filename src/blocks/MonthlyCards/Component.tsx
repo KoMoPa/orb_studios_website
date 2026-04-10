@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
 import { FormBlock } from '@/blocks/Form/Component'

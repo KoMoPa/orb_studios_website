@@ -4,6 +4,8 @@ import { StaffCardBlock } from '@/blocks/StaffCard/Component'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getCachedCollectionItemsForStaticGeneration } from '@/utilities/getGlobals'
 
+export const dynamic = 'force-static'
+
 export async function generateStaticParams() {
   return []
 }

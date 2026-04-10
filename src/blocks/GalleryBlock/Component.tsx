@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import type { GalleryBlock as GalleryBlockProps } from '@/payload-types'
 
 export const GalleryBlock: React.FC<GalleryBlockProps> = ({ 
@@ -37,10 +38,12 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({
                 className="relative w-full aspect-video rounded-lg overflow-hidden group cursor-pointer"
                 onClick={() => setSelectedImageUrl(imageUrl)}
               >
-                <img
+                <Image
                   src={imageUrl}
                   alt={typeof image === 'object' && image.alt ? image.alt : `Gallery ${index + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
             )

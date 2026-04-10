@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateRoom, revalidateDeleteRoom } from './Rooms/hooks/revalidateRoom'
 
 export const Rooms: CollectionConfig = {
   slug: 'rooms',
@@ -157,4 +158,8 @@ export const Rooms: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [revalidateRoom],
+    afterDelete: [revalidateDeleteRoom],
+  },
 }

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateStaff, revalidateDeleteStaff } from './Staff/hooks/revalidateStaff'
 
 export const Staff: CollectionConfig = {
   slug: 'staff',
@@ -53,4 +54,8 @@ export const Staff: CollectionConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateStaff],
+    afterDelete: [revalidateDeleteStaff],
+  },
 }

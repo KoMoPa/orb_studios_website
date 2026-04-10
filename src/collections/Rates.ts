@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateRate, revalidateDeleteRate } from './Rates/hooks/revalidateRate'
 
 export const Rates: CollectionConfig = {
     slug: 'rates',
@@ -52,5 +53,9 @@ export const Rates: CollectionConfig = {
             type: 'richText',
             admin: { description: 'whats included'}
         }
-    ]
+    ],
+    hooks: {
+        afterChange: [revalidateRate],
+        afterDelete: [revalidateDeleteRate],
+    },
 }

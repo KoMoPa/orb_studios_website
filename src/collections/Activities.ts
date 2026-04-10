@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateActivity, revalidateDeleteActivity } from './Activities/hooks/revalidateActivity'
 
 export const Activities: CollectionConfig = {
   slug: 'activities',
@@ -63,4 +64,8 @@ export const Activities: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [revalidateActivity],
+    afterDelete: [revalidateDeleteActivity],
+  },
 }
