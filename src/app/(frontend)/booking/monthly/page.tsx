@@ -55,7 +55,7 @@ export default function MonthlyBookingPage() {
 
   if (step === 'verify') {
     return (
-      <div className="container pt-24 pb-8">
+      <div className="container pt-24 pb-16">
         <div className="prose dark:prose-invert max-w-none mb-12">
           <h1>Monthly Client Portal</h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -107,6 +107,7 @@ export default function MonthlyBookingPage() {
             </div>
           </div>
         </div>
+
       </div>
     );
   }
@@ -139,6 +140,22 @@ export default function MonthlyBookingPage() {
         >
           ← Sign out
         </button>
+      </div>
+
+      <div className="mt-16">
+        <h2 className="text-2xl font-semibold mb-2">Studio Availability</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          Check open times before you book.
+        </p>
+        <div className="w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <iframe
+            src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FToronto&showPrint=0&showTabs=0&showCalendars=0&showTz=0&title=Orb%20Studios%20Calendar&src=b3JibXVzaWNzdHVkaW9zQGdtYWlsLmNvbQ&color=%23ff2968"
+            style={{ border: 0 }}
+            width="100%"
+            height="600"
+            title="Orb Studios Calendar"
+          />
+        </div>
       </div>
     </div>
   );

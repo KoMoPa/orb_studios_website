@@ -1,18 +1,12 @@
-// import type { Metadata } from 'next'
 import React from 'react'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getCachedPayloadInstance } from '@/utilities/getGlobals'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
 import { MonthlyRentalContent } from './MonthlyRentalContent'
 
-// Note: Metadata export not compatible with server component if needed later
-// export const metadata: Metadata = {
-//   title: 'All-Inclusive Monthly Rental',
-//   description: 'Explore our flexible monthly rental options for studio space.',
-// }
+export const revalidate = 3600
 
 export default async function MonthlyRentalsPage() {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getCachedPayloadInstance()
   
   // Fetch the form by title
   const formsData = await payload.find({

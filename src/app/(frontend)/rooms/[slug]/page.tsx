@@ -11,6 +11,8 @@ import { RateCard } from '@/components/RateCard'
 import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
 import { AudioPlayer } from '@/components/AudioPlayer'
 
+export const dynamic = 'force-static'
+
 export async function generateStaticParams() {
   try {
     const rooms = await getCachedCollectionItemsForStaticGeneration('rooms', 1000, {

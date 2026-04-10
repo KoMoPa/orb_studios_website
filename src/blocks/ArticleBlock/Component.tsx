@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 
 import type { ArticleBlock as ArticleBlockProps } from '@/payload-types'

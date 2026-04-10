@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax'
 import { FormBlock } from '@/blocks/Form/Component'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
@@ -114,44 +115,44 @@ export const MonthlyRentalContent: React.FC<MonthlyRentalContentProps> = ({ form
         <div className="absolute inset-0 flex gap-2 p-2">
           {/* Col 1 — speed 4 */}
           <Parallax speed={4} className="flex-1 flex flex-col gap-2" style={{ marginTop: '-18%' }}>
-            <div style={{ height: '55vh' }} className="overflow-hidden">
-              <img src="/api/media/file/liveroom1.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '55vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/liveroom1.jpg" alt="Live room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
-            <div style={{ height: '55vh' }} className="overflow-hidden">
-              <img src="/api/media/file/controlroom3.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '55vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/controlroom3.jpg" alt="Control room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
           </Parallax>
 
           {/* Col 2 — speed -6 */}
           <Parallax speed={-6} className="flex-1 flex flex-col gap-2" style={{ marginTop: '-8%' }}>
-            <div style={{ height: '40vh' }} className="overflow-hidden">
-              <img src="/api/media/file/controlroom1.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '40vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/controlroom1.jpg" alt="Control room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
-            <div style={{ height: '40vh' }} className="overflow-hidden">
-              <img src="/api/media/file/liveroom3.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '40vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/liveroom3.jpg" alt="Live room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
-            <div style={{ height: '40vh' }} className="overflow-hidden">
-              <img src="/api/media/file/liveroom5.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '40vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/liveroom5.jpg" alt="Live room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
           </Parallax>
 
           {/* Col 3 — speed -14 */}
           <Parallax speed={-14} className="flex-1 flex flex-col gap-2" style={{ marginTop: '-28%' }}>
-            <div style={{ height: '55vh' }} className="overflow-hidden">
-              <img src="/api/media/file/liveroom2.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '55vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/liveroom2.jpg" alt="Live room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
-            <div style={{ height: '55vh' }} className="overflow-hidden">
-              <img src="/api/media/file/controlroom4.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '55vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/controlroom4.jpg" alt="Control room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
           </Parallax>
 
           {/* Col 4 — speed 10 */}
           <Parallax speed={10} className="flex-1 flex flex-col gap-2" style={{ marginTop: '-12%' }}>
-            <div style={{ height: '48vh' }} className="overflow-hidden">
-              <img src="/api/media/file/liveroom4.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '48vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/liveroom4.jpg" alt="Live room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
-            <div style={{ height: '48vh' }} className="overflow-hidden">
-              <img src="/api/media/file/controlroom2.jpg" alt="" className="w-full h-full object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
+            <div style={{ height: '48vh', position: 'relative' }} className="overflow-hidden">
+              <Image src="/api/media/file/controlroom2.jpg" alt="Control room" fill sizes="25vw" className="object-cover" style={{ filter: 'sepia(20%) brightness(0.88)' }} />
             </div>
           </Parallax>
         </div>

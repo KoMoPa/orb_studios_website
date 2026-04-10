@@ -1,11 +1,10 @@
-'use client'
 import { cn } from '@/utilities/ui'
 import React from 'react'
 
-import type { Rates } from '@/payload-types'
+import type { Rate } from '@/payload-types'
 import RichText from '@/components/RichText'
 
-export type RateCardData = Pick<Rates, 'title' | 'amount' | 'type' | 'includes'>
+export type RateCardData = Pick<Rate, 'title' | 'amount' | 'type' | 'includes'>
 
 export const RateCard: React.FC<{
   className?: string

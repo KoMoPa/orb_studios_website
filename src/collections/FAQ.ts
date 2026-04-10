@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateFAQ, revalidateDeleteFAQ } from './FAQ/hooks/revalidateFAQ'
 
 export const FAQ: CollectionConfig = {
   slug: 'faq',
@@ -45,4 +46,8 @@ export const FAQ: CollectionConfig = {
       defaultValue: 'main',
     },
   ],
+  hooks: {
+    afterChange: [revalidateFAQ],
+    afterDelete: [revalidateDeleteFAQ],
+  },
 }

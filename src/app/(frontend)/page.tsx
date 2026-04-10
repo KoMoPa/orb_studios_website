@@ -1,8 +1,9 @@
 import React from 'react'
-import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Form } from '@payloadcms/plugin-form-builder/types'
 import type { Metadata } from 'next'
+
+import { getCachedPayloadInstance } from '@/utilities/getGlobals'
 
 import { CustomHero } from '@/heros/CustomHero'
 import { AccentHero } from '@/heros/AccentHero'
@@ -54,8 +55,10 @@ export const metadata: Metadata = {
   },
 }
 
+export const revalidate = 600
+
 export default async function Home() {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getCachedPayloadInstance()
 
   // Fetch the form by title
   const formsData = await payload.find({
