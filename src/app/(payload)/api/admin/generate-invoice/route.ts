@@ -10,6 +10,26 @@ const MONTHLY_RATE = 400;
 const HST_RATE = 0.13;
 
 /**
+ * Get the date string in Eastern timezone from a UTC date
+ * Returns format: "2026-06-10"
+ */
+function getEasternDateString(utcDate: Date): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Toronto',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  
+  const parts = formatter.formatToParts(utcDate);
+  const year = parts.find(p => p.type === 'year')?.value;
+  const month = parts.find(p => p.type === 'month')?.value;
+  const day = parts.find(p => p.type === 'day')?.value;
+  
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * POST /api/admin/generate-invoice
  * Generate an invoice PDF manually from admin panel
  * 
@@ -186,6 +206,8 @@ export async function POST(request: NextRequest) {
           transactionDate: today,
           purchasePrice: Number(purchasePrice.toFixed(2)),
           taxAmount: Number(taxAmount.toFixed(2)),
+          clientEmail: body.clientEmail,
+          bookingStartTime: startTime ? getEasternDateString(startTime) : today,
         },
       });
       console.log('Transaction logged for manual invoice');

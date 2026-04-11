@@ -80,6 +80,7 @@ export default async function Home() {
         equals: 'main',
       },
     },
+    sort: 'order',
   })
 
   const faqs = faqsData.docs
@@ -110,6 +111,7 @@ export default async function Home() {
             subtitle="Premier Boutique Music Space"
             description="Etobicoke's premier recording and rehearsal space with world-class equipment and professional tracking facilities."
             cta={{ text: 'Book Now', url: '/booking' }}
+            ctaClassName="btn-console--lg"
           />
 
           

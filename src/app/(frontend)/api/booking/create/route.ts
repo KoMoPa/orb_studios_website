@@ -10,6 +10,26 @@ import config from '@/payload.config';
 const TIMEZONE = 'America/Toronto'; // Eastern time
 
 /**
+ * Get the date string in Eastern timezone from a UTC date
+ * Returns format: "2026-06-10"
+ */
+function getEasternDateString(utcDate: Date): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Toronto',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  
+  const parts = formatter.formatToParts(utcDate);
+  const year = parts.find(p => p.type === 'year')?.value;
+  const month = parts.find(p => p.type === 'month')?.value;
+  const day = parts.find(p => p.type === 'day')?.value;
+  
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Create a UTC date from a date string and time string in Eastern timezone
  * dateString: "2026-04-01", timeString: "14:00"
  */
@@ -68,15 +88,6 @@ export async function POST(request: NextRequest) {
     if (missingFields.length > 0) {
       return NextResponse.json(
         { error: `Missing required fields: ${missingFields.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.clientEmail)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
         { status: 400 }
       );
     }
@@ -275,6 +286,8 @@ Price: $${pricing.total}
           transactionDate: today,
           purchasePrice: Number(purchasePrice.toFixed(2)),
           taxAmount: Number(taxAmount.toFixed(2)),
+          clientEmail: body.clientEmail,
+          bookingStartTime: startTime.toISOString(),
         },
       });
       console.log('Transaction logged for analytics');

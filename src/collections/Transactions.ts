@@ -45,6 +45,26 @@ export const Transactions: CollectionConfig = {
         step: 0.01,
       },
     },
+    {
+      name: 'clientEmail',
+      type: 'email',
+      required: true,
+      label: 'Client Email',
+      admin: {
+        readOnly: true,
+        description: 'Auto-populated from booking',
+      },
+    },
+    {
+      name: 'bookingStartTime',
+      type: 'date',
+      required: false,
+      label: 'Booking Start Date',
+      admin: {
+        readOnly: true,
+        description: 'Date of the actual booking (for manual invoices)',
+      },
+    },
   ],
   timestamps: true,
 }

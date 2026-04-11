@@ -46,6 +46,26 @@ function createEasternDate(dateString: string, timeString: string): Date {
 }
 
 /**
+ * Get the date string in Eastern timezone from a UTC date
+ * Returns format: "2026-06-10"
+ */
+function getEasternDateString(utcDate: Date): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Toronto',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  
+  const parts = formatter.formatToParts(utcDate);
+  const year = parts.find(p => p.type === 'year')?.value;
+  const month = parts.find(p => p.type === 'month')?.value;
+  const day = parts.find(p => p.type === 'day')?.value;
+  
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * POST /api/booking/monthly/create
  * Create a quick booking for a monthly client
  */
@@ -184,6 +204,31 @@ ${overageInfo.overageHours > 0 ? `OVERAGE: ${overageInfo.overageHours} hours cha
       console.log(`[Monthly] Updated client hours: ${client.id}`);
     } catch (error) {
       console.error('[Monthly] Error updating client hours:', error);
+    }
+
+    // Log transaction for overage charges if applicable
+    if (overageInfo.overageHours > 0) {
+      try {
+        const HST_RATE = 0.13;
+        const overageRate = rehearsalHourlyRate * 0.5;
+        const overageSubtotal = overageInfo.overageCost;
+        const hst = overageSubtotal * HST_RATE;
+        const today = new Date().toISOString().split('T')[0];
+
+        await payload.create({
+          collection: 'transactions',
+          data: {
+            transactionDate: today,
+            purchasePrice: Number(overageSubtotal.toFixed(2)),
+            taxAmount: Number(hst.toFixed(2)),
+            clientEmail: email,
+            bookingStartTime: startTime.toISOString(),
+          },
+        });
+        console.log('[Monthly] Transaction logged for overage charges');
+      } catch (transactionError) {
+        console.error('[Monthly] Error logging transaction:', transactionError);
+      }
     }
 
     // Generate invoice PDF if there are overage charges

@@ -10,15 +10,17 @@ export type RoomCardData = Pick<Room, 'title' | 'slug' | 'heroImage' | 'heroTitl
 export const RoomCard: React.FC<{
   className?: string
   doc?: RoomCardData
+  href?: string
 }> = (props) => {
-  const { className, doc } = props
+  const { className, doc, href: hrefOverride } = props
 
   if (!doc) return null
 
   const { title, slug, heroImage, infoBox } = doc
+  const href = hrefOverride ?? `/rooms/${slug}`
 
   return (
-    <Link href={`/rooms/${slug}`} className={cn('group block', className)}>
+    <Link href={href} className={cn('group block', className)}>
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full">
         {heroImage && typeof heroImage === 'object' && (
           <div className="relative aspect-video w-full overflow-hidden">

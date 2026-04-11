@@ -23,6 +23,7 @@ export default async function Page() {
       amount: true,
       type: true,
       includes: true,
+      link: true,
     },
   })
 

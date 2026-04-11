@@ -986,6 +986,10 @@ export interface Faq {
     };
     [k: string]: unknown;
   };
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order: number;
   category: 'main' | 'monthly';
   updatedAt: string;
   createdAt: string;
@@ -1224,6 +1228,10 @@ export interface Rate {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Optional page link (e.g. /rooms/jamroom). Clicking the card will navigate here.
+   */
+  link?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1266,6 +1274,14 @@ export interface Transaction {
    * HST or applicable tax
    */
   taxAmount: number;
+  /**
+   * Auto-populated from booking
+   */
+  clientEmail: string;
+  /**
+   * Date of the actual booking (for manual invoices)
+   */
+  bookingStartTime?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1991,6 +2007,7 @@ export interface RatesSelect<T extends boolean = true> {
   amount?: T;
   type?: T;
   includes?: T;
+  link?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2019,6 +2036,7 @@ export interface StaffSelect<T extends boolean = true> {
 export interface FaqSelect<T extends boolean = true> {
   question?: T;
   answer?: T;
+  order?: T;
   category?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2042,6 +2060,8 @@ export interface TransactionsSelect<T extends boolean = true> {
   transactionDate?: T;
   purchasePrice?: T;
   taxAmount?: T;
+  clientEmail?: T;
+  bookingStartTime?: T;
   updatedAt?: T;
   createdAt?: T;
 }

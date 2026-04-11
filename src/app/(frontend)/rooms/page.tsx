@@ -3,6 +3,7 @@ import React from 'react'
 
 import { getCachedPayloadInstance } from '@/utilities/getGlobals'
 import { RoomsArchive } from '@/components/RoomsArchive'
+import { RoomCard } from '@/components/RoomCard'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -34,6 +35,24 @@ export default async function Page() {
       </div>
 
       <RoomsArchive rooms={rooms.docs} />
+
+      <div className="container mt-6">
+        <div className="flex flex-wrap justify-center gap-6">
+          <div className="w-full md:w-1/2 lg:w-1/3">
+            <RoomCard
+              className="h-full"
+              href="/activities"
+              doc={{
+                title: 'Explore Activities',
+                slug: 'activities',
+                heroImage: null,
+                heroTitle: 'Explore Activities',
+                infoBox: { area: 'See all the ways you can use ORB Studios' },
+              }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

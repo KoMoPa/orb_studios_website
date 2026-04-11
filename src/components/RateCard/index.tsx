@@ -1,10 +1,11 @@
 import { cn } from '@/utilities/ui'
 import React from 'react'
+import NextLink from 'next/link'
 
 import type { Rate } from '@/payload-types'
 import RichText from '@/components/RichText'
 
-export type RateCardData = Pick<Rate, 'title' | 'amount' | 'type' | 'includes'>
+export type RateCardData = Pick<Rate, 'title' | 'amount' | 'type' | 'includes' | 'link'>
 
 export const RateCard: React.FC<{
   className?: string
@@ -14,14 +15,15 @@ export const RateCard: React.FC<{
 
   if (!doc) return null
 
-  const { title, amount, type, includes } = doc
+  const { title, amount, type, includes, link } = doc
   const typeLabel = type === 'hourly' ? '/hour' : type === 'monthly' ? '/month' : ''
 
-  return (
+  const card = (
     <div
       className={cn(
-        'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm hover:shadow-md transition-shadow',
-        className,
+        'rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm hover:shadow-md transition-shadow h-full',
+        link && 'cursor-pointer',
+        !link && className,
       )}
     >
       <div className="mb-4">
@@ -39,4 +41,14 @@ export const RateCard: React.FC<{
       )}
     </div>
   )
+
+  if (link) {
+    return (
+      <NextLink href={link} className={cn('block no-underline', className)}>
+        {card}
+      </NextLink>
+    )
+  }
+
+  return card
 }

@@ -149,6 +149,12 @@ export default async function RoomPage({ params: paramsPromise }: Args) {
         )}
       </div>
     </div>
+
+    <div className="pb-24 text-center">
+      <a href="/rooms" className="btn-console btn-console--red">
+        Looking for something else?
+      </a>
+    </div>
     </>
   )
 }
