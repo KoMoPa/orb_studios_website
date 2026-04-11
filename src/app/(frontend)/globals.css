@@ -325,6 +325,11 @@ html[data-theme='light'] {
   text-decoration: none;
 }
 
+.btn-console--lg {
+  padding: 2.5rem 5rem;
+  font-size: 3rem;
+}
+
 /* Red Console Button */
 .btn-console--red {
   background: #8b2222;

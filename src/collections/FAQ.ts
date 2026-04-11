@@ -7,7 +7,7 @@ export const FAQ: CollectionConfig = {
   slug: 'faq',
   admin: {
     useAsTitle: 'question',
-    defaultColumns: ['question', 'updatedAt'],
+    defaultColumns: ['question', 'order', 'updatedAt'],
     group: 'Content',
   },
   access: {
@@ -28,6 +28,15 @@ export const FAQ: CollectionConfig = {
       type: 'richText',
       required: true,
       label: 'Answer',
+    },
+    {
+      name: 'order',
+      type: 'number',
+      required: true,
+      defaultValue: 0,
+      admin: {
+        description: 'Display order (lower numbers appear first)',
+      },
     },
     {
       name: 'category',

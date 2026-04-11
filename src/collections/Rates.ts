@@ -52,6 +52,13 @@ export const Rates: CollectionConfig = {
             name: 'includes',
             type: 'richText',
             admin: { description: 'whats included'}
+        },
+        {
+            name: 'link',
+            type: 'text',
+            admin: {
+                description: 'Optional page link (e.g. /rooms/jamroom). Clicking the card will navigate here.',
+            },
         }
     ],
     hooks: {

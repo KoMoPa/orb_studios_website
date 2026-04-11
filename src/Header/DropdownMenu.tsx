@@ -31,8 +31,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({ isOpen, onClose, nav
             if (navItem.type === 'link' && navItem.link) {
               return (
                 <div key={i} onClick={onClose} className="block">
-                  <div className="px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors">
-                    <CMSLink {...navItem.link} appearance="inline" />
+                  <div className="px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors w-full">
+                    <CMSLink {...navItem.link} appearance="inline" className="w-full block" />
                   </div>
                 </div>
               )
@@ -97,7 +97,7 @@ const NestedCollectionDropdown: React.FC<NestedCollectionDropdownProps> = ({
               <Link
                 key={item.slug}
                 href={`${basePath}/${item.slug}`}
-                className="block px-6 py-2 text-sm text-white hover:bg-gray-700 transition-colors"
+                className="flex w-full px-6 py-2 text-sm text-white hover:bg-gray-700 transition-colors"
                 onClick={onItemClick}
               >
                 {item.title}

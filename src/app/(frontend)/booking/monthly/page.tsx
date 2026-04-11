@@ -53,6 +53,24 @@ export default function MonthlyBookingPage() {
     }
   }
 
+  async function handleBookingComplete() {
+    try {
+      const response = await fetch('/api/booking/monthly/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setClient(data.client);
+      }
+    } catch (error) {
+      console.error('Failed to refresh client data:', error);
+    }
+  }
+
   if (step === 'verify') {
     return (
       <div className="container pt-24 pb-16">
@@ -123,10 +141,7 @@ export default function MonthlyBookingPage() {
 
       <MonthlyBookingCalendarComponent
         client={client}
-        onBookingComplete={() => {
-          // Could refresh client data or show a success message here
-          // For now, the component handles the success messaging
-        }}
+        onBookingComplete={handleBookingComplete}
       />
 
       <div className="mt-8 text-center">

@@ -16,6 +16,7 @@ type CustomHeroProps = {
     text: string
     url: string
   }
+  ctaClassName?: string
   overlay?: 'dark' | 'light' | 'none' | string
   overlayOpacity?: number
   titleFont?: string
@@ -30,6 +31,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
   subtitle,
   description,
   cta,
+  ctaClassName,
   overlay = 'dark',
   overlayOpacity = 50,
   titleFont = 'glitch',
@@ -143,7 +145,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
         {cta && (
           <a
             href={cta.url}
-            className="btn-console btn-console--red"
+            className={`btn-console btn-console--red${ctaClassName ? ` ${ctaClassName}` : ''}`}
           >
             {cta.text}
           </a>

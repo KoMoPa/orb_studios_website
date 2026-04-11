@@ -29,7 +29,7 @@ export const AccentHero: React.FC<AccentHeroProps> = ({
 }) => {
   return (
     <section
-      className="relative w-full flex items-center justify-center overflow-hidden"
+      className="relative w-full flex items-center justify-center"
       style={{
         minHeight,
       }}
@@ -67,11 +67,13 @@ export const AccentHero: React.FC<AccentHeroProps> = ({
 
           {/* Links */}
           {Array.isArray(links) && links.length > 0 && (
-            <div className="flex gap-4 justify-center flex-wrap">
+            <div className="flex gap-4 justify-center flex-wrap pb-4">
               {links.map(({ link }, i) => {
                 return (
                   <div key={i}>
-                    <CMSLink {...link} className="btn-console btn-console--red" />
+                    <a href={link.url} className="btn-console btn-console--red">
+                      {link.label}
+                    </a>
                   </div>
                 )
               })}
