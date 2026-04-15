@@ -72,7 +72,7 @@ export default buildConfig({
     push: true,
   }),
   email: resendAdapter({
-    defaultFromAddress: process.env.RESEND_SENDER_EMAIL || 'noreply@orbstudios.com',
+    defaultFromAddress: process.env.RESEND_SENDER_EMAIL || 'noreply@orbstudios.ca',
     defaultFromName: 'Orb Studios',
     apiKey: process.env.RESEND_API_KEY,
   }),
