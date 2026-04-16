@@ -468,87 +468,75 @@ export async function sendBookingConfirmationEmail(
         timeZone: 'America/Toronto',
     });
 
-    try {
-        // Send to client using Resend template
-        const clientEmailResult = await resend.emails.send({
-            from: `Orb Studios <${SENDER_EMAIL}>`,
-            to: clientEmail,
-            subject: `Booking Confirmation - Orb Studios`,
-            ...(templateId
-                ? {
-                    template: {
-                        id: templateId,
-                        variables: {
-                            NAME: clientName,
-                            TYPE: rentalType,
-                            DATE: formattedDate,
-                            PRICE: `$${totalPrice.toFixed(2)}`,
-                        },
-                    },
-                }
-                : {
-                    react: BookingConfirmationEmail({
-                        clientName,
-                        startTime: formattedDate,
-                        endTime: endTime.toLocaleString('en-CA', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            timeZone: 'America/Toronto',
-                        }),
-                        totalPrice,
-                        rentalType,
-                        bookingId,
-                    }),
-                }),
-            attachments: invoicePdfAttachment
-                ? [
-                    {
-                        filename: 'invoice.pdf',
-                        content: invoicePdfAttachment,
-                    },
-                ]
-                : undefined,
-        });
+    const formattedEndDate = endTime.toLocaleString('en-CA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'America/Toronto',
+    });
 
-        // Send copy to admin (always uses React component)
-        const adminEmailContent = BookingConfirmationEmail({
+    const attachments = invoicePdfAttachment
+        ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+        : undefined;
+
+    // Send to client using Resend template
+    const { data: clientData, error: clientError } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: clientEmail,
+        subject: `Booking Confirmation - Orb Studios`,
+        ...(templateId
+            ? {
+                template: {
+                    id: templateId,
+                    variables: {
+                        NAME: clientName,
+                        TYPE: rentalType,
+                        DATE: formattedDate,
+                        PRICE: `$${totalPrice.toFixed(2)}`,
+                    },
+                },
+            }
+            : {
+                react: BookingConfirmationEmail({
+                    clientName,
+                    startTime: formattedDate,
+                    endTime: formattedEndDate,
+                    totalPrice,
+                    rentalType,
+                    bookingId,
+                }),
+            }),
+        attachments,
+    });
+
+    if (clientError) {
+        console.error('Error sending client booking confirmation email:', clientError);
+        throw new Error(`Failed to send client confirmation email: ${clientError.message}`);
+    }
+
+    // Send copy to admin (always uses React component)
+    const { error: adminError } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: ADMIN_EMAIL,
+        subject: `New Booking - ${clientName}`,
+        react: BookingConfirmationEmail({
             clientName,
             startTime: formattedDate,
-            endTime: endTime.toLocaleString('en-CA', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'America/Toronto',
-            }),
+            endTime: formattedEndDate,
             totalPrice,
             rentalType,
             bookingId,
-        });
-        const adminEmailResult = await resend.emails.send({
-            from: `Orb Studios <${SENDER_EMAIL}>`,
-            to: ADMIN_EMAIL,
-            subject: `New Booking - ${clientName}`,
-            react: adminEmailContent,
-            attachments: invoicePdfAttachment
-                ? [
-                    {
-                        filename: 'invoice.pdf',
-                        content: invoicePdfAttachment,
-                    },
-                ]
-                : undefined,
-        });
+        }),
+        attachments,
+    });
 
-        return { success: true };
-    } catch (error) {
-        console.error('Error sending booking confirmation email:', error);
-        throw new Error(`Failed to send confirmation email: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (adminError) {
+        console.error('Error sending admin booking notification:', adminError);
     }
+
+    return { success: true };
 }
 
 /**
