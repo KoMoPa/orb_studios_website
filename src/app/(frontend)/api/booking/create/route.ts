@@ -309,11 +309,16 @@ export async function POST(request: NextRequest) {
       );
 
       await notifyAdminNewBooking(
-        body.clientName,
         body.clientEmail,
+        body.clientName,
         startTime,
-        rentalTypeTitle
+        endTime,
+        pricing.total,
+        rentalTypeTitle,
+        bookingId,
+        invoicePdfBuffer
       );
+
       // console.log('Confirmation emails sent');
     } catch (emailError) {
       console.error('Error sending emails:', emailError);
