@@ -237,7 +237,7 @@ export default async function Home() {
               {
                 link: {
                   type: 'custom',
-                  url: '/recording',
+                  url: '/posts',
                   label: 'View Guides',
                   appearance: 'default',
                 },
