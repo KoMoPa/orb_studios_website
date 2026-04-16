@@ -24,6 +24,7 @@ export default async function Page() {
       slug: true,
       categories: true,
       meta: true,
+      heroImage: true,
     },
   })
 
@@ -58,6 +59,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts`,
+    title: `Orb Studios Guides and Posts`,
   }
 }
