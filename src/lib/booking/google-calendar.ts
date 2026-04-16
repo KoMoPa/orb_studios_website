@@ -103,19 +103,19 @@ export async function createCalendarEvent(
             }
         }
 
-        console.log('Creating calendar event:', { 
-            title, 
-            startTime: event.start.dateTime, 
-            endTime: event.end.dateTime,
-            hasDescription: !!event.description,
-        });
+        // console.log('Creating calendar event:', { 
+        //     title, 
+        //     startTime: event.start.dateTime, 
+        //     endTime: event.end.dateTime,
+        //     hasDescription: !!event.description,
+        // });
 
         const response = await calendar.events.insert({
             calendarId: calendarEmail,
             requestBody: event,
         });
 
-        console.log('Calendar event created successfully:', response.data.id);
+        // console.log('Calendar event created successfully:', response.data.id);
         return response.data.id;
     } catch (error: any) {
         console.error('Error creating calendar event:', error?.message || error);

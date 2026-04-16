@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check availability one final time
-    console.log(`Checking availability for ${startTime.toISOString()} to ${endTime.toISOString()}`);
+    // console.log(`Checking availability for ${startTime.toISOString()} to ${endTime.toISOString()}`);
     const isAvailable = await checkAvailability(startTime, endTime);
 
     if (!isAvailable) {
@@ -183,14 +183,14 @@ export async function POST(request: NextRequest) {
     // Create the calendar event
     const eventTitle = `${body.bandName || body.clientName} - Booking`;
     const eventDescription = `
-Client: ${body.clientName}
-Email: ${body.clientEmail}
-Phone: ${body.clientPhone || 'N/A'}
-Band: ${body.bandName || 'N/A'}
-Duration: ${body.duration} hour${body.duration > 1 ? 's' : ''}
-Rental Type: ${rentalTypeTitle}
-${body.additionalInfo ? `Additional Info: ${body.additionalInfo}` : ''}
-Price: $${pricing.total}
+      Client: ${body.clientName}
+      Email: ${body.clientEmail}
+      Phone: ${body.clientPhone || 'N/A'}
+      Band: ${body.bandName || 'N/A'}
+      Duration: ${body.duration} hour${body.duration > 1 ? 's' : ''}
+      Rental Type: ${rentalTypeTitle}
+      ${body.additionalInfo ? `Additional Info: ${body.additionalInfo}` : ''}
+      Price: $${pricing.total}
     `.trim();
 
     let googleEventId: string | undefined;
@@ -202,7 +202,7 @@ Price: $${pricing.total}
         eventDescription,
         [body.clientEmail]
       );
-      console.log(`Created Google Calendar event: ${googleEventId}`);
+      // console.log(`Created Google Calendar event: ${googleEventId}`);
     } catch (error) {
       console.error('Error creating calendar event:', error);
       // Don't fail the entire booking if calendar event creation fails
@@ -226,7 +226,7 @@ Price: $${pricing.total}
         pricing,
         rentalType: rentalTypeTitle,
       });
-      console.log('Invoice PDF generated successfully');
+      // console.log('Invoice PDF generated successfully');
     } catch (pdfError) {
       console.error('Error generating invoice PDF:', pdfError);
       // Don't fail the booking if PDF generation fails
@@ -256,7 +256,7 @@ Price: $${pricing.total}
             bandName: body.bandName || client.bandName,
           },
         });
-        console.log(`Updated existing client: ${client.id}`);
+        // console.log(`Updated existing client: ${client.id}`);
       } else {
         client = await payload.create({
           collection: 'clients',
@@ -267,7 +267,7 @@ Price: $${pricing.total}
             bandName: body.bandName,
           },
         });
-        console.log(`Created new client: ${client.id}`);
+        // console.log(`Created new client: ${client.id}`);
       }
     } catch (payloadError) {
       console.error('Error syncing client with Payload CMS:', payloadError);
@@ -290,7 +290,7 @@ Price: $${pricing.total}
           bookingStartTime: startTime.toISOString(),
         },
       });
-      console.log('Transaction logged for analytics');
+      // console.log('Transaction logged for analytics');
     } catch (transactionError) {
       console.error('Error logging transaction:', transactionError);
     }
@@ -314,7 +314,7 @@ Price: $${pricing.total}
         startTime,
         rentalTypeTitle
       );
-      console.log('Confirmation emails sent');
+      // console.log('Confirmation emails sent');
     } catch (emailError) {
       console.error('Error sending emails:', emailError);
     }
