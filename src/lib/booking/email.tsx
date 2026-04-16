@@ -308,6 +308,9 @@ export async function sendBookingConfirmationEmail(
                 PRICE: `$${totalPrice.toFixed(2)}`,
             },
         },
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
     });
 
     if (error) {
@@ -346,6 +349,9 @@ export async function notifyAdminNewBooking(
                 PRICE: `$${totalPrice.toFixed(2)}`,
             },
         },
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
     });
 
     if (error) {

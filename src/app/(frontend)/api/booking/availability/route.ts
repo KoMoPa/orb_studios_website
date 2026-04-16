@@ -16,33 +16,27 @@ const BOOKING_MIN_ADVANCE_HOURS = 0; // No advance booking requirement
 function createEasternDate(dateString: string, timeString: string): Date {
   const [year, month, day] = dateString.split('-').map(Number);
   const [hours, minutes] = timeString.split(':').map(Number);
-  
-  // Create a candidate date (in system local time)
-  const candidateDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
-  
-  // Get what time this date represents in Toronto timezone
-  const torontoFormatter = new Intl.DateTimeFormat('en-US', {
+
+  // Probe the UTC offset for Toronto on this date using noon UTC.
+  // Noon UTC is always within the same calendar day across all UTC offsets,
+  // so the formatter will never return a different day or a 24/0 edge case.
+  const noonUTC = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Toronto',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-  });
-  
-  const parts = torontoFormatter.formatToParts(candidateDate);
-  const partMap: Record<string, number> = {};
-  parts.forEach(p => {
-    partMap[p.type] = parseInt(p.value, 10);
-  });
-  
-  // Calculate the offset: how many hours/minutes we need to adjust
-  const hourDiff = hours - partMap.hour;
-  const minuteDiff = minutes - partMap.minute;
-  
-  // Adjust the candidate date to represent the correct Eastern time in UTC
-  return new Date(candidateDate.getTime() + hourDiff * 3600000 + minuteDiff * 60000);
+  }).formatToParts(noonUTC);
+
+  const pMap: Record<string, number> = {};
+  parts.forEach(p => { if (p.type !== 'literal') pMap[p.type] = parseInt(p.value, 10); });
+
+  // offsetHours: how many hours to ADD to Eastern local time to get UTC
+  // (e.g. 4 for EDT, 5 for EST)
+  const offsetHours = 12 - pMap.hour;
+
+  // Build the UTC timestamp directly — Date.UTC handles hour overflow across day boundaries
+  return new Date(Date.UTC(year, month - 1, day, hours + offsetHours, minutes));
 }
 
 /**
