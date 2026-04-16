@@ -311,8 +311,45 @@ export async function sendBookingConfirmationEmail(
     });
 
     if (error) {
-        console.error('Error sending booking confirmation email:', error);
+        console.error('Error sending booking confirmation email to client:', error);
         throw new Error(`Failed to send confirmation email: ${error.message}`);
+    }
+
+    return { success: true };
+}
+
+export async function notifyAdminNewBooking(
+    clientEmail: string,
+    clientName: string,
+    startTime: Date,
+    endTime: Date,
+    totalPrice: number,
+    rentalType: string,
+    bookingId?: string,
+    invoicePdfAttachment?: Buffer
+) {
+    const { data, error } = await resend.emails.send({
+        to: 'orbmusicstudios@gmail.com',
+        template: {
+            id: 'session-booked',
+            variables: {
+                NAME: clientName,
+                TYPE: rentalType,
+                DATE: startTime.toLocaleString('en-CA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: 'America/Toronto',
+                }),
+                PRICE: `$${totalPrice.toFixed(2)}`,
+            },
+        },
+    });
+
+    if (error) {
+        console.error('Error sending booking notification email to admin:', error);
     }
 
     return { success: true };
