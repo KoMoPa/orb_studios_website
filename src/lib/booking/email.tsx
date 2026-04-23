@@ -3,6 +3,10 @@ import React from 'react';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Email configuration from environment
+const SENDER_EMAIL = process.env.RESEND_SENDER_EMAIL || 'onboarding@resend.dev';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'orbmusicstudios@gmail.com';
+
 
 
 /**
