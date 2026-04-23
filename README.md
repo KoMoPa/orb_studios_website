@@ -1,217 +1,111 @@
 # Orb Studios Website
 
-A modern web application built with Next.js, Payload CMS with PostgreSQL and Drizzle ORM, and Tailwind CSS for styling.
+A modern music studio website built with **Next.js**, **Payload CMS**, and **PostgreSQL**. Features a booking system with Google Calendar integration, invoice generation, email notifications, and S3 media storage.
 
-### Links
-Original domain: https://orbstudios.ca
-Railway Development domain: https://orbstudioswebsite-production.up.railway.app/
+**Live**: https://orbstudios.ca
 
-
-### Studio pages to emulate
-https://blackbirdstudio.com/
-
-https://www.lynxmusic.ca/
-
-https://www.secretweaponsound.ca/
-
-
+---
 
 ## Tech Stack
 
-- **Frontend**: [Next.js](https://nextjs.org/) - React framework for production
-- **CMS**: [Payload CMS](https://payloadcms.com/) - Headless CMS and backend API
-- **Database**: [PostgreSQL](https://www.postgresql.org/) - Relational database
-- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) - Lightweight TypeScript ORM
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Package Manager**: [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
-- **Language**: TypeScript
+**Frontend & Framework:**
+- [Next.js](https://nextjs.org/) 16 - React framework with App Router
+- [TypeScript](https://www.typescriptlang.org/) - Type-safe development
+- [Tailwind CSS](https://tailwindcss.com/) 4 - Utility-first styling
+- [shadcn/ui](https://ui.shadcn.com/) - Accessible UI components (Radix UI)
 
-## Key Libraries
+**Backend & CMS:**
+- [Payload CMS](https://payloadcms.com/) 3.79 - Headless CMS with REST/GraphQL
+- [PostgreSQL](https://www.postgresql.org/) - Relational database
+- [Drizzle ORM](https://orm.drizzle.team/) - Type-safe database queries
 
-- **Email**: [Resend](https://resend.com/) with [React Email](https://react.email/) - Build email templates as React components for sending invoices and client notifications with excellent developer experience
-- **PDF Generation**: [React PDF](https://react-pdf.org/) (react-pdf/renderer) - Generate invoices as PDFs directly in your Next.js app using component-based approach
-- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema validation for forms, API inputs, and environment variables. Integrates seamlessly with Drizzle for schema validation
-- **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod - Lightweight, performant form management with unified validation schemas
-- **Date/Time**: [date-fns](https://date-fns.org/) - Lightweight, tree-shakeable date utility library for time calculations and hour tracking
+**Core Features:**
+- [Google Calendar API](https://developers.google.com/calendar) - Booking system integration
+- [Resend](https://resend.com/) + [React Email](https://react.email/) - Email notifications & invoices
+- [React PDF](https://react-pdf.org/) - Invoice PDF generation
+- [Railway S3 Storage](https://railway.app/docs/reference/object-storage) (Tigris) - Media storage
+
+**Utilities:**
+- [date-fns](https://date-fns.org/) - Date manipulation
+- [clsx](https://github.com/lukeed/clsx) - Conditional class names
+- [React Hook Form](https://react-hook-form.com/) - Form management
+- [ical-generator](https://github.com/sebbo2002/ical-generator) - iCal calendar events
+
+**Package Manager & Deployment:**
+- [pnpm](https://pnpm.io/) - Fast, efficient package manager
+- [Railway](https://railway.app/) - Production hosting
+- [Cloudflare](https://www.cloudflare.com/) - DNS management
+
+---
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your machine:
+- **Node.js** v18.20.2+ (v20+ recommended)
+- **pnpm** v9+ (`npm install -g pnpm`)
+- **PostgreSQL** (local dev) or cloud provider (Railway, Supabase, Neon)
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [pnpm](https://pnpm.io/installation) - Install globally with `npm install -g pnpm`
-- [PostgreSQL](https://www.postgresql.org/download/) (v12 or higher) - Either local installation or a PostgreSQL cloud service (e.g., Railway, Supabase, Neon)
+---
 
-## Getting Started
-
-### 1. Clone the Repository
+## Scripts
 
 ```bash
-git clone <repository-url>
-cd orb-studios-website
+pnpm dev                    # Start development server
+pnpm build                  # Build for production
+pnpm start                  # Start production server
+pnpm generate:types         # Regenerate Payload types
+pnpm generate:importmap     # Regenerate import map
+pnpm payload                # Payload CLI
+pnpm dev:prod               # Test production build locally
 ```
 
-### 2. Install Dependencies
-
-```bash
-pnpm install
-```
-
-### 3. Environment Configuration
-
-Create a `.env.local` file in the root directory with the following variables:
-
-```env
-# PostgreSQL Connection
-DATABASE_URI=postgresql://user:password@localhost:5432/orb-studios
-
-# Payload CMS
-PAYLOAD_SECRET=your-secret-key-here
-
-# Next.js
-NEXT_PUBLIC_SERVER_URL=http://localhost:3000
-```
-
-**Note**: 
-- For local PostgreSQL, use `postgresql://user:password@localhost:5432/orb-studios`
-- For Railway or other cloud providers, use your provided connection string
-- Generate a secure `PAYLOAD_SECRET` - it should be a long, random string
-
-### 4. Database Setup
-
-If using local PostgreSQL, ensure it's running:
-
-```bash
-# macOS with Homebrew
-brew services start postgresql
-
-# Or run PostgreSQL in Docker
-docker run -d -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=password postgres
-```
-
-Then create the database:
-
-```bash
-creatdb orb-studios
-```
-
-Run database migrations:
-
-```bash
-pnpm db:push
-```
-
-### 5. Start Development Server
-
-```bash
-pnpm dev
-```
-
-The application will be available at:
-- **Frontend**: http://localhost:3000
-- **Payload Admin**: http://localhost:3000/admin
-
-### 6. Create Admin User
-
-On first run, you may need to create an admin user through the Payload admin interface or seeding script.
-
-## Available Scripts
-
-```bash
-# Start development server
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-
-# Run linting
-pnpm lint
-
-# Run type checking
-pnpm type-check
-```
+---
 
 ## Project Structure
 
 ```
-├── app/                 # Next.js App Router
-│   ├── layout.tsx       # Root layout
-│   └── page.tsx         # Home page
-├── public/              # Static assets
-├── payload/             # Payload CMS configuration (if separate)
-├── next.config.ts       # Next.js configuration
-├── tsconfig.json        # TypeScript configuration
-└── tailwind.config.ts   # Tailwind CSS configuration
+src/
+├── app/                         # Next.js App Router
+│   ├── (frontend)/             # Public frontend routes
+│   ├── (payload)/              # Payload admin routes (/admin)
+│   └── api/                    # API routes (bookings, invoices, etc.)
+├── blocks/                      # Page builder blocks (CMS content)
+├── collections/                 # Payload CMS collections & hooks
+├── components/                  # React components
+│   └── ui/                     # shadcn/ui components
+├── fields/                      # Custom Payload field definitions
+├── hooks/                       # React hooks
+├── lib/                         # Utilities
+│   └── booking/                # Google Calendar, email, invoicing
+├── plugins/                     # Payload CMS plugins (S3, etc.)
+├── utilities/                   # Helper functions
+└── payload.config.ts            # Payload CMS configuration
 ```
 
-## Common Development Tasks
+---
 
-### Adding a New Collection in Payload CMS
+## Key Features
 
-1. Define the collection in your Payload config
-2. Restart the dev server
-3. Access the admin panel at http://localhost:3000/admin
+### Booking System
+- **Google Calendar Integration** - Bookings sync to studio calendar
+- **Invoice Generation** - Automatic PDF invoices attached to emails
+- **Email Notifications** - Resend-powered confirmations to clients & admin
 
-### Styling Components
+### CMS
+- **Live Preview** - Real-time content editing
+- **Media Management** - Railway S3 integration
+- **SEO Optimization** - Built-in SEO plugin
+- **Redirects** - URL redirects management
+- **Form Builder** - Dynamic form creation
 
-Use Tailwind utility classes in your React components:
+### Storage
+- **Railway S3 (Tigris)** - All media uploads stored on Railway's S3-compatible object storage
+- **PostgreSQL** - All data, users, bookings, transactions
 
-```tsx
-export default function Button() {
-  return (
-    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-      Click me
-    </button>
-  );
-}
-```
-
-## Troubleshooting
-
-**Issue**: PostgreSQL connection fails
-- Ensure PostgreSQL is running
-- Check your `DATABASE_URI` in `.env.local`
-- Verify the database exists: `psql -l`
-- Verify network connectivity if using a cloud provider
-
-**Issue**: Payload admin not loading
-- Clear browser cache
-- Ensure `PAYLOAD_SECRET` is set
-- Check console for API errors
-
-**Issue**: Database migrations fail
-- Ensure PostgreSQL is running and accessible
-- Check that the database exists
-- Review migration files in the `drizzle` directory
-
-**Issue**: pnpm install fails
-- Delete `pnpm-lock.yaml` and `node_modules`
-- Run `pnpm install` again
-
-## Contributing
-
-1. Create a new branch for your feature
-2. Make your changes
-3. Test locally with `pnpm dev`
-4. Submit a pull request
-
-## Resources
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Payload CMS Documentation](https://payloadcms.com/docs)
-- [Drizzle ORM Documentation](https://orm.drizzle.team/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [pnpm Documentation](https://pnpm.io/motivation)
+---
 
 ## Custom Google Fonts
 
 This project includes four decorative Google Fonts from the Rubik family available site-wide:
-
-### Available Fonts
 
 | Alias | Font Family | Use Case |
 |-------|-------------|----------|
@@ -219,31 +113,3 @@ This project includes four decorative Google Fonts from the Rubik family availab
 | `doodle` | Rubik Doodle Shadow | Playful, bubbly text |
 | `glitch` | Rubik Glitch | Edgy, distorted effects |
 | `spraypaint` | Rubik Spray Paint | Artistic, graffiti-style text |
-
-### Usage Examples
-
-```tsx
-// Vinyl - Bold, solid font
-<h1 className="vinyl">Title</h1>
-
-// Doodle - With Tailwind size utilities
-<h1 className="doodle text-2xl">Title</h1> 
-
-// Glitch - Edgy distorted effect
-<span className="glitch">Text</span>
-
-// Spraypaint - Artistic brushstroke style
-<div className="spraypaint">Content</div>
-```
-
-You can combine these font classes with any Tailwind utilities for color, sizing, spacing, etc:
-
-```tsx
-<h1 className="vinyl text-4xl text-red-600 mb-4">Orb Studios</h1>
-<p className="doodle text-xl text-gray-700">Premium Recording Space</p>
-```
-
-## License 
-
-[Add your license here]
-
