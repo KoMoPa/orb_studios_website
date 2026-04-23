@@ -15,6 +15,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
+    "email": "email dev --dir emails",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
@@ -39,6 +40,7 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.4",
     "@react-pdf/renderer": "^4.3.2",
     "bcryptjs": "^3.0.3",
@@ -71,6 +73,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "1.58.2",
+    "@react-email/preview-server": "5.2.9",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/react": "16.3.0",
