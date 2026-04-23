@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
         bandName: client.bandName,
         monthlyHoursUsed: client.monthlyHoursUsed || 0,
         monthlyHoursCancelled: client.monthlyHoursCancelled || 0,
+        monthlyHoursIncluded: client.monthlyHoursIncluded || 20,
         monthlyStartDate: client.monthlyStartDate,
       },
     });

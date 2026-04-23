@@ -11,6 +11,7 @@ interface MonthlyClient {
   bandName?: string;
   monthlyHoursUsed: number;
   monthlyHoursCancelled: number;
+  monthlyHoursIncluded: number;
   monthlyStartDate: string;
 }
 

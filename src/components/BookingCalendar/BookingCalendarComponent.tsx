@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format, startOfToday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, isToday, isEqual, getDay } from 'date-fns';
 
 interface AvailableSlot {
@@ -109,6 +109,7 @@ export function BookingCalendarComponent() {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Phone formatting
   const formatPhoneNumber = (phoneNumber: string): string => {
@@ -119,7 +120,7 @@ export function BookingCalendarComponent() {
     return phoneNumber;
   };
 
-  // Fetch available slots when date changes
+  // Fetch available slots when date, duration, or rental type changes
   useEffect(() => {
     if (!selectedDate) {
       setAvailableSlots([]);
@@ -127,9 +128,17 @@ export function BookingCalendarComponent() {
       return;
     }
 
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     const fetchSlots = async () => {
       setLoading(true);
       setError(null);
+      setSelectedTime(null);
       try {
         const response = await fetch('/api/booking/availability', {
           method: 'POST',
@@ -139,6 +148,7 @@ export function BookingCalendarComponent() {
             durationHours: formData.duration,
             rentalType: formData.rentalType,
           }),
+          signal,
         });
 
         if (!response.ok) {
@@ -148,12 +158,12 @@ export function BookingCalendarComponent() {
 
         const data = await response.json();
         setAvailableSlots(data.slots);
-        setSelectedTime(null);
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return;
         setError(err instanceof Error ? err.message : 'Failed to fetch available slots');
         setAvailableSlots([]);
       } finally {
-        setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     };
 
@@ -282,7 +292,7 @@ export function BookingCalendarComponent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-6 lg:px-12">
       {/* Left Column: Form */}
       <div className="lg:col-span-1">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id="booking-form" onSubmit={handleSubmit} className="space-y-4">
           <h2 className="text-2xl font-bold mb-6">Your Information</h2>
 
           <div>
@@ -397,7 +407,7 @@ export function BookingCalendarComponent() {
           <button
             type="submit"
             disabled={!selectedDate || !selectedTime || submitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg transition"
+            className="hidden lg:block w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg transition"
           >
             {submitting ? 'Booking...' : 'Complete Booking'}
           </button>
@@ -548,13 +558,23 @@ export function BookingCalendarComponent() {
           </div>
         )}
 
-        {/* Messages */}
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-            {error}
-          </div>
-        )}
-      </div>
+      {/* Mobile-only confirm button: appears right below time slots */}
+      <button
+        form="booking-form"
+        type="submit"
+        disabled={!selectedDate || !selectedTime || submitting}
+        className="lg:hidden w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg transition"
+      >
+        {submitting ? 'Booking...' : 'Complete Booking'}
+      </button>
+
+      {/* Messages */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
+    </div>
       </div>
     </div>
   );

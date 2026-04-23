@@ -35,11 +35,31 @@ export async function sendBookingConfirmationEmail(
     bookingId?: string,
     invoicePdfAttachment?: Buffer
 ) {
-    const sessionDate = fmtDate(startT    const sessionDate = fmtDate(startT    const sessionDate = fmtDate(startT    const sessionilC    const sessionDate = fmtDate(startT    const sessiame    const sessionDate = fmtDate(startT    const sessionDate = fmtDate(startT Pric    const sessionDate = fmtDate(startT    const sessionDate = fmtDate(star} =    const sessionDate = fmtDate(st      const sessionDate = fmtDate(start,
-                                     ect:                  d – O                     re                  t,
-                          cePdfAttachme                          cePd'invoi                          cePdfAttachme  
-                                                             nsole.error('Error sending booking confirmation email to client:', error);
-        throw new Error(`Failed to send        thron email: ${error.message}`);
+    const sessionDate = fmtDate(startTime);
+    const sessionTime = `${fmtTime(startTime)} – ${fmtTime(endTime)}`;
+
+    const emailComponent = BookingConfirmationEmail({
+        clientName,
+        rentalType,
+        sessionDate,
+        sessionTime,
+        totalPrice,
+        hasInvoice: !!invoicePdfAttachment,
+    });
+
+    const { error } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: clientEmail,
+        subject: `Session Confirmed – Orb Studios`,
+        react: emailComponent,
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
+    });
+
+    if (error) {
+        console.error('Error sending booking confirmation email to client:', error);
+        throw new Error(`Failed to send confirmation email: ${error.message}`);
     }
 
     return { success: true };
@@ -84,30 +104,56 @@ export async function notifyAdminNewBooking(
     return { success: true };
 }
 
-export async function sendMonexport async function rmationEmail(
+export async function sendMonthlyClientBookingConfirmationEmail(
     clientEmail: string,
-                      ,
-                         endTime: Date,
-    duratio    umber,
+    clientName: string,
+    startTime: Date,
+    endTime: Date,
+    duration: number,
     monthlyIncluded: number,
     overageHours: number,
-    overageCost:    overageCost:    overageCost:    overageCost:    overageCost:    ove    try {
+    overageCost: number,
+    bookingId?: string,
+    invoicePdfAttachment?: Buffer
+) {
+    try {
         const sessionDate = fmtDate(startTime);
-        const sessi        const sesse(startTime)} – ${fmtTime(endTime)}`;
+        const sessionTime = `${fmtTime(startTime)} – ${fmtTime(endTime)}`;
 
-        const emailComp        const emailComp        conEmail({
-                                              e,
-                                                                                                                             ,
-                                   
-                          = invoicePdfAttachment
+        const emailComponent = MonthlyBookingConfirmationEmail({
+            clientName,
+            sessionDate,
+            sessionTime,
+            duration,
+            monthlyIncluded,
+            overageHours,
+            overageCost,
+            bookingId,
+        });
+
+        const attachments = invoicePdfAttachment
             ? [{ filename: 'overage-invoice.pdf', content: invoicePdfAttachment }]
             : undefined;
 
-        awa        awa        awa        awa        awa        awa        awa       ,
-            to:             to:             ject:            to:             to:             ject:            ct:             to:             attachments,
-                                              {
-            from: `Orb            from: `Orb     ,
-            to: ADMIN_EMAI            to: ADMIN_EMAI            to: ADMIN_EMAI            to: ADMIN_EMAI            to: A
-                                               et                                               et                          end                                               et               n                                               error instanceof Error ? error.message : 'Unknown error'}`);
+        await resend.emails.send({
+            from: `Orb Studios <${SENDER_EMAIL}>`,
+            to: clientEmail,
+            subject: `Monthly Session Confirmed – Orb Studios`,
+            react: emailComponent,
+            attachments,
+        });
+
+        await resend.emails.send({
+            from: `Orb Studios <${SENDER_EMAIL}>`,
+            to: ADMIN_EMAIL,
+            subject: `Monthly Booking – ${clientName}`,
+            react: emailComponent,
+            attachments,
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error sending monthly booking confirmation email:', error);
+        throw new Error(`Failed to send confirmation email: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }

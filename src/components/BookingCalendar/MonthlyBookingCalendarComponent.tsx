@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { format, startOfToday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isBefore, isToday, isEqual, getDay } from 'date-fns';
 
 interface AvailableSlot {
@@ -16,6 +16,7 @@ interface MonthlyClient {
   bandName?: string;
   monthlyHoursUsed: number;
   monthlyHoursCancelled: number;
+  monthlyHoursIncluded: number;
   monthlyStartDate: string;
 }
 
@@ -61,6 +62,7 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
   const [success, setSuccess] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(startOfToday()));
   const [submitting, setSubmitting] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentMonth),
@@ -69,10 +71,16 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
 
   // Calculate available hours
   const hoursUsed = client.monthlyHoursUsed - client.monthlyHoursCancelled;
-  const availableHours = Math.max(0, 24 - hoursUsed);
+  const availableHours = Math.max(0, (client.monthlyHoursIncluded || 20) - hoursUsed);
 
-  const handleDateSelect = async (day: Date) => {
-    setSelectedDate(day);
+  const fetchAvailability = async (day: Date, durationHours: number) => {
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     setSelectedTime(null);
     setAvailableSlots([]);
     setError(null);
@@ -83,7 +91,8 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
       const response = await fetch('/api/booking/availability', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: formattedDate }),
+        body: JSON.stringify({ date: formattedDate, durationHours }),
+        signal,
       });
 
       if (!response.ok) {
@@ -93,10 +102,23 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
       const data = await response.json();
       setAvailableSlots(data.slots || []);
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return;
       setError('Could not load available times. Please try again.');
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!signal.aborted) setLoading(false);
+    }
+  };
+
+  const handleDateSelect = (day: Date) => {
+    setSelectedDate(day);
+    fetchAvailability(day, duration);
+  };
+
+  const handleDurationChange = (newDuration: number) => {
+    setDuration(newDuration);
+    if (selectedDate) {
+      fetchAvailability(selectedDate, newDuration);
     }
   };
 
@@ -162,7 +184,7 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-12 px-6 lg:px-12">
         {/* Left Column: Duration & Info */}
         <div className="lg:col-span-1">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form id="booking-form" onSubmit={handleSubmit} className="space-y-4">
             <h2 className="text-2xl font-bold mb-6">Booking Details</h2>
 
             {/* Client Info (read-only) */}
@@ -197,7 +219,7 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
               <select
                 id="duration"
                 value={duration}
-                onChange={(e) => setDuration(parseInt(e.target.value))}
+                onChange={(e) => handleDurationChange(parseInt(e.target.value))}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
               >
                 {DURATION_OPTIONS.map((option) => (
@@ -227,7 +249,7 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
             <button
               type="submit"
               disabled={!selectedDate || !selectedTime || submitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white font-bold py-3 rounded-lg transition"
+              className="hidden lg:block w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white font-bold py-3 rounded-lg transition"
             >
               {submitting ? 'Booking...' : 'Confirm Booking'}
             </button>
@@ -378,6 +400,16 @@ export function MonthlyBookingCalendarComponent({ client, onBookingComplete }: M
               )}
             </div>
           )}
+
+          {/* Mobile-only confirm button: appears right below time slots */}
+          <button
+            form="booking-form"
+            type="submit"
+            disabled={!selectedDate || !selectedTime || submitting}
+            className="lg:hidden w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white font-bold py-3 rounded-lg transition"
+          >
+            {submitting ? 'Booking...' : 'Confirm Booking'}
+          </button>
         </div>
       </div>
     </div>
