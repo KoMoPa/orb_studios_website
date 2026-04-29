@@ -18,7 +18,7 @@ export const Logo = (props: Props) => {
     <div className={clsx('flex items-center gap-3', className)}>
       {/* eslint-disable @next/next/no-img-element */}
       <img
-        alt="Orb Studios"
+        alt="ORB Studios"
         width={40}
         height={40}
         loading={loading}
@@ -28,7 +28,7 @@ export const Logo = (props: Props) => {
         src="/api/media/file/record.png"
       />
       <span className={clsx('text-4xl font-bold tracking-wide text-white', textClassName)}>
-        Orb Studios
+        ORB Studios
       </span>
     </div>
   )

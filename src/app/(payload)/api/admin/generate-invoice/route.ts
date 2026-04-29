@@ -1,13 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/booking/pdf-generator';
+import { generateInvoicePDF, generateInvoiceNumber, formatRentalType } from '@/lib/booking/pdf-generator';
 import { calculatePrice } from '@/lib/booking/pricing';
 import { PricingBreakdown } from '@/lib/booking/types';
-import { sendBookingConfirmationEmail } from '@/lib/booking/email';
+import { sendBookingConfirmationEmail, notifyAdminNewBooking, sendMonthlyRentalInvoiceEmail, notifyAdminMonthlyRentalInvoice } from '@/lib/booking/email';
+import { createCalendarEvent } from '@/lib/booking/google-calendar';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 
 const MONTHLY_RATE = 400;
 const HST_RATE = 0.13;
+
+// Rental type rates and formatting
+const RENTAL_TYPE_CONFIG: Record<string, { rate: number; title: string }> = {
+  'hourly-rehearsal': { rate: 30, title: 'Hourly Rehearsal' },
+  'hourly-recording': { rate: 50, title: 'Hourly Recording' },
+};
+
+/**
+ * Create a UTC date from a date string and time string in Eastern timezone
+ * dateString: "2026-04-01", timeString: "14:00"
+ */
+function createEasternDate(dateString: string, timeString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const [hours, minutes] = timeString.split(':').map(Number);
+
+  // Probe the UTC offset for Toronto on this date using noon UTC.
+  const noonUTC = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Toronto',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(noonUTC);
+
+  const pMap: Record<string, number> = {};
+  parts.forEach(p => { if (p.type !== 'literal') pMap[p.type] = parseInt(p.value, 10); });
+
+  const offsetHours = 12 - pMap.hour;
+  return new Date(Date.UTC(year, month - 1, day, hours + offsetHours, minutes));
+}
 
 /**
  * Get the date string in Eastern timezone from a UTC date
@@ -37,8 +68,9 @@ function getEasternDateString(utcDate: Date): string {
  * {
  *   clientName: string;
  *   clientEmail: string;
- *   startTime?: ISO string;
- *   endTime?: ISO string;
+ *   bookingDate?: string (YYYY-MM-DD);
+ *   startTime?: string (HH:MM);
+ *   duration?: number (hours);
  *   rentalType: 'hourly-rehearsal' | 'hourly-recording' | 'monthly';
  *   isMonthly?: boolean;
  * }
@@ -62,9 +94,9 @@ export async function POST(request: NextRequest) {
 
     // Validate for monthly vs hourly
     if (!isMonthly) {
-      if (!body.startTime || !body.endTime) {
+      if (!body.bookingDate || !body.startTime || !body.duration) {
         return NextResponse.json(
-          { error: 'startTime and endTime are required for hourly bookings' },
+          { error: 'bookingDate, startTime, and duration are required for hourly bookings' },
           { status: 400 }
         );
       }
@@ -75,8 +107,12 @@ export async function POST(request: NextRequest) {
     let durationMinutes = 0;
 
     if (!isMonthly) {
-      startTime = new Date(body.startTime);
-      endTime = new Date(body.endTime);
+      // Use createEasternDate to properly handle timezone conversion
+      startTime = createEasternDate(body.bookingDate, body.startTime);
+      
+      // Create end time by adding duration to start time
+      endTime = new Date(startTime);
+      endTime.setMinutes(endTime.getMinutes() + body.duration * 60);
 
       // Validate dates
       if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
@@ -94,8 +130,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Calculate duration in minutes
-      const durationMs = endTime.getTime() - startTime.getTime();
-      durationMinutes = Math.round(durationMs / (1000 * 60));
+      durationMinutes = body.duration * 60;
 
       if (durationMinutes < 30) {
         return NextResponse.json(
@@ -127,22 +162,15 @@ export async function POST(request: NextRequest) {
         totalMinutes: 0,
       };
     } else {
-      // Hourly booking - fetch rate and calculate with HST
-      let hourlyRate = 30;
-      try {
-        const rateResponse = await fetch(
-          `${process.env.PAYLOAD_PUBLIC_API_BASE || 'http://localhost:3000'}/api/rates?where[id][equals]=${body.rentalType}`
-        );
-        if (rateResponse.ok) {
-          const rateData = await rateResponse.json();
-          if (rateData.docs && rateData.docs.length > 0) {
-            const rate = rateData.docs[0];
-            hourlyRate = typeof rate.amount === 'number' ? rate.amount : parseFloat(String(rate.amount)) || 30;
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch rate details:', err);
-      }
+      // Hourly booking - get rate and calculate with HST
+      const config = RENTAL_TYPE_CONFIG[body.rentalType] || { rate: 30, title: body.rentalType };
+      const hourlyRate = config.rate;
+      const rentalTypeTitle = config.title;
+      
+      console.log(`Using rate for ${body.rentalType}: hourlyRate=${hourlyRate}, title=${rentalTypeTitle}`);
+      
+      // Store the title for later use in emails and events
+      body.rentalTypeTitle = rentalTypeTitle;
 
       // Calculate pricing WITHOUT HST first
       const subtotal = parseFloat(((hourlyRate * durationMinutes) / 60).toFixed(2));
@@ -168,32 +196,95 @@ export async function POST(request: NextRequest) {
       startTime,
       endTime,
       pricing,
-      rentalType: body.rentalType,
+      rentalType: body.rentalTypeTitle || body.rentalType,
       isMonthly,
     });
 
     // Send confirmation email to client and admin
     try {
-      await sendBookingConfirmationEmail(
-        body.clientEmail,
-        body.clientName,
-        startTime || new Date(),
-        endTime || new Date(),
-        pricing.total,
-        body.rentalType,
-        bookingId,
-        invoicePdfBuffer
-      );
-      console.log(`Invoice email sent to ${body.clientEmail}`);
+      if (isMonthly) {
+        // For monthly invoices, use the cleaner monthly rental template
+        const monthYear = new Date().toLocaleDateString('en-CA', {
+          timeZone: 'America/Toronto',
+          month: 'long',
+          year: 'numeric',
+        });
+        
+        await sendMonthlyRentalInvoiceEmail(
+          body.clientEmail,
+          body.clientName,
+          monthYear,
+          pricing.total,
+          invoicePdfBuffer
+        );
+        console.log(`Monthly rental invoice email sent to ${body.clientEmail}`);
+        
+        await notifyAdminMonthlyRentalInvoice(
+          body.clientEmail,
+          body.clientName,
+          monthYear,
+          pricing.total,
+          invoicePdfBuffer
+        );
+        console.log('Admin notification for monthly rental sent');
+      } else {
+        // For hourly invoices, use the standard booking confirmation template
+        await sendBookingConfirmationEmail(
+          body.clientEmail,
+          body.clientName,
+          startTime || new Date(),
+          endTime || new Date(),
+          pricing.total,
+          body.rentalTypeTitle || body.rentalType,
+          bookingId,
+          invoicePdfBuffer
+        );
+        console.log(`Invoice email sent to ${body.clientEmail}`);
+        
+        // Send admin notification for hourly invoices
+        await notifyAdminNewBooking(
+          body.clientEmail,
+          body.clientName,
+          startTime || new Date(),
+          endTime || new Date(),
+          pricing.total,
+          body.rentalTypeTitle || body.rentalType,
+          bookingId,
+          invoicePdfBuffer
+        );
+        console.log('Admin notification email sent');
+      }
     } catch (emailError) {
       console.error('Error sending invoice email:', emailError);
       throw new Error(`Failed to send invoice email: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
     }
 
-    // Log transaction for analytics
+    // Sync client with Payload CMS and log transaction
     try {
       const payload = await getPayload({ config });
       
+      // Check if client exists, create if not
+      const existingClients = await payload.find({
+        collection: 'clients',
+        where: {
+          email: {
+            equals: body.clientEmail,
+          },
+        },
+      });
+
+      if (existingClients.docs.length === 0) {
+        await payload.create({
+          collection: 'clients',
+          data: {
+            name: body.clientName,
+            email: body.clientEmail,
+          },
+        });
+        console.log(`Created new client: ${body.clientEmail}`);
+      }
+      
+      // Log transaction for analytics
       const today = new Date().toISOString().split('T')[0];
       
       // Split the total into purchase price and tax
@@ -207,13 +298,38 @@ export async function POST(request: NextRequest) {
           purchasePrice: Number(purchasePrice.toFixed(2)),
           taxAmount: Number(taxAmount.toFixed(2)),
           clientEmail: body.clientEmail,
-          bookingStartTime: startTime ? getEasternDateString(startTime) : today,
+          bookingStartTime: startTime ? startTime.toISOString() : today,
         },
       });
       console.log('Transaction logged for manual invoice');
     } catch (transactionError) {
       console.error('Error logging transaction:', transactionError);
       // Don't fail the invoice generation if transaction logging fails
+    }
+
+    // Create Google Calendar event for hourly invoices only
+    if (!isMonthly && startTime && endTime) {
+      try {
+        const eventTitle = `${body.clientName || 'Client'} - Booking`;
+        const eventDescription = `
+          Client: ${body.clientName}
+          Email: ${body.clientEmail}
+          Duration: ${durationMinutes / 60} hour${durationMinutes / 60 > 1 ? 's' : ''}
+          Rental Type: ${body.rentalTypeTitle || body.rentalType}
+        `.trim();
+        
+        await createCalendarEvent(
+          eventTitle,
+          startTime,
+          endTime,
+          eventDescription,
+          [body.clientEmail]
+        );
+        console.log('Calendar event created for manual hourly invoice');
+      } catch (calendarError) {
+        console.error('Error creating calendar event:', calendarError);
+        // Don't fail the invoice generation if calendar event creation fails
+      }
     }
 
     // Return success response

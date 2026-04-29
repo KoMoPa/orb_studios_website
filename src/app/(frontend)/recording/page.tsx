@@ -149,13 +149,13 @@ export default function RecordingPage() {
 
   const media1 = {
     id: '3',
-    alt: 'Allen & Heath Console',
-    filename: 'console.jpg',
+    alt: 'Allen & Heath Console From Side',
+    filename: 'ConsolecloseupSideKnobs.jpeg',
     mimeType: 'image/jpeg',
     filesize: 123456,
     width: 1920,
     height: 1080,
-    url: '/api/media/file/console.jpg',
+    url: '/api/media/file/ConsolecloseupSideKnobs.jpeg',
   }
 
   const media2 = {
@@ -171,24 +171,24 @@ export default function RecordingPage() {
 
   const media3 = {
     id: '5',
-    alt: 'Mixing Room',
-    filename: 'controlroom2.jpg',
+    alt: 'Monitoring',
+    filename: 'console_meters.jpg',
     mimeType: 'image/jpeg',
     filesize: 123456,
     width: 1920,
     height: 1154,
-    url: '/api/media/file/controlroom2.jpg',
+    url: '/api/media/file/console_meters.jpg',
   }
 
   const media4 = {
     id: '6',
     alt: 'Recording Studio',
-    filename: 'controlroom3.jpg',
-    mimeType: 'image/jpeg',
+    filename: 'ORBwebsite_micgroupbounce_yc.mp4',
+    mimeType: 'video/mp4',
     filesize: 123456,
     width: 1920,
     height: 1154,
-    url: '/api/media/file/controlroom3.jpg',
+    url: '/api/media/file/ORBwebsite_micgroupbounce_yc.mp4',
   }
 
   return (
@@ -235,6 +235,16 @@ export default function RecordingPage() {
           imagePosition="right"
           titleFont="bebas"
         />
+      </div>
+
+      {/* Call-to-Action Section */}
+      <div className="w-full py-16 flex justify-center" style={{ backgroundColor: 'var(--light)' }}>
+        <a
+          href="/booking"
+          className="btn-console btn-console--red"
+        >
+          Book Your Session
+        </a>
       </div>
     </article>
   )

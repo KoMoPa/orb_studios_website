@@ -29,19 +29,19 @@ export default async function Page() {
 
   return (
     <div className="pt-24 pb-24">
-      <div className="container mb-16">
+      {/* <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
           <h1>Rates</h1>
         </div>
-      </div>
+      </div> */}
 
       <div className="container mb-8">
-        <PageRange
+        {/* <PageRange
           collection="rates"
           currentPage={rates.page}
           limit={12}
           totalDocs={rates.totalDocs}
-        />
+        /> */}
       </div>
 
       <RatesArchive rates={rates.docs} />

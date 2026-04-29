@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { BookingConfirmationEmail, MonthlyBookingConfirmationEmail } from './email-templates';
+import { BookingConfirmationEmail, MonthlyBookingConfirmationEmail, MonthlyRentalInvoiceEmail } from './email-templates';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -156,4 +156,68 @@ export async function sendMonthlyClientBookingConfirmationEmail(
         console.error('Error sending monthly booking confirmation email:', error);
         throw new Error(`Failed to send confirmation email: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+}
+
+export async function sendMonthlyRentalInvoiceEmail(
+    clientEmail: string,
+    clientName: string,
+    monthYear: string,
+    totalPrice: number,
+    invoicePdfAttachment?: Buffer
+) {
+    const emailComponent = MonthlyRentalInvoiceEmail({
+        clientName,
+        monthYear,
+        totalPrice,
+        hasInvoice: !!invoicePdfAttachment,
+    });
+
+    const { error } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: clientEmail,
+        subject: `Monthly Rental Invoice – Orb Studios`,
+        react: emailComponent,
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
+    });
+
+    if (error) {
+        console.error('Error sending monthly rental invoice email to client:', error);
+        throw new Error(`Failed to send monthly rental invoice: ${error.message}`);
+    }
+
+    return { success: true };
+}
+
+export async function notifyAdminMonthlyRentalInvoice(
+    clientEmail: string,
+    clientName: string,
+    monthYear: string,
+    totalPrice: number,
+    invoicePdfAttachment?: Buffer
+) {
+    const emailComponent = MonthlyRentalInvoiceEmail({
+        clientName,
+        monthYear,
+        totalPrice,
+        hasInvoice: !!invoicePdfAttachment,
+    });
+
+    const { error } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: ADMIN_EMAIL,
+        subject: `Monthly Rental Invoice – ${clientName}`,
+        react: emailComponent,
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
+    });
+
+    if (error) {
+        console.error('Error sending monthly rental invoice notification to admin:', error);
+        throw new Error(`Failed to send admin notification: ${error.message}`);
+    }
+
+    return { success: true };
 }

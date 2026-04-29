@@ -55,11 +55,11 @@ export const ArticleBlock: React.FC<Props> = (props) => {
   )
 
   const imageSection = (
-    <div className="w-full overflow-hidden image-container">
+    <div className="w-full overflow-hidden image-container aspect-video">
       {media && typeof media === 'object' && (
         <Media
           resource={media}
-          imgClassName="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+          imgClassName="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
         />
       )}
     </div>

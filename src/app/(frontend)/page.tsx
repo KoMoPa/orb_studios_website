@@ -108,8 +108,8 @@ export default async function Home() {
             } as any}
             title="ORB STUDIOS"
             titleFont="vinyl"
-            subtitle="Premier Boutique Music Space"
-            description="Etobicoke's premier recording and rehearsal space with world-class equipment and professional tracking facilities."
+            subtitle="Boutique Rehearsal & Recording Space"
+            description="Etobicoke's professional recording and rehearsal space mixing artistic flair and great gear to help musicians create their masterpieces."
             cta={{ text: 'Book Now', url: '/booking' }}
             ctaClassName="btn-console--lg"
           />
@@ -164,7 +164,7 @@ export default async function Home() {
           />
           <ArticleBlock
             blockType="articleBlock"
-            title="Use Orb Studios in a number of ways"
+            title="Use ORB Studios in a number of ways"
             titleFont="glitch"
             content={{
               root: {
@@ -180,7 +180,7 @@ export default async function Home() {
                         format: 0,
                         mode: 'normal',
                         style: '',
-                        text: 'Check out a list of suggested activities Orb can be used for, or feel free to contact us for whatever you want.',
+                        text: 'Check out a list of suggested activities ORB can be used for, or feel free to contact us for whatever you want.',
                         type: 'text',
                         version: 1,
                       },
@@ -221,13 +221,13 @@ export default async function Home() {
               height: 800,
             } as any}
             imagePosition="right"
-            cta={{
-              text: 'Explore Activities',
-              url: '/activities',
-            }}
+            ctas={[
+              {text: 'Explore Activities', url: '/activities'},
+              {text: 'Record at ORB', url: '/recording'}
+            ]}
           />
           <AccentHero
-            title="How to Use Our Great Equipment"
+            title="How to Use Our Gear"
             description="Master our professional-grade equipment with expert guidance and tutorials. Learn the ins and outs of our gear to get the best results for your project."
             backgroundImage={{
               url: '/api/media/file/console.jpg',

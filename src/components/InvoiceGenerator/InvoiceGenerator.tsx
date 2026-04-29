@@ -97,12 +97,9 @@ export function InvoiceGenerator() {
       };
 
       if (!formData.isMonthly) {
-        const bookingDateTime = new Date(`${formData.bookingDate}T${formData.startTime}`);
-        const endDateTime = new Date(bookingDateTime);
-        endDateTime.setMinutes(endDateTime.getMinutes() + formData.duration! * 60);
-
-        payload.startTime = bookingDateTime.toISOString();
-        payload.endTime = endDateTime.toISOString();
+        payload.bookingDate = formData.bookingDate;
+        payload.startTime = formData.startTime;
+        payload.duration = formData.duration;
       }
 
       const response = await fetch('/api/admin/generate-invoice', {
