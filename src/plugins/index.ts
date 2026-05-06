@@ -1,6 +1,7 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
+import { searchPlugin } from '@payloadcms/plugin-search'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Plugin } from 'payload'
@@ -91,6 +92,12 @@ export const plugins: Plugin[] = [
           return field
         })
       },
+    },
+  }),
+  searchPlugin({
+    collections: ['posts'],
+    defaultPriorities: {
+      posts: 10,
     },
   }),
 ]
