@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { BookingConfirmationEmail, MonthlyBookingConfirmationEmail, MonthlyRentalInvoiceEmail } from './email-templates';
+import { generateIcalEventBuffer } from './ical';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -33,7 +34,9 @@ export async function sendBookingConfirmationEmail(
     totalPrice: number,
     rentalType: string,
     bookingId?: string,
-    invoicePdfAttachment?: Buffer
+    invoicePdfAttachment?: Buffer,
+    eventTitle?: string,
+    eventDescription?: string
 ) {
     const sessionDate = fmtDate(startTime);
     const sessionTime = `${fmtTime(startTime)} – ${fmtTime(endTime)}`;
@@ -47,14 +50,36 @@ export async function sendBookingConfirmationEmail(
         hasInvoice: !!invoicePdfAttachment,
     });
 
+    // Build attachments array
+    const attachments: any[] = [];
+    
+    if (invoicePdfAttachment) {
+        attachments.push({ filename: 'invoice.pdf', content: invoicePdfAttachment });
+    }
+
+    // Generate and add iCal attachment
+    if (eventTitle && eventDescription) {
+        try {
+            const icalBuffer = generateIcalEventBuffer(
+                eventTitle,
+                startTime,
+                endTime,
+                eventDescription,
+                clientEmail
+            );
+            attachments.push({ filename: 'booking.ics', content: icalBuffer });
+        } catch (icalError) {
+            console.error('Error generating iCal attachment:', icalError);
+            // Continue without iCal attachment
+        }
+    }
+
     const { error } = await resend.emails.send({
         from: `Orb Studios <${SENDER_EMAIL}>`,
         to: clientEmail,
         subject: `Session Confirmed – Orb Studios`,
         react: emailComponent,
-        attachments: invoicePdfAttachment
-            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
-            : undefined,
+        attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     if (error) {
@@ -73,7 +98,9 @@ export async function notifyAdminNewBooking(
     totalPrice: number,
     rentalType: string,
     bookingId?: string,
-    invoicePdfAttachment?: Buffer
+    invoicePdfAttachment?: Buffer,
+    eventTitle?: string,
+    eventDescription?: string
 ) {
     const sessionDate = fmtDate(startTime);
     const sessionTime = `${fmtTime(startTime)} – ${fmtTime(endTime)}`;
@@ -87,14 +114,36 @@ export async function notifyAdminNewBooking(
         hasInvoice: !!invoicePdfAttachment,
     });
 
+    // Build attachments array
+    const attachments: any[] = [];
+    
+    if (invoicePdfAttachment) {
+        attachments.push({ filename: 'invoice.pdf', content: invoicePdfAttachment });
+    }
+
+    // Generate and add iCal attachment
+    if (eventTitle && eventDescription) {
+        try {
+            const icalBuffer = generateIcalEventBuffer(
+                eventTitle,
+                startTime,
+                endTime,
+                eventDescription,
+                ADMIN_EMAIL
+            );
+            attachments.push({ filename: 'booking.ics', content: icalBuffer });
+        } catch (icalError) {
+            console.error('Error generating iCal attachment:', icalError);
+            // Continue without iCal attachment
+        }
+    }
+
     const { error } = await resend.emails.send({
         from: `Orb Studios <${SENDER_EMAIL}>`,
         to: ADMIN_EMAIL,
         subject: `New Booking – ${clientName}`,
         react: emailComponent,
-        attachments: invoicePdfAttachment
-            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
-            : undefined,
+        attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     if (error) {
@@ -114,7 +163,9 @@ export async function sendMonthlyClientBookingConfirmationEmail(
     overageHours: number,
     overageCost: number,
     bookingId?: string,
-    invoicePdfAttachment?: Buffer
+    invoicePdfAttachment?: Buffer,
+    eventTitle?: string,
+    eventDescription?: string
 ) {
     try {
         const sessionDate = fmtDate(startTime);
@@ -131,16 +182,36 @@ export async function sendMonthlyClientBookingConfirmationEmail(
             bookingId,
         });
 
-        const attachments = invoicePdfAttachment
-            ? [{ filename: 'overage-invoice.pdf', content: invoicePdfAttachment }]
-            : undefined;
+        // Build attachments array
+        const attachments: any[] = [];
+        
+        if (invoicePdfAttachment) {
+            attachments.push({ filename: 'overage-invoice.pdf', content: invoicePdfAttachment });
+        }
+
+        // Generate and add iCal attachment
+        if (eventTitle && eventDescription) {
+            try {
+                const icalBuffer = generateIcalEventBuffer(
+                    eventTitle,
+                    startTime,
+                    endTime,
+                    eventDescription,
+                    clientEmail
+                );
+                attachments.push({ filename: 'booking.ics', content: icalBuffer });
+            } catch (icalError) {
+                console.error('Error generating iCal attachment:', icalError);
+                // Continue without iCal attachment
+            }
+        }
 
         await resend.emails.send({
             from: `Orb Studios <${SENDER_EMAIL}>`,
             to: clientEmail,
             subject: `Monthly Session Confirmed – Orb Studios`,
             react: emailComponent,
-            attachments,
+            attachments: attachments.length > 0 ? attachments : undefined,
         });
 
         await resend.emails.send({
@@ -148,7 +219,7 @@ export async function sendMonthlyClientBookingConfirmationEmail(
             to: ADMIN_EMAIL,
             subject: `Monthly Booking – ${clientName}`,
             react: emailComponent,
-            attachments,
+            attachments: attachments.length > 0 ? attachments : undefined,
         });
 
         return { success: true };

@@ -237,7 +237,9 @@ export async function POST(request: NextRequest) {
           pricing.total,
           body.rentalTypeTitle || body.rentalType,
           bookingId,
-          invoicePdfBuffer
+          invoicePdfBuffer,
+          eventTitle,
+          eventDescription
         );
         console.log(`Invoice email sent to ${body.clientEmail}`);
         
@@ -250,7 +252,9 @@ export async function POST(request: NextRequest) {
           pricing.total,
           body.rentalTypeTitle || body.rentalType,
           bookingId,
-          invoicePdfBuffer
+          invoicePdfBuffer,
+          eventTitle,
+          eventDescription
         );
         console.log('Admin notification email sent');
       }
@@ -308,22 +312,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Google Calendar event for hourly invoices only
+    let eventTitle: string | undefined;
+    let eventDescription: string | undefined;
+    
     if (!isMonthly && startTime && endTime) {
-      try {
-        const eventTitle = `${body.clientName || 'Client'} - Booking`;
-        const eventDescription = `
+      eventTitle = `${body.clientName || 'Client'} - Booking`;
+      eventDescription = `
           Client: ${body.clientName}
           Email: ${body.clientEmail}
           Duration: ${durationMinutes / 60} hour${durationMinutes / 60 > 1 ? 's' : ''}
           Rental Type: ${body.rentalTypeTitle || body.rentalType}
         `.trim();
-        
+      
+      try {
         await createCalendarEvent(
           eventTitle,
           startTime,
           endTime,
-          eventDescription,
-          [body.clientEmail]
+          eventDescription
         );
         console.log('Calendar event created for manual hourly invoice');
       } catch (calendarError) {

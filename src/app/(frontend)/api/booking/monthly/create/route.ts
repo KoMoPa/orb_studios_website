@@ -190,7 +190,7 @@ ${overageInfo.overageHours > 0 ? `OVERAGE: ${overageInfo.overageHours} hours cha
 
     let googleEventId: string | undefined;
     try {
-      googleEventId = await createCalendarEvent(eventTitle, startTime, endTime, eventDescription, [email]);
+      googleEventId = await createCalendarEvent(eventTitle, startTime, endTime, eventDescription);
       console.log(`[Monthly] Created Google Calendar event: ${googleEventId}`);
     } catch (error) {
       console.error('[Monthly] Error creating calendar event:', error);
@@ -285,7 +285,9 @@ ${overageInfo.overageHours > 0 ? `OVERAGE: ${overageInfo.overageHours} hours cha
         overageInfo.overageHours,
         overageInfo.overageCost,
         googleEventId,
-        invoicePdfBuffer
+        invoicePdfBuffer,
+        eventTitle,
+        eventDescription
       );
       console.log(`[Monthly] Confirmation email sent to ${email}`);
     } catch (error) {

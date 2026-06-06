@@ -197,8 +197,7 @@ export async function POST(request: NextRequest) {
         eventTitle,
         startTime,
         endTime,
-        eventDescription,
-        [body.clientEmail]
+        eventDescription
       );
       // console.log(`Created Google Calendar event: ${googleEventId}`);
     } catch (error) {
@@ -303,7 +302,9 @@ export async function POST(request: NextRequest) {
         pricing.total,
         rentalTypeTitle,
         bookingId,
-        invoicePdfBuffer
+        invoicePdfBuffer,
+        eventTitle,
+        eventDescription
       );
 
       await notifyAdminNewBooking(
@@ -314,7 +315,9 @@ export async function POST(request: NextRequest) {
         pricing.total,
         rentalTypeTitle,
         bookingId,
-        invoicePdfBuffer
+        invoicePdfBuffer,
+        eventTitle,
+        eventDescription
       );
 
       // console.log('Confirmation emails sent');

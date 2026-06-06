@@ -70,7 +70,7 @@ export async function createCalendarEvent(
     startTime: Date,
     endTime: Date,
     description: string,
-    attendeesEmail?: string[],
+    attendeesEmail?: string[], // Note: Requires Domain-Wide Delegation to use
     calendarEmail: string = process.env.GOOGLE_CALENDAR_EMAIL!
 ) {
     try {
@@ -102,6 +102,9 @@ export async function createCalendarEvent(
                 event.description = sanitizedDescription;
             }
         }
+
+        // Note: Attendees cannot be added via service account without Domain-Wide Delegation
+        // Calendar invites are sent via email instead
 
         // console.log('Creating calendar event:', { 
         //     title, 
