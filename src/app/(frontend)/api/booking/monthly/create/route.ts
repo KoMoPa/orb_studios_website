@@ -105,13 +105,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Cannot book times in the past' }, { status: 400 });
     }
 
-    // Validate minimum 24 hours advance
-    const minBookingTime = new Date(now);
-    minBookingTime.setHours(minBookingTime.getHours() + 24);
+    // Validate booking is not in the current hour
+    // Round up to the next full hour
+    const nextFullHour = new Date(now);
+    nextFullHour.setMinutes(0, 0, 0);
+    if (now.getMinutes() > 0 || now.getSeconds() > 0) {
+      nextFullHour.setHours(nextFullHour.getHours() + 1);
+    }
 
-    if (startTime < minBookingTime) {
+    if (startTime < nextFullHour) {
       return NextResponse.json(
-        { error: 'Bookings must be made at least 24 hours in advance' },
+        { error: 'Bookings must start from the next full hour' },
         { status: 400 }
       );
     }

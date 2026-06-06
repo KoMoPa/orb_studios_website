@@ -91,20 +91,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check minimum advance booking requirement
-    const minBookingDate = new Date(now);
-    minBookingDate.setHours(minBookingDate.getHours() + BOOKING_MIN_ADVANCE_HOURS);
-    
-    if (requestedDate < minBookingDate) {
-      return NextResponse.json(
-        { 
-          error: `Bookings must be made at least ${BOOKING_MIN_ADVANCE_HOURS} hours in advance`,
-          availableDate: minBookingDate.toISOString().split('T')[0]
-        },
-        { status: 400 }
-      );
-    }
-
     // Don't allow bookings more than 6 months in advance
     const maxBookingDate = new Date(now);
     maxBookingDate.setMonth(maxBookingDate.getMonth() + 6);
@@ -134,6 +120,22 @@ export async function POST(request: NextRequest) {
       
       const slotStart = createEasternDate(dateStr, timeStr);
       const slotEnd = createEasternDate(dateStr, endTimeStr);
+
+      // Skip slots that are in the past or current hour
+      if (slotStart < now) {
+        continue;
+      }
+
+      // Skip slots that start before the next full hour
+      const nextFullHour = new Date(now);
+      nextFullHour.setMinutes(0, 0, 0);
+      if (now.getMinutes() > 0 || now.getSeconds() > 0) {
+        nextFullHour.setHours(nextFullHour.getHours() + 1);
+      }
+      
+      if (slotStart < nextFullHour) {
+        continue;
+      }
 
       // Calculate actual end time if it crosses hour boundary
       if (minutes + durationMinutes >= 60) {
