@@ -124,6 +124,8 @@ function EmailShell({ preview, children }: { preview: string; children: React.Re
                 <meta name="viewport" content="width=device-width" />
                 <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
                 <meta name="x-apple-disable-message-reformatting" />
+                <meta name="color-scheme" content="dark" />
+                <meta name="supported-color-schemes" content="dark" />
                 <style>{fontImport}</style>
             </Head>
             <Preview>{preview}</Preview>
