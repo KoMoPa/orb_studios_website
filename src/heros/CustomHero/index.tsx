@@ -96,6 +96,7 @@ export const CustomHero: React.FC<CustomHeroProps> = ({
           autoPlay
           muted
           loop
+          playsInline
           onError={() => setVideoFailed(true)}
         />
       )}

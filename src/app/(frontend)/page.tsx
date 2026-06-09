@@ -96,9 +96,9 @@ export default async function Home() {
             type="custom"
             backgroundImage={{
               id: 1,
-              filename: 'console_video.mp4',
+              filename: 'orbwalkthrough.mp4',
               alt: 'Recording studio',
-              url: '/api/media/file/console_video.mp4',
+              url: '/api/media/file/orbwalkthrough.mp4',
             } as any}
             fallbackImage={{
               id: 1,
