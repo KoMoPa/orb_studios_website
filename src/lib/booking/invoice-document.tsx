@@ -123,6 +123,8 @@ export function InvoiceDocument({
     pricing,
     rentalType,
     isMonthly = false,
+    invoiceType,
+    customDescription,
 }: {
     invoiceNumber: string;
     clientName: string;
@@ -133,6 +135,8 @@ export function InvoiceDocument({
     pricing: PricingBreakdown;
     rentalType: string;
     isMonthly?: boolean;
+    invoiceType?: 'hourly' | 'monthly' | 'custom';
+    customDescription?: string;
 }) {
     const durationHours = startTime && endTime ? (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60) : 0;
     const dateFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -153,6 +157,10 @@ export function InvoiceDocument({
     // Calculate HST (13%)
     const subtotalBeforeHST = pricing.subtotal || (pricing.total / 1.13);
     const hstAmount = pricing.total - subtotalBeforeHST;
+    
+    // Determine invoice type for rendering logic
+    const isCustom = invoiceType === 'custom';
+    const isHourly = invoiceType === 'hourly' || (!invoiceType && !isMonthly && startTime && endTime);
 
     return (
         <Document>
@@ -181,8 +189,17 @@ export function InvoiceDocument({
                     <Text style={{ fontSize: 10, color: '#666' }}>{clientEmail}</Text>
                 </View>
 
-                {/* Booking Details */}
-                {!isMonthly && startTime && endTime ? (
+                {/* Custom Invoice Details */}
+                {isCustom ? (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Invoice Details</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Description:</Text>
+                            <Text style={styles.value}>{customDescription}</Text>
+                        </View>
+                    </View>
+                ) : isHourly ? (
+                    /* Hourly Booking Details */
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Booking Details</Text>
                         <View style={styles.row}>
@@ -191,11 +208,11 @@ export function InvoiceDocument({
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Date & Time:</Text>
-                            <Text style={styles.value}>{dateTimeFormatter.format(startTime)}</Text>
+                            <Text style={styles.value}>{dateTimeFormatter.format(startTime!)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>End Time:</Text>
-                            <Text style={styles.value}>{dateTimeFormatter.format(endTime)}</Text>
+                            <Text style={styles.value}>{dateTimeFormatter.format(endTime!)}</Text>
                         </View>
                         <View style={styles.row}>
                             <Text style={styles.label}>Duration:</Text>
@@ -203,6 +220,7 @@ export function InvoiceDocument({
                         </View>
                     </View>
                 ) : (
+                    /* Monthly Rental Details */
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Booking Details</Text>
                         <View style={styles.row}>
@@ -214,7 +232,20 @@ export function InvoiceDocument({
 
                 {/* Pricing Breakdown */}
                 <View style={styles.priceTable}>
-                    {isMonthly ? (
+                    {isCustom ? (
+                        /* Custom Invoice Pricing */
+                        <>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>{customDescription}</Text>
+                                <Text style={styles.tableValue}>${pricing.subtotal.toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableLabel}>HST (13%)</Text>
+                                <Text style={styles.tableValue}>${hstAmount.toFixed(2)}</Text>
+                            </View>
+                        </>
+                    ) : isMonthly || (!invoiceType && !isHourly) ? (
+                        /* Monthly Rental Pricing */
                         <>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableLabel}>Monthly Rental Rate</Text>
@@ -226,6 +257,7 @@ export function InvoiceDocument({
                             </View>
                         </>
                     ) : (
+                        /* Hourly Pricing */
                         <>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableLabel}>Rate</Text>

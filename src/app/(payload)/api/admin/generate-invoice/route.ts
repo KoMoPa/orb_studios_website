@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateInvoicePDF, generateInvoiceNumber, formatRentalType } from '@/lib/booking/pdf-generator';
 import { calculatePrice } from '@/lib/booking/pricing';
 import { PricingBreakdown } from '@/lib/booking/types';
-import { sendBookingConfirmationEmail, notifyAdminNewBooking, sendMonthlyRentalInvoiceEmail, notifyAdminMonthlyRentalInvoice } from '@/lib/booking/email';
+import { sendBookingConfirmationEmail, notifyAdminNewBooking, sendMonthlyRentalInvoiceEmail, notifyAdminMonthlyRentalInvoice, sendCustomInvoiceEmail, notifyAdminCustomInvoice } from '@/lib/booking/email';
 import { createCalendarEvent } from '@/lib/booking/google-calendar';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
@@ -64,15 +64,32 @@ function getEasternDateString(utcDate: Date): string {
  * POST /api/admin/generate-invoice
  * Generate an invoice PDF manually from admin panel
  * 
- * Request body:
+ * Request body for hourly:
  * {
  *   clientName: string;
  *   clientEmail: string;
- *   bookingDate?: string (YYYY-MM-DD);
- *   startTime?: string (HH:MM);
- *   duration?: number (hours);
- *   rentalType: 'hourly-rehearsal' | 'hourly-recording' | 'monthly';
- *   isMonthly?: boolean;
+ *   invoiceType: 'hourly';
+ *   bookingDate: string (YYYY-MM-DD);
+ *   startTime: string (HH:MM);
+ *   duration: number (hours);
+ *   rentalType: 'hourly-rehearsal' | 'hourly-recording';
+ * }
+ * 
+ * Request body for monthly:
+ * {
+ *   clientName: string;
+ *   clientEmail: string;
+ *   invoiceType: 'monthly';
+ * }
+ * 
+ * Request body for custom:
+ * {
+ *   clientName: string;
+ *   clientEmail: string;
+ *   invoiceType: 'custom';
+ *   customAmount: number;
+ *   customInvoiceDate: string (YYYY-MM-DD);
+ *   customDescription: string;
  * }
  */
 export async function POST(request: NextRequest) {
@@ -80,7 +97,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate required fields
-    const requiredFields = ['clientName', 'clientEmail', 'rentalType'];
+    const requiredFields = ['clientName', 'clientEmail', 'invoiceType'];
     const missingFields = requiredFields.filter(field => !body[field]);
 
     if (missingFields.length > 0) {
@@ -90,13 +107,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isMonthly = body.isMonthly === true;
+    const invoiceType = body.invoiceType as 'hourly' | 'monthly' | 'custom';
 
-    // Validate for monthly vs hourly
-    if (!isMonthly) {
+    // Validate invoice type
+    if (!['hourly', 'monthly', 'custom'].includes(invoiceType)) {
+      return NextResponse.json(
+        { error: 'Invalid invoiceType. Must be hourly, monthly, or custom' },
+        { status: 400 }
+      );
+    }
+
+    // Type-specific validation
+    if (invoiceType === 'hourly') {
       if (!body.bookingDate || !body.startTime || !body.duration) {
         return NextResponse.json(
-          { error: 'bookingDate, startTime, and duration are required for hourly bookings' },
+          { error: 'bookingDate, startTime, and duration are required for hourly invoices' },
+          { status: 400 }
+        );
+      }
+      if (!body.rentalType) {
+        return NextResponse.json(
+          { error: 'rentalType is required for hourly invoices' },
+          { status: 400 }
+        );
+      }
+    } else if (invoiceType === 'custom') {
+      if (!body.customAmount || body.customAmount <= 0) {
+        return NextResponse.json(
+          { error: 'customAmount is required and must be greater than 0' },
+          { status: 400 }
+        );
+      }
+      if (!body.customInvoiceDate) {
+        return NextResponse.json(
+          { error: 'customInvoiceDate is required' },
+          { status: 400 }
+        );
+      }
+      if (!body.customDescription || body.customDescription.trim().length === 0) {
+        return NextResponse.json(
+          { error: 'customDescription is required' },
           { status: 400 }
         );
       }
@@ -106,7 +156,7 @@ export async function POST(request: NextRequest) {
     let endTime: Date | undefined;
     let durationMinutes = 0;
 
-    if (!isMonthly) {
+    if (invoiceType === 'hourly') {
       // Use createEasternDate to properly handle timezone conversion
       startTime = createEasternDate(body.bookingDate, body.startTime);
       
@@ -147,9 +197,23 @@ export async function POST(request: NextRequest) {
     // Calculate pricing
     let pricing: PricingBreakdown;
 
-    if (isMonthly) {
+    if (invoiceType === 'monthly') {
       // Monthly rental: $400 + 13% HST = $452
       const subtotal = MONTHLY_RATE;
+      const hst = parseFloat((subtotal * HST_RATE).toFixed(2));
+      const total = parseFloat((subtotal + hst).toFixed(2));
+
+      pricing = {
+        hourlyRate: 0,
+        subtotal,
+        monthlyDiscount: 0,
+        gearStorageFee: 0,
+        total,
+        totalMinutes: 0,
+      };
+    } else if (invoiceType === 'custom') {
+      // Custom invoice: use provided amount + 13% HST
+      const subtotal = parseFloat((body.customAmount).toFixed(2));
       const hst = parseFloat((subtotal * HST_RATE).toFixed(2));
       const total = parseFloat((subtotal + hst).toFixed(2));
 
@@ -192,17 +256,18 @@ export async function POST(request: NextRequest) {
       invoiceNumber,
       clientName: body.clientName,
       clientEmail: body.clientEmail,
-      bookingDate: new Date(),
+      bookingDate: invoiceType === 'custom' ? new Date(body.customInvoiceDate) : new Date(),
       startTime,
       endTime,
       pricing,
-      rentalType: body.rentalTypeTitle || body.rentalType,
-      isMonthly,
+      rentalType: body.rentalTypeTitle || body.rentalType || 'Custom',
+      invoiceType,
+      customDescription: body.customDescription,
     });
 
     // Send confirmation email to client and admin
     try {
-      if (isMonthly) {
+      if (invoiceType === 'monthly') {
         // For monthly invoices, use the cleaner monthly rental template
         const monthYear = new Date().toLocaleDateString('en-CA', {
           timeZone: 'America/Toronto',
@@ -227,8 +292,49 @@ export async function POST(request: NextRequest) {
           invoicePdfBuffer
         );
         console.log('Admin notification for monthly rental sent');
+      } else if (invoiceType === 'custom') {
+        // For custom invoices, use the custom invoice template
+        const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'America/Toronto',
+        });
+        const invoiceDate = dateFormatter.format(new Date(body.customInvoiceDate));
+        
+        await sendCustomInvoiceEmail(
+          body.clientEmail,
+          body.clientName,
+          body.customDescription,
+          invoiceDate,
+          pricing.subtotal,
+          pricing.total - pricing.subtotal,
+          pricing.total,
+          invoicePdfBuffer
+        );
+        console.log(`Custom invoice email sent to ${body.clientEmail}`);
+        
+        await notifyAdminCustomInvoice(
+          body.clientEmail,
+          body.clientName,
+          body.customDescription,
+          invoiceDate,
+          pricing.subtotal,
+          pricing.total - pricing.subtotal,
+          pricing.total,
+          invoicePdfBuffer
+        );
+        console.log('Admin notification for custom invoice sent');
       } else {
         // For hourly invoices, use the standard booking confirmation template
+        const eventTitle = `${body.clientName || 'Client'} - Booking`;
+        const eventDescription = `
+          Client: ${body.clientName}
+          Email: ${body.clientEmail}
+          Duration: ${durationMinutes / 60} hour${durationMinutes / 60 > 1 ? 's' : ''}
+          Rental Type: ${body.rentalTypeTitle || body.rentalType}
+        `.trim();
+
         await sendBookingConfirmationEmail(
           body.clientEmail,
           body.clientName,
@@ -312,12 +418,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Google Calendar event for hourly invoices only
-    let eventTitle: string | undefined;
-    let eventDescription: string | undefined;
-    
-    if (!isMonthly && startTime && endTime) {
-      eventTitle = `${body.clientName || 'Client'} - Booking`;
-      eventDescription = `
+    if (invoiceType === 'hourly' && startTime && endTime) {
+      const eventTitle = `${body.clientName || 'Client'} - Booking`;
+      const eventDescription = `
           Client: ${body.clientName}
           Email: ${body.clientEmail}
           Duration: ${durationMinutes / 60} hour${durationMinutes / 60 > 1 ? 's' : ''}

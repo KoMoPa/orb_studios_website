@@ -12,6 +12,10 @@ interface InvoiceGeneratorFormData {
   duration?: number; // hours
   rentalType: 'hourly-rehearsal' | 'hourly-recording' | 'monthly';
   isMonthly: boolean;
+  invoiceType: 'hourly' | 'monthly' | 'custom';
+  customAmount?: number;
+  customInvoiceDate?: string;
+  customDescription?: string;
 }
 
 const MONTHLY_RATE = 400;
@@ -27,6 +31,10 @@ export function InvoiceGenerator() {
     duration: undefined,
     rentalType: 'hourly-rehearsal',
     isMonthly: false,
+    invoiceType: 'hourly',
+    customAmount: undefined,
+    customInvoiceDate: '',
+    customDescription: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -41,13 +49,11 @@ export function InvoiceGenerator() {
     }));
   };
 
-  const handleMonthlyToggle = () => {
+  const handleInvoiceTypeChange = (type: 'hourly' | 'monthly' | 'custom') => {
     setFormData(prev => ({
       ...prev,
-      isMonthly: !prev.isMonthly,
-      // Clear hourly fields when switching to monthly
-      bookingDate: !prev.isMonthly ? '' : prev.bookingDate,
-      duration: !prev.isMonthly ? undefined : prev.duration,
+      invoiceType: type,
+      isMonthly: type === 'monthly',
     }));
   };
 
@@ -66,12 +72,11 @@ export function InvoiceGenerator() {
         throw new Error('Client email is required');
       }
 
-      if (formData.isMonthly) {
-        // Monthly booking - minimal validation
-        if (!formData.clientEmail.includes('@')) {
-          throw new Error('Invalid email address');
-        }
-      } else {
+      if (!formData.clientEmail.includes('@')) {
+        throw new Error('Invalid email address');
+      }
+
+      if (formData.invoiceType === 'hourly') {
         // Hourly booking - more validation
         if (!formData.bookingDate) {
           throw new Error('Booking date is required');
@@ -87,19 +92,34 @@ export function InvoiceGenerator() {
         if (isNaN(bookingDateTime.getTime())) {
           throw new Error('Invalid date/time');
         }
+      } else if (formData.invoiceType === 'custom') {
+        // Custom invoice validation
+        if (!formData.customAmount || formData.customAmount <= 0) {
+          throw new Error('Amount must be greater than 0');
+        }
+        if (!formData.customInvoiceDate) {
+          throw new Error('Invoice date is required');
+        }
+        if (!formData.customDescription.trim()) {
+          throw new Error('Invoice description is required');
+        }
       }
 
       const payload: any = {
         clientName: formData.clientName,
         clientEmail: formData.clientEmail,
+        invoiceType: formData.invoiceType,
         rentalType: formData.rentalType,
-        isMonthly: formData.isMonthly,
       };
 
-      if (!formData.isMonthly) {
+      if (formData.invoiceType === 'hourly') {
         payload.bookingDate = formData.bookingDate;
         payload.startTime = formData.startTime;
         payload.duration = formData.duration;
+      } else if (formData.invoiceType === 'custom') {
+        payload.customAmount = formData.customAmount;
+        payload.customInvoiceDate = formData.customInvoiceDate;
+        payload.customDescription = formData.customDescription;
       }
 
       const response = await fetch('/api/admin/generate-invoice', {
@@ -177,28 +197,35 @@ export function InvoiceGenerator() {
 
           {/* Booking Type Toggle */}
           <fieldset className={styles.fieldset}>
-            <legend className={styles.legend}>Booking Type</legend>
+            <legend className={styles.legend}>Invoice Type</legend>
             
             <div className={styles.toggleContainer}>
               <button
                 type="button"
-                onClick={handleMonthlyToggle}
-                className={`${styles.toggleButton} ${formData.isMonthly ? styles.active : ''}`}
+                onClick={() => handleInvoiceTypeChange('hourly')}
+                className={`${styles.toggleButton} ${formData.invoiceType === 'hourly' ? styles.active : ''}`}
+              >
+                Hourly Booking
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInvoiceTypeChange('monthly')}
+                className={`${styles.toggleButton} ${formData.invoiceType === 'monthly' ? styles.active : ''}`}
               >
                 Monthly Rental - ${MONTHLY_RATE.toFixed(2)}
               </button>
               <button
                 type="button"
-                onClick={handleMonthlyToggle}
-                className={`${styles.toggleButton} ${!formData.isMonthly ? styles.active : ''}`}
+                onClick={() => handleInvoiceTypeChange('custom')}
+                className={`${styles.toggleButton} ${formData.invoiceType === 'custom' ? styles.active : ''}`}
               >
-                Hourly Booking
+                Custom Invoice
               </button>
             </div>
           </fieldset>
 
           {/* Hourly Booking Fields */}
-          {!formData.isMonthly && (
+          {formData.invoiceType === 'hourly' && (
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Booking Details</legend>
 
@@ -228,7 +255,7 @@ export function InvoiceGenerator() {
                   name="bookingDate"
                   value={formData.bookingDate}
                   onChange={handleInputChange}
-                  required={!formData.isMonthly}
+                  required
                   className={styles.input}
                 />
               </div>
@@ -244,7 +271,7 @@ export function InvoiceGenerator() {
                     name="startTime"
                     value={formData.startTime}
                     onChange={handleInputChange}
-                    required={!formData.isMonthly}
+                    required
                     className={styles.input}
                   />
                 </div>
@@ -264,7 +291,7 @@ export function InvoiceGenerator() {
                         duration: hours || undefined,
                       }));
                     }}
-                    required={!formData.isMonthly}
+                    required
                     className={styles.input}
                   >
                     <option value="">Select duration...</option>
@@ -280,11 +307,92 @@ export function InvoiceGenerator() {
           )}
 
           {/* Monthly Booking Note */}
-          {formData.isMonthly && (
+          {formData.invoiceType === 'monthly' && (
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Monthly Rental</legend>
               <div className={styles.note}>
                 <p>Monthly rental rate: <strong>${MONTHLY_RATE.toFixed(2)}</strong> (includes 13% HST)</p>
+              </div>
+            </fieldset>
+          )}
+
+          {/* Custom Invoice Fields */}
+          {formData.invoiceType === 'custom' && (
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Custom Invoice Details</legend>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="customAmount" className={styles.label}>
+                  Amount (before HST) *
+                </label>
+                <input
+                  type="number"
+                  id="customAmount"
+                  name="customAmount"
+                  value={formData.customAmount || ''}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      customAmount: e.target.value ? parseFloat(e.target.value) : undefined,
+                    }));
+                  }}
+                  step="0.01"
+                  min="0"
+                  placeholder="e.g. 500.00"
+                  required
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="customInvoiceDate" className={styles.label}>
+                  Invoice Date *
+                </label>
+                <input
+                  type="date"
+                  id="customInvoiceDate"
+                  name="customInvoiceDate"
+                  value={formData.customInvoiceDate}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="customDescription" className={styles.label}>
+                  Description / Reason for Invoice *
+                </label>
+                <textarea
+                  id="customDescription"
+                  name="customDescription"
+                  value={formData.customDescription}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      customDescription: e.target.value,
+                    }));
+                  }}
+                  placeholder="e.g. Studio rental for special event, Equipment rental, Consultation fees, etc."
+                  required
+                  className={styles.textarea}
+                  rows={4}
+                />
+              </div>
+
+              <div className={styles.priceBreakdown}>
+                <div className={styles.priceRow}>
+                  <span>Subtotal:</span>
+                  <span>${(formData.customAmount || 0).toFixed(2)}</span>
+                </div>
+                <div className={styles.priceRow}>
+                  <span>HST (13%):</span>
+                  <span>${((formData.customAmount || 0) * HST_RATE).toFixed(2)}</span>
+                </div>
+                <div className={styles.priceRowTotal}>
+                  <span>Total:</span>
+                  <span>${((formData.customAmount || 0) * (1 + HST_RATE)).toFixed(2)}</span>
+                </div>
               </div>
             </fieldset>
           )}

@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { BookingConfirmationEmail, MonthlyBookingConfirmationEmail, MonthlyRentalInvoiceEmail } from './email-templates';
+import { BookingConfirmationEmail, MonthlyBookingConfirmationEmail, MonthlyRentalInvoiceEmail, CustomInvoiceEmail } from './email-templates';
 import { generateIcalEventBuffer } from './ical';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -287,6 +287,82 @@ export async function notifyAdminMonthlyRentalInvoice(
 
     if (error) {
         console.error('Error sending monthly rental invoice notification to admin:', error);
+        throw new Error(`Failed to send admin notification: ${error.message}`);
+    }
+
+    return { success: true };
+}
+
+export async function sendCustomInvoiceEmail(
+    clientEmail: string,
+    clientName: string,
+    description: string,
+    invoiceDate: string,
+    subtotal: number,
+    hstAmount: number,
+    totalPrice: number,
+    invoicePdfAttachment?: Buffer
+) {
+    const emailComponent = CustomInvoiceEmail({
+        clientName,
+        description,
+        invoiceDate,
+        subtotal,
+        hstAmount,
+        totalPrice,
+        hasInvoice: !!invoicePdfAttachment,
+    });
+
+    const { error } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: clientEmail,
+        subject: `Invoice – ${description} – Orb Studios`,
+        react: emailComponent,
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
+    });
+
+    if (error) {
+        console.error('Error sending custom invoice email to client:', error);
+        throw new Error(`Failed to send custom invoice: ${error.message}`);
+    }
+
+    return { success: true };
+}
+
+export async function notifyAdminCustomInvoice(
+    clientEmail: string,
+    clientName: string,
+    description: string,
+    invoiceDate: string,
+    subtotal: number,
+    hstAmount: number,
+    totalPrice: number,
+    invoicePdfAttachment?: Buffer
+) {
+    const emailComponent = CustomInvoiceEmail({
+        clientName,
+        description,
+        invoiceDate,
+        subtotal,
+        hstAmount,
+        totalPrice,
+        hasInvoice: !!invoicePdfAttachment,
+    });
+
+    const { error } = await resend.emails.send({
+        from: `Orb Studios <${SENDER_EMAIL}>`,
+        to: ADMIN_EMAIL,
+        subject: `Custom Invoice – ${clientName} – ${description}`,
+        react: emailComponent,
+        attachments: invoicePdfAttachment
+            ? [{ filename: 'invoice.pdf', content: invoicePdfAttachment }]
+            : undefined,
+    });
+
+    if (error) {
+        console.error('Error sending custom invoice notification to admin:', error);
         throw new Error(`Failed to send admin notification: ${error.message}`);
     }
 

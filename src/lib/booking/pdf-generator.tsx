@@ -16,6 +16,8 @@ export async function generateInvoicePDF(params: {
     pricing: PricingBreakdown;
     rentalType: string;
     isMonthly?: boolean;
+    invoiceType?: 'hourly' | 'monthly' | 'custom';
+    customDescription?: string;
 }): Promise<Buffer> {
     try {
         const pdfBuffer = await renderToBuffer(
@@ -29,6 +31,8 @@ export async function generateInvoicePDF(params: {
                 pricing={params.pricing}
                 rentalType={params.rentalType}
                 isMonthly={params.isMonthly}
+                invoiceType={params.invoiceType}
+                customDescription={params.customDescription}
             />
         );
         return pdfBuffer;

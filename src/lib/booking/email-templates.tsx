@@ -609,3 +609,165 @@ export function MonthlyRentalInvoiceEmail({
         </EmailShell>
     );
 }
+
+// ─── Custom Invoice ───────────────────────────────────────────────────────────
+export function CustomInvoiceEmail({
+    clientName,
+    description,
+    invoiceDate,
+    subtotal,
+    hstAmount,
+    totalPrice,
+    hasInvoice = false,
+}: {
+    clientName: string;
+    description: string;
+    invoiceDate: string;
+    subtotal: number;
+    hstAmount: number;
+    totalPrice: number;
+    hasInvoice?: boolean;
+}) {
+    return (
+        <EmailShell preview={`Invoice from Orb Studios – ${description}`}>
+            <OrbHeader title="Invoice" />
+
+            <div style={{ maxWidth: 600, margin: '0 auto', padding: '40px 20px', backgroundColor: c.bgDark }}>
+                <p style={{ margin: '0 0 30px 0', fontSize: 18, color: c.offWhite, lineHeight: 1.6 }}>
+                    Hey {clientName},
+                </p>
+                <p style={{ margin: '0 0 30px 0', fontSize: 16, color: c.white, lineHeight: 1.7 }}>
+                    We&apos;ve prepared an invoice for you. Please see the details below:
+                </p>
+
+                {/* Invoice details card */}
+                <div style={{
+                    padding: 30, marginBottom: 30,
+                    backgroundColor: c.bgCard,
+                    border: `1px solid ${c.border}`,
+                    borderLeft: `4px solid ${c.amber}`,
+                }}>
+                    <h2 style={{
+                        margin: '0 0 25px 0', padding: 0,
+                        fontSize: 20, fontWeight: 'bold',
+                        color: c.white, textTransform: 'uppercase',
+                        letterSpacing: 2, fontFamily: c.fontDisplay,
+                    }}>
+                        ✦ Invoice Details
+                    </h2>
+                    <table width="100%" border={0} cellPadding={0} cellSpacing={0} role="presentation">
+                        <tbody>
+                            <tr>
+                                <td style={{ padding: '12px 0', borderBottom: `1px dashed ${c.border}` }}>
+                                    <p style={{ margin: 0, fontSize: 14, color: c.gray, textTransform: 'uppercase' }}>Description</p>
+                                    <p style={{ margin: '8px 0 0 0', fontSize: 18, color: c.white, fontWeight: 'bold' }}>
+                                        {description}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ padding: '12px 0', borderBottom: `1px dashed ${c.border}` }}>
+                                    <p style={{ margin: 0, fontSize: 14, color: c.gray, textTransform: 'uppercase' }}>Date</p>
+                                    <p style={{ margin: '8px 0 0 0', fontSize: 18, color: c.white, fontWeight: 'bold' }}>
+                                        {invoiceDate}
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pricing breakdown */}
+                <div style={{
+                    padding: 25, marginBottom: 30,
+                    backgroundColor: c.bgCard,
+                    border: `1px solid ${c.border}`,
+                }}>
+                    <h3 style={{
+                        margin: '0 0 20px 0', padding: 0,
+                        fontSize: 14, fontWeight: 'bold',
+                        color: c.offWhite, textTransform: 'uppercase', letterSpacing: 1,
+                    }}>
+                        💰 Pricing
+                    </h3>
+                    <table width="100%" border={0} cellPadding={0} cellSpacing={0} role="presentation">
+                        <tbody>
+                            <tr>
+                                <td style={{ padding: '10px 0', borderBottom: `1px solid ${c.border}`, color: c.gray, fontSize: 14 }}>
+                                    Subtotal
+                                </td>
+                                <td style={{ padding: '10px 0', borderBottom: `1px solid ${c.border}`, color: c.white, fontSize: 14, textAlign: 'right', fontWeight: 'bold' }}>
+                                    ${subtotal.toFixed(2)}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ padding: '10px 0', borderBottom: `2px solid ${c.accent}`, color: c.gray, fontSize: 14 }}>
+                                    HST (13%)
+                                </td>
+                                <td style={{ padding: '10px 0', borderBottom: `2px solid ${c.accent}`, color: c.white, fontSize: 14, textAlign: 'right', fontWeight: 'bold' }}>
+                                    ${hstAmount.toFixed(2)}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ padding: '15px 0', color: c.accent, fontSize: 18, fontWeight: 'bold' }}>
+                                    Total Due
+                                </td>
+                                <td style={{ padding: '15px 0', color: c.accent, fontSize: 20, fontWeight: 'bold', textAlign: 'right' }}>
+                                    ${totalPrice.toFixed(2)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Payment info */}
+                <div style={{
+                    padding: 25, marginBottom: 30,
+                    backgroundColor: c.bgCard,
+                    border: `2px solid ${c.accent}`,
+                    textAlign: 'center',
+                }}>
+                    <h3 style={{
+                        margin: '0 0 12px 0', padding: 0,
+                        fontSize: 14, fontWeight: 'bold',
+                        color: c.amber, textTransform: 'uppercase', letterSpacing: 1,
+                    }}>
+                        💸 Payment Instructions
+                    </h3>
+                    <p style={{ margin: 0, fontSize: 14, color: c.white, lineHeight: 1.6 }}>
+                        Please send an e-transfer to:
+                        <br />
+                        <span style={{ fontWeight: 'bold', fontSize: 16 }}>orbmusicstudios@gmail.com</span>
+                    </p>
+                </div>
+
+                {/* CTA */}
+                <div style={{ textAlign: 'center', marginBottom: 40 }}>
+                    <a
+                        href="mailto:orbmusicstudios@gmail.com"
+                        style={{
+                            color: c.white, textDecoration: 'none',
+                            display: 'inline-block',
+                            padding: '14px 32px',
+                            fontSize: 14, fontWeight: 'bold',
+                            border: `2px solid ${c.accent}`,
+                            textTransform: 'uppercase',
+                            letterSpacing: 2,
+                        }}
+                    >
+                        Questions? Get in Touch!
+                    </a>
+                </div>
+
+                <EmailFooterInfo />
+
+                {hasInvoice && (
+                    <p style={{ margin: '30px 0 0 0', textAlign: 'center', fontSize: 12, color: c.white, fontStyle: 'italic' }}>
+                        Invoice PDF is attached to this email.<br />
+                        Prompt Payment is Appreciated!
+                    </p>
+                )}
+            </div>
+        </EmailShell>
+    );
+}
