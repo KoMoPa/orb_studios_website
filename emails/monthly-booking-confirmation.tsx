@@ -11,6 +11,7 @@ export default function Preview() {
       overageHours={0}
       overageCost={0}
       bookingId="hlutk9ksgkmnp8avhj8oj7p1i8"
+      doorCode="4321"
     />
   );
 }

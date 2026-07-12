@@ -55,6 +55,41 @@ function OrbHeader({ title }: { title: string }) {
     );
 }
 
+function DoorProcedureCard({ doorCode, isMonthly }: { doorCode: string; isMonthly: boolean }) {
+    return (
+        <div style={{ padding: 25, marginBottom: 30, backgroundColor: c.bgCard, border: `1px solid ${c.border}`, borderLeft: `4px solid ${c.accent}` }}>
+            <h3 style={{
+                margin: '0 0 20px 0', padding: 0,
+                fontSize: 14, fontWeight: 'bold',
+                color: c.offWhite, textTransform: 'uppercase', letterSpacing: 1,
+            }}>
+                🔑 Getting In
+            </h3>
+            <p style={{ margin: '0 0 14px 0', color: c.gray, lineHeight: 1.7, fontSize: 14 }}>
+                The front glass door key is in the mailbox right beside. It is a high school locker style lock with the code{' '}
+                <strong style={{ color: c.offWhite }}>PNS</strong> (we didn&apos;t pick it, sorry).{' '}
+                Clockwise to P, counterclockwise skipping N once and then landing on N, then clockwise to S.
+            </p>
+            <p style={{ margin: '0 0 14px 0', color: c.gray, lineHeight: 1.7, fontSize: 14 }}>
+                The next black door is unlocked with the code{' '}
+                <strong style={{ color: c.amber, fontSize: 16 }}>{doorCode}</strong>{' '}
+                and the big Ultraloq button in succession
+                {isMonthly ? ' (this is also the code for the gear storage/office keypad)' : ''}.
+            </p>
+            <p style={{ margin: '0 0 14px 0', color: c.gray, lineHeight: 1.7, fontSize: 14 }}>
+                Feel free to use anything in studio, but don&apos;t use any other monthlies&apos; equipment from the gear storage room.
+            </p>
+            <p style={{ margin: '0 0 14px 0', color: c.gray, lineHeight: 1.7, fontSize: 14 }}>
+                When you&apos;re done, make sure any ACs, heaters, and lights are off. Make sure the PA system has been turned off —
+                it is a single big orange power button on the rack in front of the mixer that shuts off everything.
+            </p>
+            <p style={{ margin: 0, color: c.gray, lineHeight: 1.7, fontSize: 14 }}>
+                The black door locks by simply pressing the Ultraloq button again; and make sure the glass door key ends up back in the lockbox in the mailbox.
+            </p>
+        </div>
+    );
+}
+
 function RulesCard() {
     return (
         <div style={{ padding: 25, marginBottom: 30, backgroundColor: c.bgCard, border: `1px solid ${c.border}` }}>
@@ -180,6 +215,7 @@ export function BookingConfirmationEmail({
     sessionTime,
     totalPrice,
     hasInvoice = false,
+    doorCode,
 }: {
     clientName: string;
     rentalType: string;
@@ -187,6 +223,7 @@ export function BookingConfirmationEmail({
     sessionTime: string;
     totalPrice: number;
     hasInvoice?: boolean;
+    doorCode?: string;
 }) {
     return (
         <EmailShell preview="Your Orb session is confirmed!">
@@ -247,6 +284,8 @@ export function BookingConfirmationEmail({
                     </table>
                 </div>
 
+                {doorCode && <DoorProcedureCard doorCode={doorCode} isMonthly={false} />}
+
                 <RulesCard />
 
                 {/* CTA */}
@@ -291,6 +330,7 @@ export function MonthlyBookingConfirmationEmail({
     overageHours,
     overageCost,
     bookingId,
+    doorCode,
 }: {
     clientName: string;
     sessionDate: string;
@@ -300,6 +340,7 @@ export function MonthlyBookingConfirmationEmail({
     overageHours: number;
     overageCost: number;
     bookingId?: string;
+    doorCode?: string;
 }) {
     const hasOverage = overageHours > 0;
 
@@ -428,6 +469,8 @@ export function MonthlyBookingConfirmationEmail({
                         </p>
                     </div>
                 )}
+
+                {doorCode && <DoorProcedureCard doorCode={doorCode} isMonthly={true} />}
 
                 <RulesCard />
 

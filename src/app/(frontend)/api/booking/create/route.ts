@@ -294,6 +294,20 @@ export async function POST(request: NextRequest) {
 
     // Send confirmation emails
     try {
+      // Fetch the hourly front door code
+      let hourlyDoorCode: string | undefined;
+      try {
+        const doorCodePayload = await getPayload({ config });
+        const doorCodeResult = await doorCodePayload.find({
+          collection: 'doorCodes',
+          where: { location: { equals: 'Hourlies Front Door' } },
+          limit: 1,
+        });
+        hourlyDoorCode = doorCodeResult.docs[0]?.code ?? undefined;
+      } catch (dcError) {
+        console.error('Error fetching door code:', dcError);
+      }
+
       await sendBookingConfirmationEmail(
         body.clientEmail,
         body.clientName,
@@ -304,7 +318,8 @@ export async function POST(request: NextRequest) {
         bookingId,
         invoicePdfBuffer,
         eventTitle,
-        eventDescription
+        eventDescription,
+        hourlyDoorCode
       );
 
       await notifyAdminNewBooking(

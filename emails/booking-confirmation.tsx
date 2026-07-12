@@ -9,6 +9,7 @@ export default function Preview() {
       sessionTime="8:00 p.m. – 11:00 p.m."
       totalPrice={135.59}
       hasInvoice={true}
+      doorCode="1234"
     />
   );
 }

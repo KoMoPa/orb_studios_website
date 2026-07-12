@@ -275,6 +275,18 @@ ${overageInfo.overageHours > 0 ? `OVERAGE: ${overageInfo.overageHours} hours cha
 
     // Send confirmation email with pricing info
     try {
+      let monthlyDoorCode: string | undefined;
+      try {
+        const doorCodeResult = await payload.find({
+          collection: 'doorCodes',
+          where: { location: { equals: 'Monthly Front Door' } },
+          limit: 1,
+        });
+        monthlyDoorCode = doorCodeResult.docs[0]?.code ?? undefined;
+      } catch (dcError) {
+        console.error('[Monthly] Error fetching door code:', dcError);
+      }
+
       await sendMonthlyClientBookingConfirmationEmail(
         email,
         client.name,
@@ -287,7 +299,8 @@ ${overageInfo.overageHours > 0 ? `OVERAGE: ${overageInfo.overageHours} hours cha
         googleEventId,
         invoicePdfBuffer,
         eventTitle,
-        eventDescription
+        eventDescription,
+        monthlyDoorCode
       );
       console.log(`[Monthly] Confirmation email sent to ${email}`);
     } catch (error) {

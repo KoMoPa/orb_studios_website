@@ -36,7 +36,8 @@ export async function sendBookingConfirmationEmail(
     bookingId?: string,
     invoicePdfAttachment?: Buffer,
     eventTitle?: string,
-    eventDescription?: string
+    eventDescription?: string,
+    doorCode?: string
 ) {
     const sessionDate = fmtDate(startTime);
     const sessionTime = `${fmtTime(startTime)} – ${fmtTime(endTime)}`;
@@ -48,6 +49,7 @@ export async function sendBookingConfirmationEmail(
         sessionTime,
         totalPrice,
         hasInvoice: !!invoicePdfAttachment,
+        doorCode,
     });
 
     // Build attachments array
@@ -165,7 +167,8 @@ export async function sendMonthlyClientBookingConfirmationEmail(
     bookingId?: string,
     invoicePdfAttachment?: Buffer,
     eventTitle?: string,
-    eventDescription?: string
+    eventDescription?: string,
+    doorCode?: string
 ) {
     try {
         const sessionDate = fmtDate(startTime);
@@ -180,6 +183,7 @@ export async function sendMonthlyClientBookingConfirmationEmail(
             overageHours,
             overageCost,
             bookingId,
+            doorCode,
         });
 
         // Build attachments array
