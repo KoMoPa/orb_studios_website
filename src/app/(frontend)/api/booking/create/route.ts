@@ -332,7 +332,8 @@ export async function POST(request: NextRequest) {
         bookingId,
         invoicePdfBuffer,
         eventTitle,
-        eventDescription
+        eventDescription,
+        hourlyDoorCode
       );
 
       // console.log('Confirmation emails sent');
