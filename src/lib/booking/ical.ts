@@ -36,7 +36,6 @@ export function generateIcalEvent(
                 partstat: 'ACCEPTED',
             },
         ],
-        timezone: 'America/Toronto',
         transp: 'OPAQUE',
         status: 'CONFIRMED',
     });
