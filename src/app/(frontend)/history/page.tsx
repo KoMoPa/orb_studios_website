@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { HistoryContent } from './HistoryContent'
 
@@ -15,9 +16,5 @@ export const metadata: Metadata = {
 }
 
 export default function HistoryPage() {
-  return (
-    <main className="-mt-[10.4rem]">
-      <HistoryContent />
-    </main>
-  )
+  notFound()
 }
