@@ -26,7 +26,9 @@ export default async function StaffPage({ params: paramsPromise }: Args) {
         bio: true,
         headshot: true,
         skills: true,
+        order: true,
       },
+      'order',
     )()
 
     const staff = staffData.docs || []
